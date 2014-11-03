@@ -36,7 +36,14 @@ __Operations:__
 
 * ...
 
-Next Resource
+Profile Resource
 --
+__URL Template:__ /profile/{id}
 
+__Operations:__
+
+* __Retrieve Profile:__ Retrieves a profile given its id
+
+	* __HHTP Method:__ GET
+	* __Consumes:__ application/json; a JSON string in the following form
 ...
