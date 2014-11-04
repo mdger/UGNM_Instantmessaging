@@ -249,6 +249,21 @@ public class IMServiceClass extends Service {
 			}
 		}
 	}
+	
+	/**
+	 * This method returns the profile of an account. 
+	 * @param username The name of the user which profile should be shown
+	 * @param callerName The name of the user who wants to see the profile
+	 * @return The data of the profile in the HTTP Response type 
+	 */
+	@GET
+	@Path("profile/{id}")
+	public HttpResponse getProfile(@PathParam("id") String username)
+	{
+		
+		
+		return null;
+	}
 
 	/**
 	 * Method for debugging purposes.
