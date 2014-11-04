@@ -19,6 +19,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 
+import net.minidev.json.JSONArray;
 import net.minidev.json.JSONObject;
 
 /**
@@ -263,6 +264,116 @@ public class IMServiceClass extends Service {
 		
 		
 		return null;
+	}
+	
+	/**
+	 * This method returns the profile of an account. 
+	 * @param username The name of the user which profile should be shown
+	 * @param callerName The name of the user who wants to see the profile
+	 * @return The data of the profile in the HTTP Response type 
+	 */
+	@GET
+	@Path("message/single/{name}")
+	public HttpResponse getSingleMessages(@PathParam("name") String userName)
+	{
+		String agentName = ((UserAgent) getActiveAgent()).getLoginName();
+		String result = "";
+		Connection conn = null;
+		PreparedStatement stmnt = null;
+		ResultSet rs = null;
+		
+		try {
+			// get connection from connection pool
+			conn = dbm.getConnection();
+			
+			// prepare statement
+			stmnt = conn.prepareStatement("SELECT Nessage, MessageTimeStamp, Sender FROM Message, SendingSingle WHERE (Sender = ? AND Receiver = ?) OR (Sender = ? AND Receiver = ?)");
+			stmnt.setString(1, userName);
+			stmnt.setString(2, agentName);
+			stmnt.setString(3, agentName);
+			stmnt.setString(4, userName);
+			
+			// prepare JSONArray
+			JSONArray messageArray = new JSONArray();
+			
+			// retrieve result set
+			rs = stmnt.executeQuery();
+			boolean dataFound = false;
+			// extract all the messages and put them first in a JSON object and after that in a list
+			while (rs.next())
+			{
+				if(!dataFound) dataFound = true;
+				JSONObject messageObject = new JSONObject();
+				messageObject.put("text", rs.getString(1));
+				messageObject.put("timestamp", rs.getString(2));
+				messageObject.put("Sender", rs.getString(3));
+				messageArray.add(messageObject);
+			}
+			
+			if (dataFound)
+			{
+				// setup resulting JSON Object
+				JSONObject jsonResult = new JSONObject();
+				jsonResult.put("message", messageArray);
+				
+				// return HTTP response
+				HttpResponse r = new HttpResponse(jsonResult.toJSONString());
+				r.setStatus(200);
+				return r;
+			}
+			else 
+			{
+				result = "No messages found for contact " + userName + "!";
+				
+				// return HTTP Response on error
+				HttpResponse er = new HttpResponse(result);
+				er.setStatus(404);
+				return er;
+			}
+		} catch (Exception e) {
+			// return HTTP Response on error
+			HttpResponse er = new HttpResponse("Internal error: " + e.getMessage());
+			er.setStatus(500);
+			return er;
+		} finally {
+			// free resources
+			if (rs != null) {
+				try {
+					rs.close();
+				} catch (Exception e) {
+					Context.logError(this, e.getMessage());
+					
+					// return HTTP Response on error
+					HttpResponse er = new HttpResponse("Internal error: " + e.getMessage());
+					er.setStatus(500);
+					return er;
+				}
+			}
+			if (stmnt != null) {
+				try {
+					stmnt.close();
+				} catch (Exception e) {
+					Context.logError(this, e.getMessage());
+					
+					// return HTTP Response on error
+					HttpResponse er = new HttpResponse("Internal error: " + e.getMessage());
+					er.setStatus(500);
+					return er;
+				}
+			}
+			if (conn != null) {
+				try {
+					conn.close();
+				} catch (Exception e) {
+					Context.logError(this, e.getMessage());
+					
+					// return HTTP Response on error
+					HttpResponse er = new HttpResponse("Internal error: " + e.getMessage());
+					er.setStatus(500);
+					return er;
+				}
+			}
+		}
 	}
 
 	/**
