@@ -1,0 +1,85 @@
+@GET
+@Path("contact/{name}")
+Public HttpResponse getContact(@PathParam("name") String name) {
+	String result ="";
+	Connection conn = null;
+	PreparedStatement stmnt = null;
+	ResultSet rs = null;
+	try {
+		// get connection from connection pool
+		conn = dbm.getConnection();
+		
+		// prepare statement
+		stmnt = conn.prepareStatement("SELECT Contact_Username FROM Contact WHERE This_Username = ?;");
+		stmnt.setString(1, name);
+		
+		// retrieve result set
+		rs = stmnt.executeQuery();
+		
+		// process result set
+		if (rs.next()) {
+			result = rs.getString(1);
+			
+			// setup resulting JSON Object
+			JSONObject ro = new JSONObject();
+			ro.put("Contact_Username", result);
+			
+			// return HTTP Response on success
+			HttpResponse r = new HttpResponse(ro.toJSONString());
+			r.setStatus(200);
+			return r;
+			
+		} else {
+			result = "No result for this username " + name;
+			
+			// return HTTP Response on error
+			HttpResponse er = new HttpResponse(result);
+			er.setStatus(404);
+			return er;
+		}
+	} catch (Exception e) {
+		// return HTTP Response on error
+		HttpResponse er = new HttpResponse("Internal error: " + e.getMessage());
+		er.setStatus(500);
+		return er;
+	} finally {
+		// free resources
+		if (rs != null) {
+			try {
+				rs.close();
+			} catch (Exception e) {
+				Context.logError(this, e.getMessage());
+				
+				// return HTTP Response on error
+				HttpResponse er = new HttpResponse("Internal error: " + e.getMessage());
+				er.setStatus(500);
+				return er;
+			}
+		}
+		if (stmnt != null) {
+			try {
+				stmnt.close();
+			} catch (Exception e) {
+				Context.logError(this, e.getMessage());
+				
+				// return HTTP Response on error
+				HttpResponse er = new HttpResponse("Internal error: " + e.getMessage());
+				er.setStatus(500);
+				return er;
+			}
+		}
+		if (conn != null) {
+			try {
+				conn.close();
+			} catch (Exception e) {
+				Context.logError(this, e.getMessage());
+				
+				// return HTTP Response on error
+				HttpResponse er = new HttpResponse("Internal error: " + e.getMessage());
+				er.setStatus(500);
+				return er;
+			}
+		}
+	}
+	}
+	
