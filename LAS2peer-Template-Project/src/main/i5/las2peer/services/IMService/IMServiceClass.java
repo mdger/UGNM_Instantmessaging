@@ -3,8 +3,10 @@ package i5.las2peer.services.IMService;
 import i5.las2peer.api.Service;
 import i5.las2peer.restMapper.HttpResponse;
 import i5.las2peer.restMapper.RESTMapper;
+import i5.las2peer.restMapper.annotations.DELETE;
 import i5.las2peer.restMapper.annotations.GET;
 import i5.las2peer.restMapper.annotations.POST;
+import i5.las2peer.restMapper.annotations.PUT;
 import i5.las2peer.restMapper.annotations.Path;
 import i5.las2peer.restMapper.annotations.PathParam;
 import i5.las2peer.restMapper.annotations.Version;
@@ -252,19 +254,178 @@ public class IMServiceClass extends Service {
 	}
 	
 	/**
-	 * This method returns the profile of an account. 
-	 * @param username The name of the user which profile should be shown
-	 * @param callerName The name of the user who wants to see the profile
-	 * @return The data of the profile in the HTTP Response type 
+	 * Retrieve Profile
+	 * Retrieves a profile 
+	 * 
+	 * @param UserName of the Profile to be Retrieved 
+	 * @result Profile Data
 	 */
 	@GET
-	@Path("profile/{id}")
-	public HttpResponse getProfile(@PathParam("id") String username)
-	{
-		
-		
-		return null;
+	@Path("profile/{name}")
+	public HttpResponse retrieveProfil(@PathParam("name") String userName) {
+		String[] result = new String[6];
+		Connection conn = null;
+		PreparedStatement stmnt = null;
+		ResultSet rs = null;
+		try {
+			// get connection from connection pool
+			conn = dbm.getConnection();
+			
+			// prepare statement
+			stmnt = conn.prepareStatement("SELECT EMail, Telephone, ImageLink, NickName, Visible FROM AccountProfile WHERE UserName = ?;");
+			stmnt.setString(1, userName);
+			
+			// retrieve result set
+			rs = stmnt.executeQuery();
+			
+			// process result set
+			if (rs.next()) {
+				for (int i=1; i<=5; i++) {
+					result[i] = rs.getString(i);
+				}
+				
+				// setup resulting JSON Object
+				JSONObject ro = new JSONObject();
+				ro.put("email", result[1]);
+				ro.put("telephone", result[2]);
+				ro.put("imageLink", result[3]);
+				ro.put("nickname", result[4]);
+				ro.put("visible", result[5]);
+				
+				// return HTTP Response on success
+				HttpResponse r = new HttpResponse(ro.toJSONString());
+				r.setStatus(200);
+				return r;
+				
+			} else {
+				result[0] = "No result for username " + userName;
+				
+				// return HTTP Response on error
+				HttpResponse er = new HttpResponse(result[0]);
+				er.setStatus(404);
+				return er;
+			}
+		} catch (Exception e) {
+			// return HTTP Response on error
+			HttpResponse er = new HttpResponse("Internal error: " + e.getMessage());
+			er.setStatus(500);
+			return er;
+		} finally {
+			// free resources
+			if (rs != null) {
+				try {
+					rs.close();
+				} catch (Exception e) {
+					Context.logError(this, e.getMessage());
+					
+					// return HTTP Response on error
+					HttpResponse er = new HttpResponse("Internal error: " + e.getMessage());
+					er.setStatus(500);
+					return er;
+				}
+			}
+			if (stmnt != null) {
+				try {
+					stmnt.close();
+				} catch (Exception e) {
+					Context.logError(this, e.getMessage());
+					
+					// return HTTP Response on error
+					HttpResponse er = new HttpResponse("Internal error: " + e.getMessage());
+					er.setStatus(500);
+					return er;
+				}
+			}
+			if (conn != null) {
+				try {
+					conn.close();
+				} catch (Exception e) {
+					Context.logError(this, e.getMessage());
+					
+					// return HTTP Response on error
+					HttpResponse er = new HttpResponse("Internal error: " + e.getMessage());
+					er.setStatus(500);
+					return er;
+				}
+			}
+		}
 	}
+	
+	
+
+/**
+ * Delete Profile 
+ * Deletes a profile 
+ * 
+ *@param UserName of the Profile to be deleted.
+ */
+@DELETE
+@Path("profile/{name}")
+public HttpResponse deleteProfile(@PathParam("name") String userName) {
+	
+	String result = "";
+	Connection conn = null;
+	PreparedStatement stmnt = null;
+	ResultSet rs = null;
+	try {
+		conn = dbm.getConnection();
+		stmnt = conn.prepareStatement("DELETE FROM AccountProfile WHERE UserName = ?;");
+		stmnt.setString(1, userName);
+		int rows = stmnt.executeUpdate(); // same works for insert
+		result = "Database updated. " + rows + " rows affected";
+		
+		// return 
+		HttpResponse r = new HttpResponse(result);
+		r.setStatus(200);
+		return r;
+		
+	} catch (Exception e) {
+		// return HTTP Response on error
+		HttpResponse er = new HttpResponse("Internal error: " + e.getMessage());
+		er.setStatus(500);
+		return er;
+	} finally {
+		// free resources if exception or not
+		if (rs != null) {
+			try {
+				rs.close();
+			} catch (Exception e) {
+				Context.logError(this, e.getMessage());
+				
+				// return HTTP Response on error
+				HttpResponse er = new HttpResponse("Internal error: " + e.getMessage());
+				er.setStatus(500);
+				return er;
+			}
+		}
+		if (stmnt != null) {
+			try {
+				stmnt.close();
+			} catch (Exception e) {
+				Context.logError(this, e.getMessage());
+				
+				// return HTTP Response on error
+				HttpResponse er = new HttpResponse("Internal error: " + e.getMessage());
+				er.setStatus(500);
+				return er;
+			}
+		}
+		if (conn != null) {
+			try {
+				conn.close();
+			} catch (Exception e) {
+				Context.logError(this, e.getMessage());
+				
+				// return HTTP Response on error
+				HttpResponse er = new HttpResponse("Internal error: " + e.getMessage());
+				er.setStatus(500);
+				return er;
+			}
+		}
+	}
+}
+
+
 	
 	/**
 	 * This method returns the profile of an account. 
