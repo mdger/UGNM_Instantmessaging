@@ -43,7 +43,7 @@ __Operations:__
 * __Retrieve Profile:__ Retrieves a profile given its name
 	* __HHTP Method:__ GET
 	* __Consumes:__ -
-	* __Produces:__ application/json; a JSON string in the following form `{'email':'email_val', 'telephone':'telephone_val', 'pictureLink':'pictureLink_val', 'nickname':'nickname_val'}` ('email'=The email adress of the contact, 'telephone'=The telephone number of the contact, 'pictureLink'=The link of the profile image, 'nickname'=The nickname of the account)
+	* __Produces:__ application/json; a JSON string in the following form `{'email':'email_val', 'telephone':'telephone_val', 'imageLink':'imageLink_val', 'nickname':'nickname_val', 'visible':'visible_val'}` ('email'=The email adress of the contact, 'telephone'=The telephone number of the contact, 'imageLink'=The link of the profile image, 'nickname'=The nickname of the account, 'visible'=The visibility of the profile)
 	* __Parameter:__ authorization header, path parameter 'name'
 	* __HTTP Status Codes:__
 		* Success: 200
@@ -53,7 +53,7 @@ __Operations:__
 			
 * __Update Profile:__ Updates a profile given its name
  	* __HHTP Method:__ PUT
-	* __Consumes:__ application/json; a JSON string in the following form `{'email':'email_val', 'telephone':'telephone_val', 'pictureLink':'pictureLink_val', 'nickname':'nickname_val'}` ('email'=The email adress of the contact, 'telephone'=The telephone number of the contact, 'pictureLink'=The link of the profile image, 'nickname'=The nickname of the account)
+	* __Consumes:__ application/json; a JSON string in the following form `{'email':'email_val', 'telephone':'telephone_val', 'imageLink':'imageLink_val', 'nickname':'nickname_val', 'visible':'visible_var'}` ('email'=The email adress of the contact, 'telephone'=The telephone number of the contact, 'imageLink'=The link of the profile image, 'nickname'=The nickname of the account, 'visible'=The visibility of the profile)
 	* __Produces:__ -
 	* __Parameter:__ authorization header, path parameter 'name'
 	* __HTTP Status Codes:__
