@@ -10,7 +10,8 @@ Public HttpResponse getContact(@PathParam("name") String name) {
 		conn = dbm.getConnection();
 		
 		// prepare statement
-		stmnt = conn.prepareStatement("SELECT Contact_Username FROM Contact WHERE This_Username = ?;");
+		stmnt = conn.prepareStatement("select ap.UserName, ap.NickName from Contact as c, AccountProfile as ap
+where c.This_UserName= ? AND c.Contact_UserName=ap.UserName;");
 		stmnt.setString(1, name);
 		
 		// retrieve result set
@@ -22,7 +23,7 @@ Public HttpResponse getContact(@PathParam("name") String name) {
 			
 			// setup resulting JSON Object
 			JSONObject ro = new JSONObject();
-			ro.put("Contact_Username", result);
+			ro.put("Contact Username Nickname", result);
 			
 			// return HTTP Response on success
 			HttpResponse r = new HttpResponse(ro.toJSONString());
