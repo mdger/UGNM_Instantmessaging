@@ -1031,4 +1031,274 @@ public HttpResponse getContact(@PathParam("name") String name) {
 		return result;
 	}
 
+
+
+/**
+ * Retrieves a group given its name
+ * 
+ * @param Information of a group to be retrieved 
+ * @result Group Data
+ */
+@GET
+@Path("group/{name}")
+public HttpResponse retrieveGroup(@PathParam("name") String groupName) {
+	String[] result = new String[5];
+	Connection conn = null;
+	PreparedStatement stmnt = null;
+	ResultSet rs = null;
+	try {
+		// get connection from connection pool
+		conn = dbm.getConnection();
+		
+		// prepare statement
+		stmnt = conn.prepareStatement("SELECT a.GroupName, a.FounderName, a.Description, a.ImageLink, a.MemberID FROM Groups as a, MemberOf as b WHERE a.GroupName = b.GroupName;");
+		stmnt.setString(1, groupName);
+		
+		// retrieve result set
+		rs = stmnt.executeQuery();
+		
+		// process result set
+		if (rs.next()) {
+			for (int i=1; i<=5; i++) {
+				result[i] = rs.getString(i);
+			}
+			
+			// setup resulting JSON Object
+			JSONObject ro = new JSONObject();
+			ro.put("name", result[1]);
+			ro.put("founder", result[2]);
+			ro.put("description", result[3]);
+			ro.put("imageLink", result[4]);
+			ro.put("member", result[5]);
+			
+			// return HTTP Response on success
+			HttpResponse r = new HttpResponse(ro.toJSONString());
+			r.setStatus(200);
+			return r;
+			
+		} else {
+			result[0] = "Group does not exist: " + groupName;
+			
+			// return HTTP Response on error
+			HttpResponse er = new HttpResponse(result[0]);
+			er.setStatus(404);
+			return er;
+		}
+	} catch (Exception e) {
+		// return HTTP Response on error
+		HttpResponse er = new HttpResponse("Internal error: " + e.getMessage());
+		er.setStatus(500);
+		return er;
+	} finally {
+		// free resources
+		if (rs != null) {
+			try {
+				rs.close();
+			} catch (Exception e) {
+				Context.logError(this, e.getMessage());
+				
+				// return HTTP Response on error
+				HttpResponse er = new HttpResponse("Internal error: " + e.getMessage());
+				er.setStatus(500);
+				return er;
+			}
+		}
+		if (stmnt != null) {
+			try {
+				stmnt.close();
+			} catch (Exception e) {
+				Context.logError(this, e.getMessage());
+				
+				// return HTTP Response on error
+				HttpResponse er = new HttpResponse("Internal error: " + e.getMessage());
+				er.setStatus(500);
+				return er;
+			}
+		}
+		if (conn != null) {
+			try {
+				conn.close();
+			} catch (Exception e) {
+				Context.logError(this, e.getMessage());
+				
+				// return HTTP Response on error
+				HttpResponse er = new HttpResponse("Internal error: " + e.getMessage());
+				er.setStatus(500);
+				return er;
+			}
+		}
+	}
 }
+
+/**
+ * Update Group given its name
+ * Updates a Group  
+ * 
+ * @param GroupName of the Group to be updated 
+ * @param content Data for updating the Profile encoded as JSON-String
+ * @return Code if the sending was successfully
+ */
+@PUT
+@Path("group/{name}")
+@Consumes("application/json")
+public HttpResponse updateGroup(@PathParam("name") String groupName, @ContentParam String content) {		
+	
+	try 
+	{
+		// convert string content to JSON object 
+		JSONObject profileObject = (JSONObject) JSONValue.parse(content);
+		String name = (String) profileObject.get("name");
+		String founder = (String) profileObject.get("founder");
+		String desc = (String) profileObject.get("description");
+		String iLink = (String) profileObject.get("imageLink");		
+	
+		String result = "";
+		Connection conn = null;
+		PreparedStatement stmnt = null;
+		ResultSet rs = null;
+			
+	
+		try {
+			conn = dbm.getConnection();
+			stmnt = conn.prepareStatement("UPDATE Groups SET GroupName = ?, FounderName = ?, Description = ?, ImageLink = ? WHERE GroupName = ?;");
+			stmnt.setString(1, name);
+			stmnt.setString(2, founder);
+			stmnt.setString(3, desc);
+			stmnt.setString(4, iLink);
+			int rows = stmnt.executeUpdate(); 
+			result = "Database updated. " + rows + " rows affected";
+			
+			// return 
+			HttpResponse r = new HttpResponse(result);
+			r.setStatus(200);
+			return r;
+			
+		} catch (Exception e) {
+			// return HTTP Response on error
+			HttpResponse er = new HttpResponse("Internal error: " + e.getMessage());
+			er.setStatus(500);
+			return er;
+		} finally {
+			// free resources if exception or not
+			if (rs != null) {
+				try {
+					rs.close();
+				} catch (Exception e) {
+					Context.logError(this, e.getMessage());
+					
+					// return HTTP Response on error
+					HttpResponse er = new HttpResponse("Internal error: " + e.getMessage());
+					er.setStatus(500);
+					return er;
+				}
+			}
+			if (stmnt != null) {
+				try {
+					stmnt.close();
+				} catch (Exception e) {
+					Context.logError(this, e.getMessage());
+					
+					// return HTTP Response on error
+					HttpResponse er = new HttpResponse("Internal error: " + e.getMessage());
+					er.setStatus(500);
+					return er;
+				}
+			}
+			if (conn != null) {
+				try {
+					conn.close();
+				} catch (Exception e) {
+					Context.logError(this, e.getMessage());
+					
+					// return HTTP Response on error
+					HttpResponse er = new HttpResponse("Internal error: " + e.getMessage());
+					er.setStatus(500);
+					return er;
+				}
+			}
+		}
+	}
+		catch (Exception e)
+		{
+			Context.logError(this, e.getMessage());
+			
+			// return HTTP Response on error
+			HttpResponse er = new HttpResponse("Content data in invalid format: " + e.getMessage());
+			er.setStatus(400);
+			return er;
+		}
+}
+
+/**
+	 * Delete Group 
+	 * Deletes a group 
+	 * 
+	 *@param UserName of the Profile to be deleted.
+	 */
+@DELETE
+@Path("group/{name}")
+public HttpResponse deleteGroup(@PathParam("name") String groupName) {
+
+	String result = "";
+	Connection conn = null;
+	PreparedStatement stmnt = null;
+	ResultSet rs = null;
+	try {
+		conn = dbm.getConnection();
+		stmnt = conn.prepareStatement("DELETE FROM Groups WHERE GroupName = ?;");
+		stmnt.setString(1, groupName);
+		int rows = stmnt.executeUpdate(); // same works for insert
+		result = "Database updated. " + rows + " rows affected";
+		
+		// return 
+		HttpResponse r = new HttpResponse(result);
+		r.setStatus(200);
+		return r;
+		
+	} catch (Exception e) {
+		// return HTTP Response on error
+		HttpResponse er = new HttpResponse("Internal error: " + e.getMessage());
+		er.setStatus(500);
+		return er;
+	} finally {
+		// free resources if exception or not
+		if (rs != null) {
+			try {
+				rs.close();
+			} catch (Exception e) {
+				Context.logError(this, e.getMessage());
+				
+				// return HTTP Response on error
+				HttpResponse er = new HttpResponse("Internal error: " + e.getMessage());
+				er.setStatus(500);
+				return er;
+			}
+		}
+		if (stmnt != null) {
+			try {
+				stmnt.close();
+			} catch (Exception e) {
+				Context.logError(this, e.getMessage());
+				
+				// return HTTP Response on error
+				HttpResponse er = new HttpResponse("Internal error: " + e.getMessage());
+				er.setStatus(500);
+				return er;
+			}
+		}
+		if (conn != null) {
+			try {
+				conn.close();
+			} catch (Exception e) {
+				Context.logError(this, e.getMessage());
+				
+				// return HTTP Response on error
+				HttpResponse er = new HttpResponse("Internal error: " + e.getMessage());
+				er.setStatus(500);
+				return er;
+			}
+		}
+	}
+}
+}
+
