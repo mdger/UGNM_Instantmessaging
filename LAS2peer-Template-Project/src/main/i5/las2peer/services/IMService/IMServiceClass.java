@@ -1409,7 +1409,97 @@ public class IMServiceClass extends Service {
 		}
 	}
 	
-	//TODO addMember()
+	/**
+	 * addMember	 
+	 * Adds a User to an existing Group
+	 * @param name The username of the new member to be added
+	 * @param content The groupname of the group where the user have to be added encoded as JSON-String
+	 */
+	@PUT
+	@Consumes("application/json")
+	@Path("member/{name}")
+	public HttpResponse addMember(@PathParam("name") String userName, @ContentParam String content) {
+		
+		try 
+		{
+			// convert string content to JSON object 
+			JSONObject contentObject = (JSONObject) JSONValue.parse(content);
+			String groupName = (String) contentObject.get("groupname");
+		
+			String result = "";
+			Connection conn = null;
+			PreparedStatement stmnt = null;
+			ResultSet rs = null;				
+		
+			try {
+				conn = dbm.getConnection();
+				stmnt = conn.prepareStatement("INSERT INTO MemberOf (UserName, GroupName) VALUES (?, ?);");
+				stmnt.setString(1, userName);
+				stmnt.setString(2, groupName);
+
+				int rows = stmnt.executeUpdate(); 
+				result = "Database updated. " + rows + " rows affected";
+				
+				// return 
+				HttpResponse r = new HttpResponse(result);
+				r.setStatus(200);
+				return r;
+				
+			} catch (Exception e) {
+				// return HTTP Response on error
+				HttpResponse er = new HttpResponse("Internal error: " + e.getMessage());
+				er.setStatus(500);
+				return er;
+			} finally {
+				// free resources if exception or not
+				if (rs != null) {
+					try {
+						rs.close();
+					} catch (Exception e) {
+						Context.logError(this, e.getMessage());
+						
+						// return HTTP Response on error
+						HttpResponse er = new HttpResponse("Internal error: " + e.getMessage());
+						er.setStatus(500);
+						return er;
+					}
+				}
+				if (stmnt != null) {
+					try {
+						stmnt.close();
+					} catch (Exception e) {
+						Context.logError(this, e.getMessage());
+						
+						// return HTTP Response on error
+						HttpResponse er = new HttpResponse("Internal error: " + e.getMessage());
+						er.setStatus(500);
+						return er;
+					}
+				}
+				if (conn != null) {
+					try {
+						conn.close();
+					} catch (Exception e) {
+						Context.logError(this, e.getMessage());
+						
+						// return HTTP Response on error
+						HttpResponse er = new HttpResponse("Internal error: " + e.getMessage());
+						er.setStatus(500);
+						return er;
+					}
+				}
+			}
+		}
+			catch (Exception e)
+			{
+				Context.logError(this, e.getMessage());
+				
+				// return HTTP Response on error
+				HttpResponse er = new HttpResponse("Content data in invalid format: " + e.getMessage());
+				er.setStatus(400);
+				return er;
+			}
+	}
 	
 	//TODO deleteMember()
 	
@@ -1723,7 +1813,7 @@ public HttpResponse deleteGroup(@PathParam("name") String groupName) {
 		}
 	}
 }
-}
+
 
 /**
  * This method sends a message from a user to a different user
