@@ -3,6 +3,7 @@ package i5.las2peer.services.IMService;
 import i5.las2peer.api.Service;
 import i5.las2peer.restMapper.HttpResponse;
 import i5.las2peer.restMapper.RESTMapper;
+import i5.las2peer.restMapper.annotations.Consumes;
 import i5.las2peer.restMapper.annotations.ContentParam;
 import i5.las2peer.restMapper.annotations.DELETE;
 import i5.las2peer.restMapper.annotations.GET;
@@ -455,7 +456,6 @@ public class IMServiceClass extends Service {
 			}
 	}
 
-
 /**
  * Delete Profile 
  * Deletes a profile 
@@ -528,8 +528,6 @@ public HttpResponse deleteProfile(@PathParam("name") String userName) {
 	}
 }
 
-
-	
 	/**
 	 * This method returns the profile of an account. 
 	 * @param username The name of the user which profile should be shown
@@ -655,14 +653,14 @@ public HttpResponse deleteProfile(@PathParam("name") String userName) {
 		}
 	}
 
-	@PUT
-	@Path("message/single/{name}")
 	/**
 	 * This method sends a message from a user to a different user
 	 * @param userName The name of the user who gets the message
 	 * @param content The content of the message encoded as JSON string
 	 * @return Code if the sending was successfully
 	 */
+	@PUT
+	@Path("message/single/{name}")
 	public HttpResponse sendSingleMessage(@PathParam("name") String userName, @ContentParam String content)
 	{
 		try 
