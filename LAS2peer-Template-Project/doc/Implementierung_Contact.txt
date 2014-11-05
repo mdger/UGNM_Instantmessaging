@@ -19,6 +19,7 @@ Public HttpResponse getContact(@PathParam("name") String name) {
 		stmnt = conn.prepareStatement("select ap.UserName, ap.NickName from Contact as c, AccountProfile as ap
 where c.This_UserName= ? AND c.Contact_UserName=ap.UserName;");
 		stmnt.setString(1, name);
+		stmnt.setString(2, name);
 		
 		//prepare JSONArray
 		JSONArray contactArray = new JSONArray();
@@ -33,10 +34,9 @@ where c.This_UserName= ? AND c.Contact_UserName=ap.UserName;");
 			while (rs.next())
 			{
 				if(!dataFound) dataFound = true;
-						
 				JSONObject contactObject = new JSONObject();
-				contactObject.put("username", rs.getString(1));
-				contactObject.put("nickname", rs.getString(2));
+				contactObject.put("contact username", rs.getString(1));
+				contactObject.put("contact nickname", rs.getString(2));
 				contactArray.add(contactObject);
 			}
 			
