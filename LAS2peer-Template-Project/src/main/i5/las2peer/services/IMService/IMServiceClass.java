@@ -1723,7 +1723,7 @@ public HttpResponse deleteGroup(@PathParam("name") String groupName) {
 		}
 	}
 }
-}
+
 
 /**
  * This method sends a message from a user to a different user
