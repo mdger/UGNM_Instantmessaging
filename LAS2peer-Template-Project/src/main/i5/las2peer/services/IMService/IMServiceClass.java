@@ -1677,7 +1677,98 @@ try {
 			}
 	}
 	
-	//TODO deleteMember()
+	/**
+	 * Delete Member
+	 * Deletes a Group Member
+	 * 
+	 *@param UserName of the Profile to be deleted.
+	 *@param content groupname 
+	 */
+	@DELETE
+	@Consumes("application/json")
+	@Path("member/{name}")
+	public HttpResponse deleteMember(@PathParam("name") String userName, @ContentParam String content) {
+
+	try 
+	{
+		// convert string content to JSON object 
+		JSONObject contentObject = (JSONObject) JSONValue.parse(content);
+		String groupName = (String) contentObject.get("groupname");	
+		
+		String result = "";
+		Connection conn = null;
+		PreparedStatement stmnt = null;
+		ResultSet rs = null;
+		
+		try {
+			conn = dbm.getConnection();
+			stmnt = conn.prepareStatement("DELETE FROM MemberOf WHERE UserName = ? AND GroupName = ?;");
+			stmnt.setString(1, userName);
+			stmnt.setString(2, groupName);
+			int rows = stmnt.executeUpdate(); // same works for insert
+			result = "Database updated. " + rows + " rows affected";
+			
+			// return 
+			HttpResponse r = new HttpResponse(result);
+			r.setStatus(200);
+			return r;
+			
+		} catch (Exception e) {
+			// return HTTP Response on error
+			HttpResponse er = new HttpResponse("Internal error: " + e.getMessage());
+			er.setStatus(500);
+			return er;
+		} finally {
+			// free resources if exception or not
+			if (rs != null) {
+				try {
+					rs.close();
+				} catch (Exception e) {
+					Context.logError(this, e.getMessage());
+					
+					// return HTTP Response on error
+					HttpResponse er = new HttpResponse("Internal error: " + e.getMessage());
+					er.setStatus(500);
+					return er;
+				}
+			}
+			if (stmnt != null) {
+				try {
+					stmnt.close();
+				} catch (Exception e) {
+					Context.logError(this, e.getMessage());
+					
+					// return HTTP Response on error
+					HttpResponse er = new HttpResponse("Internal error: " + e.getMessage());
+					er.setStatus(500);
+					return er;
+				}
+			}
+			if (conn != null) {
+				try {
+					conn.close();
+				} catch (Exception e) {
+					Context.logError(this, e.getMessage());
+					
+					// return HTTP Response on error
+					HttpResponse er = new HttpResponse("Internal error: " + e.getMessage());
+					er.setStatus(500);
+					return er;
+				}
+			}
+		}
+	}
+	catch (Exception e)
+	{
+		Context.logError(this, e.getMessage());
+		
+		// return HTTP Response on error
+		HttpResponse er = new HttpResponse("Content data in invalid format: " + e.getMessage());
+		er.setStatus(400);
+		return er;
+	}
+}
+
 	
 	/**
 	 * Method for debugging purposes.

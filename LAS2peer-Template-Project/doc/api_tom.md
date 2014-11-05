@@ -240,7 +240,7 @@ __URL Template:__ /member/{name}
 
 __Operations:__
 
-* __Retrieve memberships:__ Retrieves the list of groups for a contact given its name
+* __Get memberships:__ Retrieves the list of groups for a contact given its name
 	* __HHTP Method:__ GET
 	* __Consumes:__ -
 	* __Produces:__ application/json; a JSON string in the following form `{'group':['groupname':'groupname_val', 'founder':'founder_val'}` ('group'=A group founded, 'groupname'=The name of the group, 'founder'=The founder of the group)
@@ -263,7 +263,7 @@ __Operations:__
 
 * __Delete Member:__ Deletes a member out of a group given its name
  	* __HHTP Method:__ DELETE
-	* __Consumes:__ application/json; a JSON string in the following form `{'groupname':'groupname_val'}` ('groupname'=The name of the group the contact should be added to)
+	* __Consumes:__ application/json; a JSON string in the following form `{'groupname':'groupname_val'}` ('groupname'=The name of the group the user should be deleted from)
 	* __Produces:__ -
 	* __Parameter:__ path parameter 'name'
 	* __HTTP Status Codes:__
