@@ -266,7 +266,7 @@ public class IMServiceClass extends Service {
 	 */
 	@GET
 	@Path("profile/{name}")
-	public HttpResponse retrieveProfil(@PathParam("name") String userName) {
+	public HttpResponse retrieveProfile(@PathParam("name") String userName) {
 		String[] result = new String[6];
 		Connection conn = null;
 		PreparedStatement stmnt = null;
@@ -365,6 +365,7 @@ public class IMServiceClass extends Service {
 	 */
 	@PUT
 	@Path("profile/{name}")
+	@Consumes("application/json")
 	public HttpResponse updateProfile(@PathParam("name") String userName, @ContentParam String content) {		
 		
 		try 
@@ -375,7 +376,7 @@ public class IMServiceClass extends Service {
 			String tele = (String) profileObject.get("telephone");
 			String image = (String) profileObject.get("imageLink");
 			String nickName = (String) profileObject.get("nickname");
-			String visible = (String) profileObject.get("visible");				
+			int visible = (int) profileObject.get("visible");				
 		
 			String result = "";
 			Connection conn = null;
@@ -390,7 +391,7 @@ public class IMServiceClass extends Service {
 				stmnt.setString(2, tele);
 				stmnt.setString(3, image);
 				stmnt.setString(4, nickName);
-				stmnt.setString(5, visible);
+				stmnt.setInt(5, visible);
 				stmnt.setString(6, userName);
 				int rows = stmnt.executeUpdate(); 
 				result = "Database updated. " + rows + " rows affected";
@@ -456,82 +457,82 @@ public class IMServiceClass extends Service {
 			}
 	}
 
-/**
- * Delete Profile 
- * Deletes a profile 
- * 
- *@param UserName of the Profile to be deleted.
- */
-@DELETE
-@Path("profile/{name}")
-public HttpResponse deleteProfile(@PathParam("name") String userName) {
+	/**
+ 	 * Delete Profile 
+   	 * Deletes a profile 
+ 	 * 
+ 	 *@param UserName of the Profile to be deleted.
+ 	 */
+	@DELETE
+	@Path("profile/{name}")
+	public HttpResponse deleteProfile(@PathParam("name") String userName) {
 	
-	String result = "";
-	Connection conn = null;
-	PreparedStatement stmnt = null;
-	ResultSet rs = null;
-	try {
-		conn = dbm.getConnection();
-		stmnt = conn.prepareStatement("DELETE FROM AccountProfile WHERE UserName = ?;");
-		stmnt.setString(1, userName);
-		int rows = stmnt.executeUpdate(); // same works for insert
-		result = "Database updated. " + rows + " rows affected";
-		
-		// return 
-		HttpResponse r = new HttpResponse(result);
-		r.setStatus(200);
-		return r;
-		
-	} catch (Exception e) {
-		// return HTTP Response on error
-		HttpResponse er = new HttpResponse("Internal error: " + e.getMessage());
-		er.setStatus(500);
-		return er;
-	} finally {
-		// free resources if exception or not
-		if (rs != null) {
-			try {
-				rs.close();
-			} catch (Exception e) {
-				Context.logError(this, e.getMessage());
-				
-				// return HTTP Response on error
-				HttpResponse er = new HttpResponse("Internal error: " + e.getMessage());
-				er.setStatus(500);
-				return er;
+		String result = "";
+		Connection conn = null;
+		PreparedStatement stmnt = null;
+		ResultSet rs = null;
+		try {
+			conn = dbm.getConnection();
+			stmnt = conn.prepareStatement("DELETE FROM AccountProfile WHERE UserName = ?;");
+			stmnt.setString(1, userName);
+			int rows = stmnt.executeUpdate(); // same works for insert
+			result = "Database updated. " + rows + " rows affected";
+			
+			// return 
+			HttpResponse r = new HttpResponse(result);
+			r.setStatus(200);
+			return r;
+			
+		} catch (Exception e) {
+			// return HTTP Response on error
+			HttpResponse er = new HttpResponse("Internal error: " + e.getMessage());
+			er.setStatus(500);
+			return er;
+		} finally {
+			// free resources if exception or not
+			if (rs != null) {
+				try {
+					rs.close();
+				} catch (Exception e) {
+					Context.logError(this, e.getMessage());
+					
+					// return HTTP Response on error
+					HttpResponse er = new HttpResponse("Internal error: " + e.getMessage());
+					er.setStatus(500);
+					return er;
+				}
 			}
-		}
-		if (stmnt != null) {
-			try {
-				stmnt.close();
-			} catch (Exception e) {
-				Context.logError(this, e.getMessage());
-				
-				// return HTTP Response on error
-				HttpResponse er = new HttpResponse("Internal error: " + e.getMessage());
-				er.setStatus(500);
-				return er;
+			if (stmnt != null) {
+				try {
+					stmnt.close();
+				} catch (Exception e) {
+					Context.logError(this, e.getMessage());
+					
+					// return HTTP Response on error
+					HttpResponse er = new HttpResponse("Internal error: " + e.getMessage());
+					er.setStatus(500);
+					return er;
+				}
 			}
-		}
-		if (conn != null) {
-			try {
-				conn.close();
-			} catch (Exception e) {
-				Context.logError(this, e.getMessage());
-				
-				// return HTTP Response on error
-				HttpResponse er = new HttpResponse("Internal error: " + e.getMessage());
-				er.setStatus(500);
-				return er;
+			if (conn != null) {
+				try {
+					conn.close();
+				} catch (Exception e) {
+					Context.logError(this, e.getMessage());
+					
+					// return HTTP Response on error
+					HttpResponse er = new HttpResponse("Internal error: " + e.getMessage());
+					er.setStatus(500);
+					return er;
+				}
 			}
 		}
 	}
-}
 
 	/**
-	 * This method returns the profile of an account. 
-	 * @param username The name of the user which profile should be shown
-	 * @return The data of the profile in the HTTP Response type 
+	 * This method returns messages which were send to an account. 
+	 * @param username The name of the user who got the messages
+	 * @return The messages for the user as HTTP Response type 
 	 */
 	@GET
 	@Path("message/single/{name}")
@@ -548,7 +549,7 @@ public HttpResponse deleteProfile(@PathParam("name") String userName) {
 			conn = dbm.getConnection();
 			
 			// prepare statement
-			stmnt = conn.prepareStatement("SELECT Message, MessageTimeStamp, Sender FROM Message, SendingSingle WHERE (Sender = ? AND Receiver = ?) OR (Sender = ? AND Receiver = ?);");
+			stmnt = conn.prepareStatement("SELECT Message, MessageTimeStamp, Sender FROM Message, SendingSingle WHERE ((Sender = ? AND Receiver = ?) OR (Sender = ? AND Receiver = ?)) AND SingleID = MessageID;");
 			stmnt.setString(1, userName);
 			stmnt.setString(2, agentName);
 			stmnt.setString(3, agentName);
@@ -567,7 +568,7 @@ public HttpResponse deleteProfile(@PathParam("name") String userName) {
 				JSONObject messageObject = new JSONObject();
 				messageObject.put("text", rs.getString(1));
 				messageObject.put("timestamp", rs.getString(2));
-				messageObject.put("Sender", rs.getString(3));
+				messageObject.put("sender", rs.getString(3));
 				messageArray.add(messageObject);
 			}
 			
@@ -661,6 +662,7 @@ public HttpResponse deleteProfile(@PathParam("name") String userName) {
 	 */
 	@PUT
 	@Path("message/single/{name}")
+	@Consumes("application/json")
 	public HttpResponse sendSingleMessage(@PathParam("name") String userName, @ContentParam String content)
 	{
 		try 
@@ -679,7 +681,7 @@ public HttpResponse deleteProfile(@PathParam("name") String userName) {
 				conn = dbm.getConnection();
 				
 				// insert the message in the message table
-				stmnt = conn.prepareStatement("INSERT INTO Message (Message, MessageTimeStamp, WasRead) VALUES ('?', '?', ?);", Statement.RETURN_GENERATED_KEYS);
+				stmnt = conn.prepareStatement("INSERT INTO Message (Message, MessageTimeStamp, WasRead) VALUES (?, ?, ?);", Statement.RETURN_GENERATED_KEYS);
 				stmnt.setString(1, message);
 				stmnt.setString(2, timeStamp);
 				stmnt.setInt(3, 0);
@@ -691,7 +693,7 @@ public HttpResponse deleteProfile(@PathParam("name") String userName) {
 				int messageID = stmnt.getGeneratedKeys().getInt(1);
 				
 				// insert the message ID, sender and receiver in the sending single table
-				stmnt1 = conn.prepareStatement("INSERT INTO SendingSingle (Sender, Receiver, MessageID) VALUES ('?', '?', ?);");
+				stmnt1 = conn.prepareStatement("INSERT INTO SendingSingle (Sender, Receiver, MessageID) VALUES (?, ?, ?);");
 				stmnt1.setString(1, ((UserAgent) getActiveAgent()).getLoginName());
 				stmnt1.setString(2, userName);
 				stmnt1.setInt(3, messageID);
@@ -772,43 +774,281 @@ public HttpResponse deleteProfile(@PathParam("name") String userName) {
 	}
 	
 	/**
+	 * This method returns the messages in a group. 
+	 * @param groupName The name of the group in which the messages are sent
+	 * @return The messages sent in a group as HTTP Response type 
+	 */
+	@GET
+	@Path("message/group/{name}")
+	public HttpResponse getGroupMessages(@PathParam("name") String groupName)
+	{
+		Connection conn = null;
+		PreparedStatement stmnt = null;
+		ResultSet rs = null;
+		
+		try 
+		{
+			// get connection from connection pool
+			conn = dbm.getConnection();
+			
+			// prepare statement
+			stmnt = conn.prepareStatement("SELECT Message, MessageTimeStamp, Sender FROM Message, SendingGroup WHERE Receiver = ? AND GroupID = MessageID;");
+			stmnt.setString(1, groupName);
+			
+			// prepare JSONArray
+			JSONArray messageArray = new JSONArray();
+			
+			// retrieve result set
+			rs = stmnt.executeQuery();
+			boolean dataFound = false;
+			// extract all the messages and put them first in a JSON object and after that in a list
+			while (rs.next())
+			{
+				if(!dataFound) dataFound = true;
+				JSONObject messageObject = new JSONObject();
+				messageObject.put("text", rs.getString(1));
+				messageObject.put("timestamp", rs.getString(2));
+				messageObject.put("sender", rs.getString(3));
+				messageArray.add(messageObject);
+			}
+			
+			if (dataFound)
+			{
+				// setup resulting JSON Object
+				JSONObject jsonResult = new JSONObject();
+				jsonResult.put("message", messageArray);
+				
+				// return HTTP response
+				HttpResponse r = new HttpResponse(jsonResult.toJSONString());
+				r.setStatus(200);
+				return r;
+			}
+			else 
+			{
+				String error = "No messages found for contact " + groupName + "!";
+				
+				// return HTTP Response on error
+				HttpResponse er = new HttpResponse(error);
+				er.setStatus(404);
+				return er;
+			}
+		} 
+		catch (Exception e) 
+		{
+			// return HTTP Response on error
+			HttpResponse er = new HttpResponse("Internal error: " + e.getMessage());
+			er.setStatus(500);
+			return er;
+		} 
+		finally 
+		{
+			// free resources
+			if (rs != null) 
+			{
+				try 
+				{
+					rs.close();
+				}
+				catch (Exception e) 
+				{
+					Context.logError(this, e.getMessage());
+					
+					// return HTTP Response on error
+					HttpResponse er = new HttpResponse("Internal error: " + e.getMessage());
+					er.setStatus(500);
+					return er;
+				}
+			}
+			if (stmnt != null) 
+			{
+				try 
+				{
+					stmnt.close();
+				}
+				catch (Exception e) 
+				{
+					Context.logError(this, e.getMessage());
+					
+					// return HTTP Response on error
+					HttpResponse er = new HttpResponse("Internal error: " + e.getMessage());
+					er.setStatus(500);
+					return er;
+				}
+			}
+			if (conn != null) 
+			{
+				try 
+				{
+					conn.close();
+				}
+				catch (Exception e) 
+				{
+					Context.logError(this, e.getMessage());
+					
+					// return HTTP Response on error
+					HttpResponse er = new HttpResponse("Internal error: " + e.getMessage());
+					er.setStatus(500);
+					return er;
+				}
+			}
+		}
+	}
+	
+	/** This method sends a message to a group
+	 * @param userName The name of the group the message will be sent
+	 * @param content The content of the message encoded as JSON string
+	 * @return Code if the sending was successfully
+	 */
+	@PUT
+	@Path("message/group/{name}")
+	@Consumes("application/json")
+	public HttpResponse sendGroupMessage(@PathParam("name") String groupName, @ContentParam String content)
+	{
+		try 
+		{
+			// convert string content to JSON object to get the message content
+			JSONObject messageObject = (JSONObject) JSONValue.parse(content);
+			String message = (String) messageObject.get("message");
+			String timeStamp = (String) messageObject.get("timestamp");
+			
+			String result = "";
+			Connection conn = null;
+			PreparedStatement stmnt = null;
+			PreparedStatement stmnt1 = null;
+			ResultSet rs = null;
+			try {
+				conn = dbm.getConnection();
+				
+				// insert the message in the message table
+				stmnt = conn.prepareStatement("INSERT INTO Message (Message, MessageTimeStamp, WasRead) VALUES (?, ?, ?);", Statement.RETURN_GENERATED_KEYS);
+				stmnt.setString(1, message);
+				stmnt.setString(2, timeStamp);
+				stmnt.setInt(3, 0);
+				int rows = stmnt.executeUpdate();
+				result = "Database updated. " + rows + " rows in table \"Message\" affected";
+				stmnt.getGeneratedKeys().next();
+				
+				// retrieve the message ID for saving it in the sending group table
+				int messageID = stmnt.getGeneratedKeys().getInt(1);
+				
+				// insert the message ID, sender and receiver in the sending group table
+				stmnt1 = conn.prepareStatement("INSERT INTO SendingGroup (Sender, Receiver, MessageID) VALUES (?, ?, ?);");
+				stmnt1.setString(1, ((UserAgent) getActiveAgent()).getLoginName());
+				stmnt1.setString(2, groupName);
+				stmnt1.setInt(3, messageID);
+				rows = stmnt1.executeUpdate();
+				result += "\n\rDatabase updated. " + rows + " rows in table \"SendingGroup\" affected";
+				
+				// return 
+				HttpResponse r = new HttpResponse(result);
+				r.setStatus(200);
+				return r;
+				
+			} catch (Exception e) {
+				// return HTTP Response on error
+				HttpResponse er = new HttpResponse("Internal error: " + e.getMessage());
+				er.setStatus(500);
+				return er;
+			} finally {
+				// free resources if exception or not
+				if (rs != null) {
+					try {
+						rs.close();
+					} catch (Exception e) {
+						Context.logError(this, e.getMessage());
+						
+						// return HTTP Response on error
+						HttpResponse er = new HttpResponse("Internal error: " + e.getMessage());
+						er.setStatus(500);
+						return er;
+					}
+				}
+				if (stmnt != null) {
+					try {
+						stmnt.close();
+					} catch (Exception e) {
+						Context.logError(this, e.getMessage());
+						
+						// return HTTP Response on error
+						HttpResponse er = new HttpResponse("Internal error: " + e.getMessage());
+						er.setStatus(500);
+						return er;
+					}
+				}
+				if (stmnt1 != null) {
+					try {
+						stmnt1.close();
+					} catch (Exception e) {
+						Context.logError(this, e.getMessage());
+						
+						// return HTTP Response on error
+						HttpResponse er = new HttpResponse("Internal error: " + e.getMessage());
+						er.setStatus(500);
+						return er;
+					}
+				}
+				if (conn != null) {
+					try {
+						conn.close();
+					} catch (Exception e) {
+						Context.logError(this, e.getMessage());
+						
+						// return HTTP Response on error
+						HttpResponse er = new HttpResponse("Internal error: " + e.getMessage());
+						er.setStatus(500);
+						return er;
+					}
+				}
+			}
+		}
+		catch (Exception e)
+		{
+			Context.logError(this, e.getMessage());
+			
+			// return HTTP Response on error
+			HttpResponse er = new HttpResponse("Content data in invalid format: " + e.getMessage());
+			er.setStatus(400);
+			return er;
+		}
+	}
+	
+	/**
 	 * This method returns the contact list of a certain user. 
 	 * @param name The name of the user whose contact list should be displayed
 	 * @return The data (username and nickname) of the contacts in the HTTP Response type 
 	 */
-
-@GET	 
-@Path("contact/{name}")
-public HttpResponse getContact(@PathParam("name") String name) {
-	String result ="";
-	Connection conn = null;
-	PreparedStatement stmnt = null;
-	ResultSet rs = null;
-	try {
-		// get connection from connection pool
-		conn = dbm.getConnection();
-		
-		// prepare statement
-		stmnt = conn.prepareStatement("select ap.UserName, ap.NickName from Contact as c, AccountProfile as ap where c.This_UserName= ? AND c.Contact_UserName=ap.UserName;");
-		stmnt.setString(1, name);
-		stmnt.setString(2, name);
-		
-		//prepare JSONArray
-		JSONArray contactArray = new JSONArray();
-		
-		// retrieve result set
-		rs = stmnt.executeQuery();
-		
-		//differentiate situations 1) with contacts and 2) without contacts
-		boolean dataFound = false;
-		// process result set
-		// extract all the messages and put them first in a JSON object and after that in a list
+	@GET	 
+	@Path("contact/{name}")
+	public HttpResponse getContacts(@PathParam("name") String name) {
+		String result ="";
+		Connection conn = null;
+		PreparedStatement stmnt = null;
+		ResultSet rs = null;
+		try {
+			// get connection from connection pool
+			conn = dbm.getConnection();
+			
+			// prepare statement
+			stmnt = conn.prepareStatement("select ap.UserName, ap.NickName from Contact as c, AccountProfile as ap where c.This_UserName= ? AND c.Contact_UserName=ap.UserName;");
+			stmnt.setString(1, name);
+			stmnt.setString(2, name);
+			
+			//prepare JSONArray
+			JSONArray contactArray = new JSONArray();
+			
+			// retrieve result set
+			rs = stmnt.executeQuery();
+			
+			//differentiate situations 1) with contacts and 2) without contacts
+			boolean dataFound = false;
+			// process result set
+			// extract all the contacts and put them first in a JSON object and after that in a list
 			while (rs.next())
 			{
 				if(!dataFound) dataFound = true;
 				JSONObject contactObject = new JSONObject();
-				contactObject.put("contact username", rs.getString(1));
-				contactObject.put("contact nickname", rs.getString(2));
+				contactObject.put("username", rs.getString(1));
+				contactObject.put("nickname", rs.getString(2));
 				contactArray.add(contactObject);
 			}
 			
@@ -816,7 +1056,7 @@ public HttpResponse getContact(@PathParam("name") String name) {
 			{
 				// setup resulting JSON Object
 				JSONObject jsonResult = new JSONObject();
-				jsonResult.put("contact list", contactArray);
+				jsonResult.put("contact", contactArray);
 				
 				// return HTTP response
 				HttpResponse r = new HttpResponse(jsonResult.toJSONString());
@@ -877,16 +1117,15 @@ public HttpResponse getContact(@PathParam("name") String name) {
 			}
 		}
 	}
-	 
+
 	 /**
 		 * This method returns all contact requests to a certain user. 
 		 * @param name The name of the user to whom contact request were sent
 		 * @return The data (username and nickname) of the user who has sent a contact request in the HTTP Response type 
-		 */@GET
-		 
-		 
+		 */
+	@GET
 	@Path("request/{name}")
-	public HttpResponse getRequest(@PathParam("name") String name) {
+	public HttpResponse getRequests(@PathParam("name") String name) {
 		String result ="";
 		Connection conn = null;
 		PreparedStatement stmnt = null;
@@ -898,7 +1137,6 @@ public HttpResponse getContact(@PathParam("name") String name) {
 			// prepare statement
 			stmnt = conn.prepareStatement("select ap.UserName, ap.NickName from ContactRequest as cr, AccountProfile as ap where cr.To_UserName= ? AND cr.From_UserName=ap.UserName;");
 			stmnt.setString(1, name);
-			stmnt.setString(2, name);
 			
 			//prepare JSONArray
 			JSONArray contactArray = new JSONArray();
@@ -909,13 +1147,13 @@ public HttpResponse getContact(@PathParam("name") String name) {
 			//differentiate situations 1) with contacts and 2) without contacts
 			boolean dataFound = false;
 			// process result set
-			// extract all the messages and put them first in a JSON object and after that in a list
+			// extract all the requests and put them first in a JSON object and after that in a list
 				while (rs.next())
 				{
 					if(!dataFound) dataFound = true;
 					JSONObject contactObject = new JSONObject();
-					contactObject.put("username of the user sending a request", rs.getString(1));
-					contactObject.put("nickname of the user sending a request", rs.getString(2));
+					contactObject.put("username", rs.getString(1));
+					contactObject.put("nickname", rs.getString(2));
 					contactArray.add(contactObject);
 				}
 				
@@ -923,7 +1161,7 @@ public HttpResponse getContact(@PathParam("name") String name) {
 				{
 					// setup resulting JSON Object
 					JSONObject jsonResult = new JSONObject();
-					jsonResult.put("request list", contactArray);
+					jsonResult.put("request", contactArray);
 					
 					// return HTTP response
 					HttpResponse r = new HttpResponse(jsonResult.toJSONString());
@@ -932,7 +1170,7 @@ public HttpResponse getContact(@PathParam("name") String name) {
 				}
 				else 
 				{
-					result = "No contact list found for " + name + "!";
+					result = "No requests found for " + name + "!";
 					
 					// return HTTP Response on error
 					HttpResponse er = new HttpResponse(result);
@@ -1027,8 +1265,6 @@ public HttpResponse getContact(@PathParam("name") String name) {
 		}
 		return result;
 	}
-
-
 
 /**
  * Retrieves a group given its name
