@@ -886,7 +886,7 @@ public HttpResponse getContact(@PathParam("name") String name) {
 		 * @return The data (username and nickname) of the user who has sent a contact request in the HTTP Response type 
 		 */@GET
 		 
-    @GET	 
+		 
 	@Path("request/{name}")
 	Public HttpResponse getRequest(@PathParam("name") String name) {
 		String result ="";
