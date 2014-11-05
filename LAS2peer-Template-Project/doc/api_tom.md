@@ -92,7 +92,7 @@ __Operations:__
 			
 * __Update Group:__ Updates a group given its name
  	* __HHTP Method:__ PUT
-	* __Consumes:__ application/json; a JSON string in the following form `{'name':'name_val', 'founder':'founder_val', 'description':'description_val', 'imageLink':'imageLink_val'}` ('name'=The name of the group, 'founder'=The name of the founder of the group, 'description'=The description of the group, 'imageLink'=The link to the profile image of the group)
+	* __Consumes:__ application/json; a JSON string in the following form `{'name':'name_val', 'founder':'founder_val', 'description':'description_val', 'imageLink':'imageLink_val', 'member':['username':'username_val']}` ('name'=The name of the group, 'founder'=The name of the founder of the group, 'description'=The description of the group, 'imageLink'=The link to the profile image of the group)
 	* __Produces:__ -
 	* __Parameter:__ authorization header, path parameter 'name'
 	* __HTTP Status Codes:__
@@ -251,5 +251,16 @@ __Operations:__
 		* Success: 200
 		* Errors:
 			* 400: content data in invalid format
+			* 401: no authorization
+			* 404: resource does not exist
+			
+* __Delete Group Member:__ Deletes a Member out of a group
+ 	* __HHTP Method:__ DELETE
+	* __Consumes:__ -
+	* __Produces:__ -
+	* __Parameter:__ authorization header, path parameter 'name'
+	* __HTTP Status Codes:__
+		* Success: 200
+		* Errors:
 			* 401: no authorization
 			* 404: resource does not exist
