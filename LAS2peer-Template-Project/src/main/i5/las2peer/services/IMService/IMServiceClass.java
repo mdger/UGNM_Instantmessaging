@@ -878,7 +878,115 @@ public HttpResponse getContact(@PathParam("name") String name) {
 				}
 			}
 		}
-	}	
+	}
+	 
+	 /**
+		 * This method returns all contact requests to a certain user. 
+		 * @param name The name of the user to whom contact request were sent
+		 * @return The data (username and nickname) of the user who has sent a contact request in the HTTP Response type 
+		 */@GET
+		 
+		 
+	@Path("request/{name}")
+	Public HttpResponse getRequest(@PathParam("name") String name) {
+		String result ="";
+		Connection conn = null;
+		PreparedStatement stmnt = null;
+		ResultSet rs = null;
+		try {
+			// get connection from connection pool
+			conn = dbm.getConnection();
+			
+			// prepare statement
+			stmnt = conn.prepareStatement("select ap.UserName, ap.NickName from ContactRequest as cr, AccountProfile as ap
+	where cr.To_UserName= ? AND cr.From_UserName=ap.UserName;");
+			stmnt.setString(1, name);
+			stmnt.setString(2, name);
+			
+			//prepare JSONArray
+			JSONArray contactArray = new JSONArray();
+			
+			// retrieve result set
+			rs = stmnt.executeQuery();
+			
+			//differentiate situations 1) with contacts and 2) without contacts
+			boolean dataFound = false;
+			// process result set
+			// extract all the messages and put them first in a JSON object and after that in a list
+				while (rs.next())
+				{
+					if(!dataFound) dataFound = true;
+					JSONObject contactObject = new JSONObject();
+					contactObject.put("username of the user sending a request", rs.getString(1));
+					contactObject.put("nickname of the user sending a request", rs.getString(2));
+					contactArray.add(contactObject);
+				}
+				
+				if (dataFound)
+				{
+					// setup resulting JSON Object
+					JSONObject jsonResult = new JSONObject();
+					jsonResult.put("request list", contactArray);
+					
+					// return HTTP response
+					HttpResponse r = new HttpResponse(jsonResult.toJSONString());
+					r.setStatus(200);
+					return r;
+				}
+				else 
+				{
+					result = "No contact list found for " + name + "!";
+					
+					// return HTTP Response on error
+					HttpResponse er = new HttpResponse(result);
+					er.setStatus(404);
+					return er;
+				}
+			} catch (Exception e) {
+				// return HTTP Response on error
+				HttpResponse er = new HttpResponse("Internal error: " + e.getMessage());
+				er.setStatus(500);
+				return er;
+			} finally {
+				// free resources
+				if (rs != null) {
+					try {
+						rs.close();
+					} catch (Exception e) {
+						Context.logError(this, e.getMessage());
+						
+						// return HTTP Response on error
+						HttpResponse er = new HttpResponse("Internal error: " + e.getMessage());
+						er.setStatus(500);
+						return er;
+					}
+				}
+				if (stmnt != null) {
+					try {
+						stmnt.close();
+					} catch (Exception e) {
+						Context.logError(this, e.getMessage());
+						
+						// return HTTP Response on error
+						HttpResponse er = new HttpResponse("Internal error: " + e.getMessage());
+						er.setStatus(500);
+						return er;
+					}
+				}
+				if (conn != null) {
+					try {
+						conn.close();
+					} catch (Exception e) {
+						Context.logError(this, e.getMessage());
+						
+						// return HTTP Response on error
+						HttpResponse er = new HttpResponse("Internal error: " + e.getMessage());
+						er.setStatus(500);
+						return er;
+					}
+				}
+			}
+		}
 	
 	/**
 	 * Method for debugging purposes.
