@@ -353,8 +353,106 @@ public class IMServiceClass extends Service {
 			}
 		}
 	}
-	
-	
+
+	/**
+	 * Update Profile	
+	 * Updates a profile 
+	 * 
+	 * @param name UserName of the Profile to be updated 
+	 * @param content Data for updating the Profile encoded as JSON-String
+	 * @return Code if the sending was successfully
+	 */
+	@PUT
+	@Path("profile/{name}")
+	public HttpResponse updateProfile(@PathParam("name") String userName, @ContentParam String content) {		
+		
+		try 
+		{
+			// convert string content to JSON object 
+			JSONObject profileObject = (JSONObject) JSONValue.parse(content);
+			String mail = (String) profileObject.get("email");
+			String tele = (String) profileObject.get("telephone");
+			String image = (String) profileObject.get("imageLink");
+			String visible = (String) profileObject.get("visible");				
+		
+			String result = "";
+			Connection conn = null;
+			PreparedStatement stmnt = null;
+			ResultSet rs = null;
+				
+		
+			try {
+				conn = dbm.getConnection();
+				stmnt = conn.prepareStatement("UPDATE AccountProfile SET EMail = ?, Telephone = ?, ImageLink = ?, Visible = ? WHERE UserName = ?;");
+				stmnt.setString(1, mail);
+				stmnt.setString(2, tele);
+				stmnt.setString(3, image);
+				stmnt.setString(4, visible);
+				stmnt.setString(5, userName);
+				int rows = stmnt.executeUpdate(); 
+				result = "Database updated. " + rows + " rows affected";
+				
+				// return 
+				HttpResponse r = new HttpResponse(result);
+				r.setStatus(200);
+				return r;
+				
+			} catch (Exception e) {
+				// return HTTP Response on error
+				HttpResponse er = new HttpResponse("Internal error: " + e.getMessage());
+				er.setStatus(500);
+				return er;
+			} finally {
+				// free resources if exception or not
+				if (rs != null) {
+					try {
+						rs.close();
+					} catch (Exception e) {
+						Context.logError(this, e.getMessage());
+						
+						// return HTTP Response on error
+						HttpResponse er = new HttpResponse("Internal error: " + e.getMessage());
+						er.setStatus(500);
+						return er;
+					}
+				}
+				if (stmnt != null) {
+					try {
+						stmnt.close();
+					} catch (Exception e) {
+						Context.logError(this, e.getMessage());
+						
+						// return HTTP Response on error
+						HttpResponse er = new HttpResponse("Internal error: " + e.getMessage());
+						er.setStatus(500);
+						return er;
+					}
+				}
+				if (conn != null) {
+					try {
+						conn.close();
+					} catch (Exception e) {
+						Context.logError(this, e.getMessage());
+						
+						// return HTTP Response on error
+						HttpResponse er = new HttpResponse("Internal error: " + e.getMessage());
+						er.setStatus(500);
+						return er;
+					}
+				}
+			}
+		}
+			catch (Exception e)
+			{
+				Context.logError(this, e.getMessage());
+				
+				// return HTTP Response on error
+				HttpResponse er = new HttpResponse("Content data in invalid format: " + e.getMessage());
+				er.setStatus(400);
+				return er;
+			}
+	}
+
 
 /**
  * Delete Profile 
