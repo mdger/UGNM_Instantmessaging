@@ -888,7 +888,7 @@ public HttpResponse getContact(@PathParam("name") String name) {
 		 
 		 
 	@Path("request/{name}")
-	Public HttpResponse getRequest(@PathParam("name") String name) {
+	public HttpResponse getRequest(@PathParam("name") String name) {
 		String result ="";
 		Connection conn = null;
 		PreparedStatement stmnt = null;
@@ -898,8 +898,7 @@ public HttpResponse getContact(@PathParam("name") String name) {
 			conn = dbm.getConnection();
 			
 			// prepare statement
-			stmnt = conn.prepareStatement("select ap.UserName, ap.NickName from ContactRequest as cr, AccountProfile as ap
-	where cr.To_UserName= ? AND cr.From_UserName=ap.UserName;");
+			stmnt = conn.prepareStatement("select ap.UserName, ap.NickName from ContactRequest as cr, AccountProfile as ap where cr.To_UserName= ? AND cr.From_UserName=ap.UserName;");
 			stmnt.setString(1, name);
 			stmnt.setString(2, name);
 			
