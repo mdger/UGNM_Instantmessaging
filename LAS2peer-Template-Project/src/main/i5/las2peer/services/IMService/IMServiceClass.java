@@ -373,6 +373,7 @@ public class IMServiceClass extends Service {
 			String mail = (String) profileObject.get("email");
 			String tele = (String) profileObject.get("telephone");
 			String image = (String) profileObject.get("imageLink");
+			String nickName = (String) profileObject.get("nickname");
 			String visible = (String) profileObject.get("visible");				
 		
 			String result = "";
@@ -383,12 +384,13 @@ public class IMServiceClass extends Service {
 		
 			try {
 				conn = dbm.getConnection();
-				stmnt = conn.prepareStatement("UPDATE AccountProfile SET EMail = ?, Telephone = ?, ImageLink = ?, Visible = ? WHERE UserName = ?;");
+				stmnt = conn.prepareStatement("UPDATE AccountProfile SET EMail = ?, Telephone = ?, ImageLink = ?, NickName = ?, Visible = ? WHERE UserName = ?;");
 				stmnt.setString(1, mail);
 				stmnt.setString(2, tele);
 				stmnt.setString(3, image);
-				stmnt.setString(4, visible);
-				stmnt.setString(5, userName);
+				stmnt.setString(4, nickName);
+				stmnt.setString(5, visible);
+				stmnt.setString(6, userName);
 				int rows = stmnt.executeUpdate(); 
 				result = "Database updated. " + rows + " rows affected";
 				
@@ -548,7 +550,7 @@ public HttpResponse deleteProfile(@PathParam("name") String userName) {
 			conn = dbm.getConnection();
 			
 			// prepare statement
-			stmnt = conn.prepareStatement("SELECT Nessage, MessageTimeStamp, Sender FROM Message, SendingSingle WHERE (Sender = ? AND Receiver = ?) OR (Sender = ? AND Receiver = ?);");
+			stmnt = conn.prepareStatement("SELECT Message, MessageTimeStamp, Sender FROM Message, SendingSingle WHERE (Sender = ? AND Receiver = ?) OR (Sender = ? AND Receiver = ?);");
 			stmnt.setString(1, userName);
 			stmnt.setString(2, agentName);
 			stmnt.setString(3, agentName);
@@ -775,11 +777,11 @@ public HttpResponse deleteProfile(@PathParam("name") String userName) {
 	 * This method returns the contact list of a certain user. 
 	 * @param name The name of the user whose contact list should be displayed
 	 * @return The data (username and nickname) of the contacts in the HTTP Response type 
-	 */@GET
-	 
-	 
+	 */
+
+@GET	 
 @Path("contact/{name}")
-Public HttpResponse getContact(@PathParam("name") String name) {
+public HttpResponse getContact(@PathParam("name") String name) {
 	String result ="";
 	Connection conn = null;
 	PreparedStatement stmnt = null;
@@ -789,8 +791,7 @@ Public HttpResponse getContact(@PathParam("name") String name) {
 		conn = dbm.getConnection();
 		
 		// prepare statement
-		stmnt = conn.prepareStatement("select ap.UserName, ap.NickName from Contact as c, AccountProfile as ap
-where c.This_UserName= ? AND c.Contact_UserName=ap.UserName;");
+		stmnt = conn.prepareStatement("select ap.UserName, ap.NickName from Contact as c, AccountProfile as ap where c.This_UserName= ? AND c.Contact_UserName=ap.UserName;");
 		stmnt.setString(1, name);
 		stmnt.setString(2, name);
 		
