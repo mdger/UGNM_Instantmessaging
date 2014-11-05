@@ -3,6 +3,7 @@ package i5.las2peer.services.IMService;
 import i5.las2peer.api.Service;
 import i5.las2peer.restMapper.HttpResponse;
 import i5.las2peer.restMapper.RESTMapper;
+import i5.las2peer.restMapper.annotations.Consumes;
 import i5.las2peer.restMapper.annotations.ContentParam;
 import i5.las2peer.restMapper.annotations.DELETE;
 import i5.las2peer.restMapper.annotations.GET;
@@ -364,6 +365,7 @@ public class IMServiceClass extends Service {
 	 */
 	@PUT
 	@Path("profile/{name}")
+	@Consumes("application/json")
 	public HttpResponse updateProfile(@PathParam("name") String userName, @ContentParam String content) {		
 		
 		try 
@@ -528,9 +530,9 @@ public class IMServiceClass extends Service {
 	}
 
 	/**
-	 * This method returns the profile of an account. 
-	 * @param username The name of the user which profile should be shown
-	 * @return The data of the profile in the HTTP Response type 
+	 * This method returns messages which were send to an account. 
+	 * @param username The name of the user who got the messages
+	 * @return The messages for the user as HTTP Response type 
 	 */
 	@GET
 	@Path("message/single/{name}")
@@ -547,7 +549,7 @@ public class IMServiceClass extends Service {
 			conn = dbm.getConnection();
 			
 			// prepare statement
-			stmnt = conn.prepareStatement("SELECT Message, MessageTimeStamp, Sender FROM Message, SendingSingle WHERE (Sender = ? AND Receiver = ?) OR (Sender = ? AND Receiver = ?);");
+			stmnt = conn.prepareStatement("SELECT Message, MessageTimeStamp, Sender FROM Message, SendingSingle WHERE ((Sender = ? AND Receiver = ?) OR (Sender = ? AND Receiver = ?)) AND SingleID = MessageID;");
 			stmnt.setString(1, userName);
 			stmnt.setString(2, agentName);
 			stmnt.setString(3, agentName);
@@ -566,7 +568,7 @@ public class IMServiceClass extends Service {
 				JSONObject messageObject = new JSONObject();
 				messageObject.put("text", rs.getString(1));
 				messageObject.put("timestamp", rs.getString(2));
-				messageObject.put("Sender", rs.getString(3));
+				messageObject.put("sender", rs.getString(3));
 				messageArray.add(messageObject);
 			}
 			
@@ -660,6 +662,7 @@ public class IMServiceClass extends Service {
 	 */
 	@PUT
 	@Path("message/single/{name}")
+	@Consumes("application/json")
 	public HttpResponse sendSingleMessage(@PathParam("name") String userName, @ContentParam String content)
 	{
 		try 
@@ -678,7 +681,7 @@ public class IMServiceClass extends Service {
 				conn = dbm.getConnection();
 				
 				// insert the message in the message table
-				stmnt = conn.prepareStatement("INSERT INTO Message (Message, MessageTimeStamp, WasRead) VALUES ('?', '?', ?);", Statement.RETURN_GENERATED_KEYS);
+				stmnt = conn.prepareStatement("INSERT INTO Message (Message, MessageTimeStamp, WasRead) VALUES (?, ?, ?);", Statement.RETURN_GENERATED_KEYS);
 				stmnt.setString(1, message);
 				stmnt.setString(2, timeStamp);
 				stmnt.setInt(3, 0);
@@ -690,12 +693,251 @@ public class IMServiceClass extends Service {
 				int messageID = stmnt.getGeneratedKeys().getInt(1);
 				
 				// insert the message ID, sender and receiver in the sending single table
-				stmnt1 = conn.prepareStatement("INSERT INTO SendingSingle (Sender, Receiver, MessageID) VALUES ('?', '?', ?);");
+				stmnt1 = conn.prepareStatement("INSERT INTO SendingSingle (Sender, Receiver, MessageID) VALUES (?, ?, ?);");
 				stmnt1.setString(1, ((UserAgent) getActiveAgent()).getLoginName());
 				stmnt1.setString(2, userName);
 				stmnt1.setInt(3, messageID);
 				rows = stmnt1.executeUpdate();
 				result += "\n\rDatabase updated. " + rows + " rows in table \"SendingSingle\" affected";
+				
+				// return 
+				HttpResponse r = new HttpResponse(result);
+				r.setStatus(200);
+				return r;
+				
+			} catch (Exception e) {
+				// return HTTP Response on error
+				HttpResponse er = new HttpResponse("Internal error: " + e.getMessage());
+				er.setStatus(500);
+				return er;
+			} finally {
+				// free resources if exception or not
+				if (rs != null) {
+					try {
+						rs.close();
+					} catch (Exception e) {
+						Context.logError(this, e.getMessage());
+						
+						// return HTTP Response on error
+						HttpResponse er = new HttpResponse("Internal error: " + e.getMessage());
+						er.setStatus(500);
+						return er;
+					}
+				}
+				if (stmnt != null) {
+					try {
+						stmnt.close();
+					} catch (Exception e) {
+						Context.logError(this, e.getMessage());
+						
+						// return HTTP Response on error
+						HttpResponse er = new HttpResponse("Internal error: " + e.getMessage());
+						er.setStatus(500);
+						return er;
+					}
+				}
+				if (stmnt1 != null) {
+					try {
+						stmnt1.close();
+					} catch (Exception e) {
+						Context.logError(this, e.getMessage());
+						
+						// return HTTP Response on error
+						HttpResponse er = new HttpResponse("Internal error: " + e.getMessage());
+						er.setStatus(500);
+						return er;
+					}
+				}
+				if (conn != null) {
+					try {
+						conn.close();
+					} catch (Exception e) {
+						Context.logError(this, e.getMessage());
+						
+						// return HTTP Response on error
+						HttpResponse er = new HttpResponse("Internal error: " + e.getMessage());
+						er.setStatus(500);
+						return er;
+					}
+				}
+			}
+		}
+		catch (Exception e)
+		{
+			Context.logError(this, e.getMessage());
+			
+			// return HTTP Response on error
+			HttpResponse er = new HttpResponse("Content data in invalid format: " + e.getMessage());
+			er.setStatus(400);
+			return er;
+		}
+	}
+	
+	/**
+	 * This method returns the messages in a group. 
+	 * @param groupName The name of the group in which the messages are sent
+	 * @return The messages sent in a group as HTTP Response type 
+	 */
+	@GET
+	@Path("message/group/{name}")
+	public HttpResponse getGroupMessages(@PathParam("name") String groupName)
+	{
+		Connection conn = null;
+		PreparedStatement stmnt = null;
+		ResultSet rs = null;
+		
+		try 
+		{
+			// get connection from connection pool
+			conn = dbm.getConnection();
+			
+			// prepare statement
+			stmnt = conn.prepareStatement("SELECT Message, MessageTimeStamp, Sender FROM Message, SendingGroup WHERE Receiver = ? AND GroupID = MessageID;");
+			stmnt.setString(1, groupName);
+			
+			// prepare JSONArray
+			JSONArray messageArray = new JSONArray();
+			
+			// retrieve result set
+			rs = stmnt.executeQuery();
+			boolean dataFound = false;
+			// extract all the messages and put them first in a JSON object and after that in a list
+			while (rs.next())
+			{
+				if(!dataFound) dataFound = true;
+				JSONObject messageObject = new JSONObject();
+				messageObject.put("text", rs.getString(1));
+				messageObject.put("timestamp", rs.getString(2));
+				messageObject.put("sender", rs.getString(3));
+				messageArray.add(messageObject);
+			}
+			
+			if (dataFound)
+			{
+				// setup resulting JSON Object
+				JSONObject jsonResult = new JSONObject();
+				jsonResult.put("message", messageArray);
+				
+				// return HTTP response
+				HttpResponse r = new HttpResponse(jsonResult.toJSONString());
+				r.setStatus(200);
+				return r;
+			}
+			else 
+			{
+				String error = "No messages found for contact " + groupName + "!";
+				
+				// return HTTP Response on error
+				HttpResponse er = new HttpResponse(error);
+				er.setStatus(404);
+				return er;
+			}
+		} 
+		catch (Exception e) 
+		{
+			// return HTTP Response on error
+			HttpResponse er = new HttpResponse("Internal error: " + e.getMessage());
+			er.setStatus(500);
+			return er;
+		} 
+		finally 
+		{
+			// free resources
+			if (rs != null) 
+			{
+				try 
+				{
+					rs.close();
+				}
+				catch (Exception e) 
+				{
+					Context.logError(this, e.getMessage());
+					
+					// return HTTP Response on error
+					HttpResponse er = new HttpResponse("Internal error: " + e.getMessage());
+					er.setStatus(500);
+					return er;
+				}
+			}
+			if (stmnt != null) 
+			{
+				try 
+				{
+					stmnt.close();
+				}
+				catch (Exception e) 
+				{
+					Context.logError(this, e.getMessage());
+					
+					// return HTTP Response on error
+					HttpResponse er = new HttpResponse("Internal error: " + e.getMessage());
+					er.setStatus(500);
+					return er;
+				}
+			}
+			if (conn != null) 
+			{
+				try 
+				{
+					conn.close();
+				}
+				catch (Exception e) 
+				{
+					Context.logError(this, e.getMessage());
+					
+					// return HTTP Response on error
+					HttpResponse er = new HttpResponse("Internal error: " + e.getMessage());
+					er.setStatus(500);
+					return er;
+				}
+			}
+		}
+	}
+	
+	/** This method sends a message to a group
+	 * @param userName The name of the group the message will be sent
+	 * @param content The content of the message encoded as JSON string
+	 * @return Code if the sending was successfully
+	 */
+	@PUT
+	@Path("message/group/{name}")
+	@Consumes("application/json")
+	public HttpResponse sendGroupMessage(@PathParam("name") String groupName, @ContentParam String content)
+	{
+		try 
+		{
+			// convert string content to JSON object to get the message content
+			JSONObject messageObject = (JSONObject) JSONValue.parse(content);
+			String message = (String) messageObject.get("message");
+			String timeStamp = (String) messageObject.get("timestamp");
+			
+			String result = "";
+			Connection conn = null;
+			PreparedStatement stmnt = null;
+			PreparedStatement stmnt1 = null;
+			ResultSet rs = null;
+			try {
+				conn = dbm.getConnection();
+				
+				// insert the message in the message table
+				stmnt = conn.prepareStatement("INSERT INTO Message (Message, MessageTimeStamp, WasRead) VALUES (?, ?, ?);", Statement.RETURN_GENERATED_KEYS);
+				stmnt.setString(1, message);
+				stmnt.setString(2, timeStamp);
+				stmnt.setInt(3, 0);
+				int rows = stmnt.executeUpdate();
+				result = "Database updated. " + rows + " rows in table \"Message\" affected";
+				stmnt.getGeneratedKeys().next();
+				
+				// retrieve the message ID for saving it in the sending group table
+				int messageID = stmnt.getGeneratedKeys().getInt(1);
+				
+				// insert the message ID, sender and receiver in the sending group table
+				stmnt1 = conn.prepareStatement("INSERT INTO SendingGroup (Sender, Receiver, MessageID) VALUES (?, ?, ?);");
+				stmnt1.setString(1, ((UserAgent) getActiveAgent()).getLoginName());
+				stmnt1.setString(2, groupName);
+				stmnt1.setInt(3, messageID);
+				rows = stmnt1.executeUpdate();
+				result += "\n\rDatabase updated. " + rows + " rows in table \"SendingGroup\" affected";
 				
 				// return 
 				HttpResponse r = new HttpResponse(result);

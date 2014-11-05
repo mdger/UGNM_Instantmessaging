@@ -207,11 +207,10 @@ __Operations:__
 	* __HHTP Method:__ GET
 	* __Consumes:__ -
 	* __Produces:__ application/json; a JSON string in the following form `{'message':['text':'text_val', 'timestamp':'timestamp_val', 'sender':'sender_val' ]}` ('message'=The messages of a conversation, 'text'=The message text, 'timestamp'=The time the message was sent, 'sender'=The sender of the message)
-	* __Parameter:__ authorization header, path parameter 'name'
+	* __Parameter:__ path parameter 'name'
 	* __HTTP Status Codes:__
 		* Success: 200
 		* Errors:
-			* 401: no authorization
 			* 404: resource does not exist
 			
 * __Send Group Message:__ Sends a message to a group given its name
