@@ -3,8 +3,10 @@ package i5.las2peer.services.IMService;
 import i5.las2peer.api.Service;
 import i5.las2peer.restMapper.HttpResponse;
 import i5.las2peer.restMapper.RESTMapper;
+import i5.las2peer.restMapper.annotations.ContentParam;
 import i5.las2peer.restMapper.annotations.GET;
 import i5.las2peer.restMapper.annotations.POST;
+import i5.las2peer.restMapper.annotations.PUT;
 import i5.las2peer.restMapper.annotations.Path;
 import i5.las2peer.restMapper.annotations.PathParam;
 import i5.las2peer.restMapper.annotations.Version;
@@ -18,9 +20,11 @@ import java.io.IOException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.Statement;
 
 import net.minidev.json.JSONArray;
 import net.minidev.json.JSONObject;
+import net.minidev.json.JSONValue;
 
 /**
  * LAS2peer Service
@@ -117,7 +121,7 @@ public class IMServiceClass extends Service {
 				// setup resulting JSON Object
 				JSONObject ro = new JSONObject();
 				ro.put("email", result);
-				
+
 				// return HTTP Response on success
 				HttpResponse r = new HttpResponse(ro.toJSONString());
 				r.setStatus(200);
@@ -269,7 +273,6 @@ public class IMServiceClass extends Service {
 	/**
 	 * This method returns the profile of an account. 
 	 * @param username The name of the user which profile should be shown
-	 * @param callerName The name of the user who wants to see the profile
 	 * @return The data of the profile in the HTTP Response type 
 	 */
 	@GET
@@ -277,17 +280,17 @@ public class IMServiceClass extends Service {
 	public HttpResponse getSingleMessages(@PathParam("name") String userName)
 	{
 		String agentName = ((UserAgent) getActiveAgent()).getLoginName();
-		String result = "";
 		Connection conn = null;
 		PreparedStatement stmnt = null;
 		ResultSet rs = null;
 		
-		try {
+		try 
+		{
 			// get connection from connection pool
 			conn = dbm.getConnection();
 			
 			// prepare statement
-			stmnt = conn.prepareStatement("SELECT Nessage, MessageTimeStamp, Sender FROM Message, SendingSingle WHERE (Sender = ? AND Receiver = ?) OR (Sender = ? AND Receiver = ?)");
+			stmnt = conn.prepareStatement("SELECT Nessage, MessageTimeStamp, Sender FROM Message, SendingSingle WHERE (Sender = ? AND Receiver = ?) OR (Sender = ? AND Receiver = ?);");
 			stmnt.setString(1, userName);
 			stmnt.setString(2, agentName);
 			stmnt.setString(3, agentName);
@@ -323,24 +326,32 @@ public class IMServiceClass extends Service {
 			}
 			else 
 			{
-				result = "No messages found for contact " + userName + "!";
+				String error = "No messages found for contact " + userName + "!";
 				
 				// return HTTP Response on error
-				HttpResponse er = new HttpResponse(result);
+				HttpResponse er = new HttpResponse(error);
 				er.setStatus(404);
 				return er;
 			}
-		} catch (Exception e) {
+		} 
+		catch (Exception e) 
+		{
 			// return HTTP Response on error
 			HttpResponse er = new HttpResponse("Internal error: " + e.getMessage());
 			er.setStatus(500);
 			return er;
-		} finally {
+		} 
+		finally 
+		{
 			// free resources
-			if (rs != null) {
-				try {
+			if (rs != null) 
+			{
+				try 
+				{
 					rs.close();
-				} catch (Exception e) {
+				}
+				catch (Exception e) 
+				{
 					Context.logError(this, e.getMessage());
 					
 					// return HTTP Response on error
@@ -349,10 +360,14 @@ public class IMServiceClass extends Service {
 					return er;
 				}
 			}
-			if (stmnt != null) {
-				try {
+			if (stmnt != null) 
+			{
+				try 
+				{
 					stmnt.close();
-				} catch (Exception e) {
+				}
+				catch (Exception e) 
+				{
 					Context.logError(this, e.getMessage());
 					
 					// return HTTP Response on error
@@ -361,10 +376,14 @@ public class IMServiceClass extends Service {
 					return er;
 				}
 			}
-			if (conn != null) {
-				try {
+			if (conn != null) 
+			{
+				try 
+				{
 					conn.close();
-				} catch (Exception e) {
+				}
+				catch (Exception e) 
+				{
 					Context.logError(this, e.getMessage());
 					
 					// return HTTP Response on error
@@ -376,6 +395,124 @@ public class IMServiceClass extends Service {
 		}
 	}
 
+	@PUT
+	@Path("message/single/{name}")
+	/**
+	 * This method sends a message from a user to a different user
+	 * @param userName The name of the user who gets the message
+	 * @param content The content of the message encoded as JSON string
+	 * @return Code if the sending was successfully
+	 */
+	public HttpResponse sendSingleMessage(@PathParam("name") String userName, @ContentParam String content)
+	{
+		try 
+		{
+			// convert string content to JSON object to get the message content
+			JSONObject messageObject = (JSONObject) JSONValue.parse(content);
+			String message = (String) messageObject.get("message");
+			String timeStamp = (String) messageObject.get("timestamp");
+			
+			String result = "";
+			Connection conn = null;
+			PreparedStatement stmnt = null;
+			PreparedStatement stmnt1 = null;
+			ResultSet rs = null;
+			try {
+				conn = dbm.getConnection();
+				
+				// insert the message in the message table
+				stmnt = conn.prepareStatement("INSERT INTO Message (Message, MessageTimeStamp, WasRead) VALUES ('?', '?', ?);", Statement.RETURN_GENERATED_KEYS);
+				stmnt.setString(1, message);
+				stmnt.setString(2, timeStamp);
+				stmnt.setInt(3, 0);
+				int rows = stmnt.executeUpdate();
+				result = "Database updated. " + rows + " rows in table \"Message\" affected";
+				stmnt.getGeneratedKeys().next();
+				
+				// retrieve the message ID for saving it in the sending single table
+				int messageID = stmnt.getGeneratedKeys().getInt(1);
+				
+				// insert the message ID, sender and receiver in the sending single table
+				stmnt1 = conn.prepareStatement("INSERT INTO SendingSingle (Sender, Receiver, MessageID) VALUES ('?', '?', ?);");
+				stmnt1.setString(1, ((UserAgent) getActiveAgent()).getLoginName());
+				stmnt1.setString(2, userName);
+				stmnt1.setInt(3, messageID);
+				rows = stmnt1.executeUpdate();
+				result += "\n\rDatabase updated. " + rows + " rows in table \"SendingSingle\" affected";
+				
+				// return 
+				HttpResponse r = new HttpResponse(result);
+				r.setStatus(200);
+				return r;
+				
+			} catch (Exception e) {
+				// return HTTP Response on error
+				HttpResponse er = new HttpResponse("Internal error: " + e.getMessage());
+				er.setStatus(500);
+				return er;
+			} finally {
+				// free resources if exception or not
+				if (rs != null) {
+					try {
+						rs.close();
+					} catch (Exception e) {
+						Context.logError(this, e.getMessage());
+						
+						// return HTTP Response on error
+						HttpResponse er = new HttpResponse("Internal error: " + e.getMessage());
+						er.setStatus(500);
+						return er;
+					}
+				}
+				if (stmnt != null) {
+					try {
+						stmnt.close();
+					} catch (Exception e) {
+						Context.logError(this, e.getMessage());
+						
+						// return HTTP Response on error
+						HttpResponse er = new HttpResponse("Internal error: " + e.getMessage());
+						er.setStatus(500);
+						return er;
+					}
+				}
+				if (stmnt1 != null) {
+					try {
+						stmnt1.close();
+					} catch (Exception e) {
+						Context.logError(this, e.getMessage());
+						
+						// return HTTP Response on error
+						HttpResponse er = new HttpResponse("Internal error: " + e.getMessage());
+						er.setStatus(500);
+						return er;
+					}
+				}
+				if (conn != null) {
+					try {
+						conn.close();
+					} catch (Exception e) {
+						Context.logError(this, e.getMessage());
+						
+						// return HTTP Response on error
+						HttpResponse er = new HttpResponse("Internal error: " + e.getMessage());
+						er.setStatus(500);
+						return er;
+					}
+				}
+			}
+		}
+		catch (Exception e)
+		{
+			Context.logError(this, e.getMessage());
+			
+			// return HTTP Response on error
+			HttpResponse er = new HttpResponse("Content data in invalid format: " + e.getMessage());
+			er.setStatus(400);
+			return er;
+		}
+	}
+	
 	/**
 	 * Method for debugging purposes.
 	 * Here the concept of restMapping validation is shown.
