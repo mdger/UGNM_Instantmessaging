@@ -772,6 +772,114 @@ public HttpResponse deleteProfile(@PathParam("name") String userName) {
 	}
 	
 	/**
+	 * This method returns the contact list of a certain user. 
+	 * @param name The name of the user whose contact list should be displayed
+	 * @return The data (username and nickname) of the contacts in the HTTP Response type 
+	 */@GET
+	 
+	 
+@Path("contact/{name}")
+Public HttpResponse getContact(@PathParam("name") String name) {
+	String result ="";
+	Connection conn = null;
+	PreparedStatement stmnt = null;
+	ResultSet rs = null;
+	try {
+		// get connection from connection pool
+		conn = dbm.getConnection();
+		
+		// prepare statement
+		stmnt = conn.prepareStatement("select ap.UserName, ap.NickName from Contact as c, AccountProfile as ap
+where c.This_UserName= ? AND c.Contact_UserName=ap.UserName;");
+		stmnt.setString(1, name);
+		stmnt.setString(2, name);
+		
+		//prepare JSONArray
+		JSONArray contactArray = new JSONArray();
+		
+		// retrieve result set
+		rs = stmnt.executeQuery();
+		
+		//differentiate situations 1) with contacts and 2) without contacts
+		boolean dataFound = false;
+		// process result set
+		// extract all the messages and put them first in a JSON object and after that in a list
+			while (rs.next())
+			{
+				if(!dataFound) dataFound = true;
+				JSONObject contactObject = new JSONObject();
+				contactObject.put("contact username", rs.getString(1));
+				contactObject.put("contact nickname", rs.getString(2));
+				contactArray.add(contactObject);
+			}
+			
+			if (dataFound)
+			{
+				// setup resulting JSON Object
+				JSONObject jsonResult = new JSONObject();
+				jsonResult.put("contact list", contactArray);
+				
+				// return HTTP response
+				HttpResponse r = new HttpResponse(jsonResult.toJSONString());
+				r.setStatus(200);
+				return r;
+			}
+			else 
+			{
+				result = "No contact list found for " + name + "!";
+				
+				// return HTTP Response on error
+				HttpResponse er = new HttpResponse(result);
+				er.setStatus(404);
+				return er;
+			}
+		} catch (Exception e) {
+			// return HTTP Response on error
+			HttpResponse er = new HttpResponse("Internal error: " + e.getMessage());
+			er.setStatus(500);
+			return er;
+		} finally {
+			// free resources
+			if (rs != null) {
+				try {
+					rs.close();
+				} catch (Exception e) {
+					Context.logError(this, e.getMessage());
+					
+					// return HTTP Response on error
+					HttpResponse er = new HttpResponse("Internal error: " + e.getMessage());
+					er.setStatus(500);
+					return er;
+				}
+			}
+			if (stmnt != null) {
+				try {
+					stmnt.close();
+				} catch (Exception e) {
+					Context.logError(this, e.getMessage());
+					
+					// return HTTP Response on error
+					HttpResponse er = new HttpResponse("Internal error: " + e.getMessage());
+					er.setStatus(500);
+					return er;
+				}
+			}
+			if (conn != null) {
+				try {
+					conn.close();
+				} catch (Exception e) {
+					Context.logError(this, e.getMessage());
+					
+					// return HTTP Response on error
+					HttpResponse er = new HttpResponse("Internal error: " + e.getMessage());
+					er.setStatus(500);
+					return er;
+				}
+			}
+		}
+	}	
+	
+	/**
 	 * Method for debugging purposes.
 	 * Here the concept of restMapping validation is shown.
 	 * It is important to check, if all annotations are correct and consistent.
