@@ -1300,7 +1300,114 @@ public class IMServiceClass extends Service {
 	
 	//TODO deleteRequest()
 	
-	//TODO getGroups()
+	/**
+	 * getMembership
+	 * Retrieves all Groups where the user has a Membership 
+	 * 
+	 * @param UserName of the User to get his groups
+	 * @result Profile Data
+	 */
+	@GET
+	@Path("member/{name}")
+	public HttpResponse getMemberships(@PathParam("name") String userName) {
+		
+		Connection conn = null;
+		PreparedStatement stmnt = null;
+		ResultSet rs = null;
+		
+		try {
+			// get connection from connection pool
+			conn = dbm.getConnection();
+			
+			// prepare statement
+			stmnt = conn.prepareStatement("SELECT g.GroupName, g.FounderName FROM Groups As g, MemberOf As m WHERE m.UserName = ? AND m.GroupName = g.GroupName;");
+			stmnt.setString(1, userName);
+			
+			// prepare JSONArray
+			JSONArray groupArray = new JSONArray();
+			
+			// retrieve result set
+			rs = stmnt.executeQuery();
+			
+			// process result set
+			boolean dataFound = false;
+			while (rs.next())
+			{				
+				// extract all the messages and put them first in a JSON object and after that in a list
+				JSONObject resultObject = new JSONObject();
+				resultObject.put("groupname", rs.getString(1));
+				resultObject.put("founder", rs.getString(2));
+				groupArray.add(resultObject);				
+								
+				//Result found
+				if(!dataFound) dataFound = true;
+			}
+			
+			//Check if some result found
+			if (dataFound) {
+				
+				// setup resulting JSON Object
+				JSONObject jsonResult = new JSONObject();
+				jsonResult.put("group", groupArray);
+				
+				// return HTTP Response on success
+				HttpResponse r = new HttpResponse(jsonResult.toJSONString());
+				r.setStatus(200);
+				return r;				
+
+			} else {
+				String result = "No groups found for username " + userName;
+				
+				// return HTTP Response on error
+				HttpResponse er = new HttpResponse(result);
+				er.setStatus(404);
+				return er;
+			}
+		} catch (Exception e) {
+			// return HTTP Response on error
+			HttpResponse er = new HttpResponse("Internal error: " + e.getMessage());
+			er.setStatus(500);
+			return er;
+		} finally {
+			// free resources
+			if (rs != null) {
+				try {
+					rs.close();
+				} catch (Exception e) {
+					Context.logError(this, e.getMessage());
+					
+					// return HTTP Response on error
+					HttpResponse er = new HttpResponse("Internal error: " + e.getMessage());
+					er.setStatus(500);
+					return er;
+				}
+			}
+			if (stmnt != null) {
+				try {
+					stmnt.close();
+				} catch (Exception e) {
+					Context.logError(this, e.getMessage());
+					
+					// return HTTP Response on error
+					HttpResponse er = new HttpResponse("Internal error: " + e.getMessage());
+					er.setStatus(500);
+					return er;
+				}
+			}
+			if (conn != null) {
+				try {
+					conn.close();
+				} catch (Exception e) {
+					Context.logError(this, e.getMessage());
+					
+					// return HTTP Response on error
+					HttpResponse er = new HttpResponse("Internal error: " + e.getMessage());
+					er.setStatus(500);
+					return er;
+				}
+			}
+		}
+	}
 	
 	//TODO addMember()
 	
