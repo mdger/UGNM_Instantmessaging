@@ -1117,7 +1117,79 @@ public class IMServiceClass extends Service {
 		}
 	}
 
-	//TODO deleteContact()
+	/**
+	 * This method deletes a contact from the contact list
+	 * @param name The name of the contact which should be deleted
+	 * @return Success or not
+	 */
+	@DELETE 
+	@Path("contact/{name}")
+	public HttpResponse deleteContact(@PathParam("name") String name) {
+		String result ="";
+		Connection conn = null;
+		PreparedStatement stmnt = null;
+		ResultSet rs = null;
+		try {
+			// get connection from connection pool
+			conn = dbm.getConnection();
+			
+			// prepare statement
+			stmnt = conn.prepareStatement("DELETE FROM Contact WHERE Contact_UserName = ?;");
+			stmnt.setString(1, name);
+			int rows = stmnt.executeUpdate();
+			result = "Database updated. " + rows + " rows affected";
+			
+			//return
+			HttpResponse r = new HttpResponse(result);
+			r.setStatus(200);
+			return r;
+				
+				
+			} catch (Exception e) {
+				// return HTTP Response on error
+				HttpResponse er = new HttpResponse("Internal error: " + e.getMessage());
+				er.setStatus(500);
+				return er;
+			} finally {
+				// free resources
+				if (rs != null) {
+					try {
+						rs.close();
+					} catch (Exception e) {
+						Context.logError(this, e.getMessage());
+						
+						// return HTTP Response on error
+						HttpResponse er = new HttpResponse("Internal error: " + e.getMessage());
+						er.setStatus(500);
+						return er;
+					}
+				}
+				if (stmnt != null) {
+					try {
+						stmnt.close();
+					} catch (Exception e) {
+						Context.logError(this, e.getMessage());
+						
+						// return HTTP Response on error
+						HttpResponse er = new HttpResponse("Internal error: " + e.getMessage());
+						er.setStatus(500);
+						return er;
+					}
+				}
+				if (conn != null) {
+					try {
+						conn.close();
+					} catch (Exception e) {
+						Context.logError(this, e.getMessage());
+						
+						// return HTTP Response on error
+						HttpResponse er = new HttpResponse("Internal error: " + e.getMessage());
+						er.setStatus(500);
+						return er;
+					}
+				}
+			}
+		}
 	
 	 /**
 		 * This method returns all contact requests to a certain user. 
