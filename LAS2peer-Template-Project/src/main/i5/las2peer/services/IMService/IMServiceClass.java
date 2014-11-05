@@ -1031,7 +1031,6 @@ public class IMServiceClass extends Service {
 			// prepare statement
 			stmnt = conn.prepareStatement("select ap.UserName, ap.NickName from Contact as c, AccountProfile as ap where c.This_UserName= ? AND c.Contact_UserName=ap.UserName;");
 			stmnt.setString(1, name);
-			stmnt.setString(2, name);
 			
 			//prepare JSONArray
 			JSONArray contactArray = new JSONArray();
@@ -1118,6 +1117,8 @@ public class IMServiceClass extends Service {
 		}
 	}
 
+	//TODO deleteContact()
+	
 	 /**
 		 * This method returns all contact requests to a certain user. 
 		 * @param name The name of the user to whom contact request were sent
@@ -1222,6 +1223,16 @@ public class IMServiceClass extends Service {
 				}
 			}
 		}
+	
+	//TODO updateRequest()
+	
+	//TODO deleteRequest()
+	
+	//TODO getGroups()
+	
+	//TODO addMember()
+	
+	//TODO deleteMember()
 	
 	/**
 	 * Method for debugging purposes.

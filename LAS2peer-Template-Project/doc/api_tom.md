@@ -44,34 +44,31 @@ __Operations:__
 	* __HHTP Method:__ GET
 	* __Consumes:__ -
 	* __Produces:__ application/json; a JSON string in the following form `{'email':'email_val', 'telephone':'telephone_val', 'imageLink':'imageLink_val', 'nickname':'nickname_val', 'visible':'visible_val'}` ('email'=The email adress of the contact, 'telephone'=The telephone number of the contact, 'imageLink'=The link of the profile image, 'nickname'=The nickname of the account, 'visible'=The visibility of the profile)
-	* __Parameter:__ authorization header, path parameter 'name'
+	* __Parameter:__ path parameter 'name'
 	* __HTTP Status Codes:__
 		* Success: 200
 		* Errors:
-			* 401: no authorization
 			* 404: resource does not exist
 			
 * __Update Profile:__ Updates a profile given its name
  	* __HHTP Method:__ PUT
 	* __Consumes:__ application/json; a JSON string in the following form `{'email':'email_val', 'telephone':'telephone_val', 'imageLink':'imageLink_val', 'nickname':'nickname_val', 'visible':'visible_var'}` ('email'=The email adress of the contact, 'telephone'=The telephone number of the contact, 'imageLink'=The link of the profile image, 'nickname'=The nickname of the account, 'visible'=The visibility of the profile)
 	* __Produces:__ -
-	* __Parameter:__ authorization header, path parameter 'name'
+	* __Parameter:__ path parameter 'name'
 	* __HTTP Status Codes:__
 		* Success: 200
 		* Errors:
 			* 400: content data in invalid format
-			* 401: no authorization
 			* 404: resource does not exist
 
 * __Delete Profile:__ Deletes a profile given its name
  	* __HHTP Method:__ DELETE
 	* __Consumes:__ -
 	* __Produces:__ -
-	* __Parameter:__ authorization header, path parameter 'name'
+	* __Parameter:__ path parameter 'name'
 	* __HTTP Status Codes:__
 		* Success: 200
 		* Errors:
-			* 401: no authorization
 			* 404: resource does not exist
 
 Group Resource
@@ -84,7 +81,7 @@ __Operations:__
 	* __HHTP Method:__ GET
 	* __Consumes:__ -
 	* __Produces:__ application/json; a JSON string in the following form `{'name':'name_val', 'founder':'founder_val', 'description':'description_val', 'imageLink':'imageLink_val', 'member':['username':'username_val']}` ('name'=The name of the group, 'founder'=The name of the founder of the group, 'description'=The description of the group, 'imageLink'=The link to the profile image of the group, 'member'=The members of the group, except the founder, 'username'=The username of a member)
-	* __Parameter:__ authorization header, path parameter 'name'
+	* __Parameter:__ path parameter 'name'
 	* __HTTP Status Codes:__
 		* Success: 200
 		* Errors:
@@ -129,6 +126,17 @@ __Operations:__
 		* Errors:
 			* 401: no authorization
 			* 404: resource does not exist
+			
+* __Delete Contact:__ Deletes a contact given its name
+ 	* __HHTP Method:__ DELETE
+	* __Consumes:__ -
+	* __Produces:__ -
+	* __Parameter:__ authorization header, path parameter 'name'
+	* __HTTP Status Codes:__
+		* Success: 200
+		* Errors:
+			* 401: no authorization
+			* 404: resource does not exist
 
 Request Resource
 --
@@ -140,7 +148,7 @@ __Operations:__
 	* __HHTP Method:__ GET
 	* __Consumes:__ -
 	* __Produces:__ application/json; a JSON string in the following form `{'request':['nickname':'nickname_val', 'username':'username_val']}` ('request'=A request one user has done to this account, 'nickname'=The nickname of the account who requests, 'username'=The username of the account who requests)
-	* __Parameter:__ authorization header, path parameter 'name'
+	* __Parameter:__ path parameter 'name'
 	* __HTTP Status Codes:__
 		* Success: 200
 		* Errors:
@@ -159,7 +167,7 @@ __Operations:__
 			* 401: no authorization
 			* 404: resource does not exist
 
-* __Delete Contact:__ Deletes a contact given its name
+* __Delete Request:__ Deletes a request given its name
  	* __HHTP Method:__ DELETE
 	* __Consumes:__ -
 	* __Produces:__ -
@@ -226,31 +234,40 @@ __Operations:__
 			* 401: no authorization
 			* 404: resource does not exist
 
-Invitation Resource
+Member Resource
 --
-__URL Template:__ /invitation/{name}
+__URL Template:__ /member/{name}
 
 __Operations:__
 
-* __Retrieve invitations:__ Retrieves the invitation to groups for a contact given its name
+* __Retrieve memberships:__ Retrieves the list of groups for a contact given its name
 	* __HHTP Method:__ GET
 	* __Consumes:__ -
-	* __Produces:__ application/json; a JSON string in the following form `{'group':['groupname':'groupname_val', 'founder':'founder_val']}` ('group'=A group founded, 'groupname'=The name of the group, 'founder'=The founder of the group)
-	* __Parameter:__ authorization header, path parameter 'name'
+	* __Produces:__ application/json; a JSON string in the following form `{'group':['groupname':'groupname_val', 'founder':'founder_val'}` ('group'=A group founded, 'groupname'=The name of the group, 'founder'=The founder of the group)
+	* __Parameter:__ path parameter 'name'
 	* __HTTP Status Codes:__
 		* Success: 200
 		* Errors:
-			* 401: no authorization
 			* 404: resource does not exist
 			
-* __Send invitation:__ Sends an invitation to the contact given its name
+* __Add Member:__ Adds a member to a group
  	* __HHTP Method:__ PUT
-	* __Consumes:__ application/json; a JSON string in the following form `{'groupname':'groupname_val'}` ('groupname'=The name of the group the contact should be invited to)
+	* __Consumes:__ application/json; a JSON string in the following form `{'groupname':'groupname_val'}` ('groupname'=The name of the group the contact should be added to)
 	* __Produces:__ -
-	* __Parameter:__ authorization header, path parameter 'name'
+	* __Parameter:__ path parameter 'name'
 	* __HTTP Status Codes:__
 		* Success: 200
 		* Errors:
 			* 400: content data in invalid format
-			* 401: no authorization
+			* 404: resource does not exist
+
+* __Delete Member:__ Deletes a member out of a group given its name
+ 	* __HHTP Method:__ DELETE
+	* __Consumes:__ application/json; a JSON string in the following form `{'groupname':'groupname_val'}` ('groupname'=The name of the group the contact should be added to)
+	* __Produces:__ -
+	* __Parameter:__ path parameter 'name'
+	* __HTTP Status Codes:__
+		* Success: 200
+		* Errors:
+			* 400: content data in invalid format
 			* 404: resource does not exist
