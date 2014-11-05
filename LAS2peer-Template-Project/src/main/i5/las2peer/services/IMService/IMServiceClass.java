@@ -3,6 +3,7 @@ package i5.las2peer.services.IMService;
 import i5.las2peer.api.Service;
 import i5.las2peer.restMapper.HttpResponse;
 import i5.las2peer.restMapper.RESTMapper;
+import i5.las2peer.restMapper.annotations.Consumes;
 import i5.las2peer.restMapper.annotations.ContentParam;
 import i5.las2peer.restMapper.annotations.DELETE;
 import i5.las2peer.restMapper.annotations.GET;
@@ -781,7 +782,7 @@ public HttpResponse deleteProfile(@PathParam("name") String userName) {
 
 @GET	 
 @Path("contact/{name}")
-Public HttpResponse getContact(@PathParam("name") String name) {
+public HttpResponse getContact(@PathParam("name") String name) {
 	String result ="";
 	Connection conn = null;
 	PreparedStatement stmnt = null;
@@ -791,8 +792,7 @@ Public HttpResponse getContact(@PathParam("name") String name) {
 		conn = dbm.getConnection();
 		
 		// prepare statement
-		stmnt = conn.prepareStatement("select ap.UserName, ap.NickName from Contact as c, AccountProfile as ap
-where c.This_UserName= ? AND c.Contact_UserName=ap.UserName;");
+		stmnt = conn.prepareStatement("select ap.UserName, ap.NickName from Contact as c, AccountProfile as ap where c.This_UserName= ? AND c.Contact_UserName=ap.UserName;");
 		stmnt.setString(1, name);
 		
 		//prepare JSONArray
@@ -886,12 +886,11 @@ where c.This_UserName= ? AND c.Contact_UserName=ap.UserName;");
 		 * This method returns all contact requests to a certain user. 
 		 * @param name The name of the user to whom contact request were sent
 		 * @return The data (username and nickname) of the user who has sent a contact request in the HTTP Response type 
-		 */@GET
-		 
+		 */		 
 		 
 		 @GET	 
 		 @Path("request/{name}")
-		 Public HttpResponse getRequest(@PathParam("name") String name) {
+		 public HttpResponse getRequest(@PathParam("name") String name) {
 		 	String result ="";
 		 	Connection conn = null;
 		 	PreparedStatement stmnt = null;
@@ -901,8 +900,7 @@ where c.This_UserName= ? AND c.Contact_UserName=ap.UserName;");
 		 		conn = dbm.getConnection();
 		 		
 		 		// prepare statement
-		 		stmnt = conn.prepareStatement("select ap.UserName, ap.NickName from ContactRequest as cr, AccountProfile as ap
-		 where cr.To_UserName= ? AND cr.From_UserName=ap.UserName;");
+		 		stmnt = conn.prepareStatement("select ap.UserName, ap.NickName from ContactRequest as cr, AccountProfile as ap where cr.To_UserName= ? AND cr.From_UserName=ap.UserName;");
 		 		stmnt.setString(1, name);
 		 		
 		 		//prepare JSONArray
@@ -994,7 +992,7 @@ where c.This_UserName= ? AND c.Contact_UserName=ap.UserName;");
 		 
 		 @DELETE	 
 		 @Path("contact/{name}")
-		 Public HttpResponse deleteContact(@PathParam("name") String name) {
+		 public HttpResponse deleteContact(@PathParam("name") String name) {
 		 	String result ="";
 		 	Connection conn = null;
 		 	PreparedStatement stmnt = null;
