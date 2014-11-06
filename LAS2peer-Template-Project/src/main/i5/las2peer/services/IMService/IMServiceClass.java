@@ -792,7 +792,7 @@ public class IMServiceClass extends Service {
 			conn = dbm.getConnection();
 			
 			// prepare statement
-			stmnt = conn.prepareStatement("SELECT Message, MessageTimeStamp, Sender FROM Message, SendingGroup WHERE Receiver = ? AND Message.MessageID = SendingGroup.MessageID;");
+			stmnt = conn.prepareStatement("SELECT Message, MessageTimeStamp, Sender FROM Message, SendingGroup;"); // WHERE Receiver = ? AND Message.MessageID = SendingGroup.MessageID;");
 			stmnt.setString(1, groupName);
 			
 			// prepare JSONArray
@@ -836,7 +836,7 @@ public class IMServiceClass extends Service {
 		catch (Exception e) 
 		{
 			// return HTTP Response on error
-			HttpResponse er = new HttpResponse("Internal error: " + e.getMessage());
+			HttpResponse er = new HttpResponse("Internal error: " + e.getMessage() + "/n" +  e.getStackTrace());
 			er.setStatus(500);
 			return er;
 		} 
