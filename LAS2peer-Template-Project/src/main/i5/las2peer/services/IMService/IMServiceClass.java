@@ -782,6 +782,7 @@ public class IMServiceClass extends Service {
 	@Path("message/group/{name}")
 	public HttpResponse getGroupMessages(@PathParam("name") String groupName)
 	{
+		String test = "";
 		Connection conn = null;
 		PreparedStatement stmnt = null;
 		ResultSet rs = null;
@@ -792,18 +793,24 @@ public class IMServiceClass extends Service {
 			conn = dbm.getConnection();
 			
 			// prepare statement
-			stmnt = conn.prepareStatement("SELECT Message, MessageTimeStamp, Sender FROM Message, SendingGroup;"); // WHERE Receiver = ? AND Message.MessageID = SendingGroup.MessageID;");
-			stmnt.setString(1, "TestGroup");
+			stmnt = conn.prepareStatement("SELECT Message, MessageTimeStamp, Sender FROM Message, SendingGroup WHERE Receiver = ? AND Message.MessageID = SendingGroup.MessageID;");
+			test += "1";
+			stmnt.setString(1, groupName);
+			test += "2";
 			
+			test += "3";
 			// prepare JSONArray
 			JSONArray messageArray = new JSONArray();
 			
 			// retrieve result set
+			test += "4";
 			rs = stmnt.executeQuery();
+			test += "5";
 			boolean dataFound = false;
 			// extract all the messages and put them first in a JSON object and after that in a list
 			while (rs.next())
 			{
+				test += "6";
 				if(!dataFound) dataFound = true;
 				JSONObject messageObject = new JSONObject();
 				messageObject.put("text", rs.getString(1));
@@ -836,7 +843,7 @@ public class IMServiceClass extends Service {
 		catch (Exception e) 
 		{
 			// return HTTP Response on error
-			HttpResponse er = new HttpResponse("Internal error: " + e.getMessage() + "/n" +  e.getStackTrace());
+			HttpResponse er = new HttpResponse(test + "Internal error: " + e.getMessage() + "  " +  e.getStackTrace().toString() + "  " + e.getLocalizedMessage());
 			er.setStatus(500);
 			return er;
 		} 
