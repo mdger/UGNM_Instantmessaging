@@ -792,7 +792,7 @@ public class IMServiceClass extends Service {
 			conn = dbm.getConnection();
 			
 			// prepare statement
-			stmnt = conn.prepareStatement("SELECT Message, MessageTimeStamp, Sender FROM Message, SendingGroup WHERE Receiver = ? AND GroupID = MessageID;");
+			stmnt = conn.prepareStatement("SELECT Message, MessageTimeStamp, Sender FROM Message, SendingGroup WHERE Receiver = ? AND Message.MessageID = SendingGroup.MessageID;");
 			stmnt.setString(1, groupName);
 			
 			// prepare JSONArray
