@@ -1296,9 +1296,185 @@ public class IMServiceClass extends Service {
 			}
 		}
 	
-	//TODO updateRequest()
+
+/**
+ * This method sends a message from a user to a different user
+ * @param userName The name of the user who gets the message
+ * @param content The content of the message encoded as JSON string
+ * @return Code if the sending was successfully
+ */
+@PUT
+@Path("request/{name}")
+@Consumes("application/json")
+public HttpResponse updateRequest(@PathParam("name") String userName)
+{
+	try 
+	{
+		String result = "";
+		Connection conn = null;
+		PreparedStatement stmnt = null;
+		PreparedStatement stmnt1 = null;
+		ResultSet rs = null;
+		try {
+			conn = dbm.getConnection();
+			
+			// insert the request into the request table
+			stmnt = conn.prepareStatement("INSERT INTO ContactRequest (RequestID, From_UserName, To_UserName) VALUES (?, ?, ?);", Statement.RETURN_GENERATED_KEYS);
+			stmnt.getGeneratedKeys().next();
+			int requestID = stmnt.getGeneratedKeys().getInt(1);			
+			stmnt.setInt(1, requestID);
+			stmnt.setString(2, ((UserAgent) getActiveAgent()).getLoginName());
+			stmnt.setString(3, userName);
+			int rows = stmnt.executeUpdate();
+			result = "Database updated. " + rows + " rows in table \"Message\" affected";
+			
+			// return 
+			HttpResponse r = new HttpResponse(result);
+			r.setStatus(200);
+			return r;
+			
+		} catch (Exception e) {
+			// return HTTP Response on error
+			HttpResponse er = new HttpResponse("Internal error: " + e.getMessage());
+			er.setStatus(500);
+			return er;
+		} finally {
+			// free resources if exception or not
+			if (rs != null) {
+				try {
+					rs.close();
+				} catch (Exception e) {
+					Context.logError(this, e.getMessage());
+					
+					// return HTTP Response on error
+					HttpResponse er = new HttpResponse("Internal error: " + e.getMessage());
+					er.setStatus(500);
+					return er;
+				}
+			}
+			if (stmnt != null) {
+				try {
+					stmnt.close();
+				} catch (Exception e) {
+					Context.logError(this, e.getMessage());
+					
+					// return HTTP Response on error
+					HttpResponse er = new HttpResponse("Internal error: " + e.getMessage());
+					er.setStatus(500);
+					return er;
+				}
+			}
+			if (stmnt1 != null) {
+				try {
+					stmnt1.close();
+				} catch (Exception e) {
+					Context.logError(this, e.getMessage());
+					
+					// return HTTP Response on error
+					HttpResponse er = new HttpResponse("Internal error: " + e.getMessage());
+					er.setStatus(500);
+					return er;
+				}
+			}
+			if (conn != null) {
+				try {
+					conn.close();
+				} catch (Exception e) {
+					Context.logError(this, e.getMessage());
+					
+					// return HTTP Response on error
+					HttpResponse er = new HttpResponse("Internal error: " + e.getMessage());
+					er.setStatus(500);
+					return er;
+				}
+			}
+		}
+	}
+	catch (Exception e)
+	{
+		Context.logError(this, e.getMessage());
+		
+		// return HTTP Response on error
+		HttpResponse er = new HttpResponse("Content data in invalid format: " + e.getMessage());
+		er.setStatus(400);
+		return er;
+	}
+}
+
+
+
+/**
+ * Delete Request
+ * Deletes a Request given its name. 
+ * 
+ *@param UserName of the Profile to be deleted.
+ */
+@DELETE
+@Path("request/{name}")
+public HttpResponse deleteRequest(@PathParam("name") String userName) {
+
+String result = "";
+Connection conn = null;
+PreparedStatement stmnt = null;
+ResultSet rs = null;
+try {
+	conn = dbm.getConnection();
+	stmnt = conn.prepareStatement("DELETE FROM ContactRequest WHERE (To_UserName = ? OR From_UserName = ?);");
+	stmnt.setString(1, userName);
+	int rows = stmnt.executeUpdate(); // same works for insert
+	result = "Database updated. " + rows + " rows affected";
 	
-	//TODO deleteRequest()
+	// return 
+	HttpResponse r = new HttpResponse(result);
+	r.setStatus(200);
+	return r;
+	
+} catch (Exception e) {
+	// return HTTP Response on error
+	HttpResponse er = new HttpResponse("Internal error: " + e.getMessage());
+	er.setStatus(500);
+	return er;
+} finally {
+	// free resources if exception or not
+	if (rs != null) {
+		try {
+			rs.close();
+		} catch (Exception e) {
+			Context.logError(this, e.getMessage());
+			
+			// return HTTP Response on error
+			HttpResponse er = new HttpResponse("Internal error: " + e.getMessage());
+			er.setStatus(500);
+			return er;
+		}
+	}
+	if (stmnt != null) {
+		try {
+			stmnt.close();
+		} catch (Exception e) {
+			Context.logError(this, e.getMessage());
+			
+			// return HTTP Response on error
+			HttpResponse er = new HttpResponse("Internal error: " + e.getMessage());
+			er.setStatus(500);
+			return er;
+		}
+	}
+	if (conn != null) {
+		try {
+			conn.close();
+		} catch (Exception e) {
+			Context.logError(this, e.getMessage());
+			
+			// return HTTP Response on error
+			HttpResponse er = new HttpResponse("Internal error: " + e.getMessage());
+			er.setStatus(500);
+			return er;
+		}
+	}
+}
+}
+
 	
 	/**
 	 * getMembership
@@ -1409,9 +1585,190 @@ public class IMServiceClass extends Service {
 		}
 	}
 	
-	//TODO addMember()
+	/**
+	 * addMember	 
+	 * Adds a User to an existing Group
+	 * @param name The username of the new member to be added
+	 * @param content The groupname of the group where the user have to be added encoded as JSON-String
+	 */
+	@PUT
+	@Consumes("application/json")
+	@Path("member/{name}")
+	public HttpResponse addMember(@PathParam("name") String userName, @ContentParam String content) {
+		
+		try 
+		{
+			// convert string content to JSON object 
+			JSONObject contentObject = (JSONObject) JSONValue.parse(content);
+			String groupName = (String) contentObject.get("groupname");
+		
+			String result = "";
+			Connection conn = null;
+			PreparedStatement stmnt = null;
+			ResultSet rs = null;				
+		
+			try {
+				conn = dbm.getConnection();
+				stmnt = conn.prepareStatement("INSERT INTO MemberOf (UserName, GroupName) VALUES (?, ?);");
+				stmnt.setString(1, userName);
+				stmnt.setString(2, groupName);
+
+				int rows = stmnt.executeUpdate(); 
+				result = "Database updated. " + rows + " rows affected";
+				
+				// return 
+				HttpResponse r = new HttpResponse(result);
+				r.setStatus(200);
+				return r;
+				
+			} catch (Exception e) {
+				// return HTTP Response on error
+				HttpResponse er = new HttpResponse("Internal error: " + e.getMessage());
+				er.setStatus(500);
+				return er;
+			} finally {
+				// free resources if exception or not
+				if (rs != null) {
+					try {
+						rs.close();
+					} catch (Exception e) {
+						Context.logError(this, e.getMessage());
+						
+						// return HTTP Response on error
+						HttpResponse er = new HttpResponse("Internal error: " + e.getMessage());
+						er.setStatus(500);
+						return er;
+					}
+				}
+				if (stmnt != null) {
+					try {
+						stmnt.close();
+					} catch (Exception e) {
+						Context.logError(this, e.getMessage());
+						
+						// return HTTP Response on error
+						HttpResponse er = new HttpResponse("Internal error: " + e.getMessage());
+						er.setStatus(500);
+						return er;
+					}
+				}
+				if (conn != null) {
+					try {
+						conn.close();
+					} catch (Exception e) {
+						Context.logError(this, e.getMessage());
+						
+						// return HTTP Response on error
+						HttpResponse er = new HttpResponse("Internal error: " + e.getMessage());
+						er.setStatus(500);
+						return er;
+					}
+				}
+			}
+		}
+			catch (Exception e)
+			{
+				Context.logError(this, e.getMessage());
+				
+				// return HTTP Response on error
+				HttpResponse er = new HttpResponse("Content data in invalid format: " + e.getMessage());
+				er.setStatus(400);
+				return er;
+			}
+	}
 	
-	//TODO deleteMember()
+	/**
+	 * Delete Member
+	 * Deletes a Group Member
+	 * 
+	 *@param UserName of the Profile to be deleted.
+	 *@param content groupname 
+	 */
+	@DELETE
+	@Consumes("application/json")
+	@Path("member/{name}")
+	public HttpResponse deleteMember(@PathParam("name") String userName, @ContentParam String content) {
+
+	try 
+	{
+		// convert string content to JSON object 
+		JSONObject contentObject = (JSONObject) JSONValue.parse(content);
+		String groupName = (String) contentObject.get("groupname");	
+		
+		String result = "";
+		Connection conn = null;
+		PreparedStatement stmnt = null;
+		ResultSet rs = null;
+		
+		try {
+			conn = dbm.getConnection();
+			stmnt = conn.prepareStatement("DELETE FROM MemberOf WHERE UserName = ? AND GroupName = ?;");
+			stmnt.setString(1, userName);
+			stmnt.setString(2, groupName);
+			int rows = stmnt.executeUpdate(); // same works for insert
+			result = "Database updated. " + rows + " rows affected";
+			
+			// return 
+			HttpResponse r = new HttpResponse(result);
+			r.setStatus(200);
+			return r;
+			
+		} catch (Exception e) {
+			// return HTTP Response on error
+			HttpResponse er = new HttpResponse("Internal error: " + e.getMessage());
+			er.setStatus(500);
+			return er;
+		} finally {
+			// free resources if exception or not
+			if (rs != null) {
+				try {
+					rs.close();
+				} catch (Exception e) {
+					Context.logError(this, e.getMessage());
+					
+					// return HTTP Response on error
+					HttpResponse er = new HttpResponse("Internal error: " + e.getMessage());
+					er.setStatus(500);
+					return er;
+				}
+			}
+			if (stmnt != null) {
+				try {
+					stmnt.close();
+				} catch (Exception e) {
+					Context.logError(this, e.getMessage());
+					
+					// return HTTP Response on error
+					HttpResponse er = new HttpResponse("Internal error: " + e.getMessage());
+					er.setStatus(500);
+					return er;
+				}
+			}
+			if (conn != null) {
+				try {
+					conn.close();
+				} catch (Exception e) {
+					Context.logError(this, e.getMessage());
+					
+					// return HTTP Response on error
+					HttpResponse er = new HttpResponse("Internal error: " + e.getMessage());
+					er.setStatus(500);
+					return er;
+				}
+			}
+		}
+	}
+	catch (Exception e)
+	{
+		Context.logError(this, e.getMessage());
+		
+		// return HTTP Response on error
+		HttpResponse er = new HttpResponse("Content data in invalid format: " + e.getMessage());
+		er.setStatus(400);
+		return er;
+	}
+}
+
 	
 	/**
 	 * Method for debugging purposes.
@@ -1722,184 +2079,5 @@ public HttpResponse deleteGroup(@PathParam("name") String groupName) {
 			}
 		}
 	}
-}
-
-
-/**
- * This method sends a message from a user to a different user
- * @param userName The name of the user who gets the message
- * @param content The content of the message encoded as JSON string
- * @return Code if the sending was successfully
- */
-@PUT
-@Path("request/{name}")
-@Consumes("application/json")
-public HttpResponse updateRequest(@PathParam("name") String userName)
-{
-	try 
-	{
-		String result = "";
-		Connection conn = null;
-		PreparedStatement stmnt = null;
-		PreparedStatement stmnt1 = null;
-		ResultSet rs = null;
-		try {
-			conn = dbm.getConnection();
-			
-			// insert the request into the request table
-			stmnt = conn.prepareStatement("INSERT INTO ContactRequest (RequestID, From_UserName, To_UserName) VALUES (?, ?, ?);", Statement.RETURN_GENERATED_KEYS);
-			stmnt.getGeneratedKeys().next();
-			int requestID = stmnt.getGeneratedKeys().getInt(1);			
-			stmnt.setInt(1, requestID);
-			stmnt.setString(2, ((UserAgent) getActiveAgent()).getLoginName());
-			stmnt.setString(3, userName);
-			int rows = stmnt.executeUpdate();
-			result = "Database updated. " + rows + " rows in table \"Message\" affected";
-			
-			// return 
-			HttpResponse r = new HttpResponse(result);
-			r.setStatus(200);
-			return r;
-			
-		} catch (Exception e) {
-			// return HTTP Response on error
-			HttpResponse er = new HttpResponse("Internal error: " + e.getMessage());
-			er.setStatus(500);
-			return er;
-		} finally {
-			// free resources if exception or not
-			if (rs != null) {
-				try {
-					rs.close();
-				} catch (Exception e) {
-					Context.logError(this, e.getMessage());
-					
-					// return HTTP Response on error
-					HttpResponse er = new HttpResponse("Internal error: " + e.getMessage());
-					er.setStatus(500);
-					return er;
-				}
-			}
-			if (stmnt != null) {
-				try {
-					stmnt.close();
-				} catch (Exception e) {
-					Context.logError(this, e.getMessage());
-					
-					// return HTTP Response on error
-					HttpResponse er = new HttpResponse("Internal error: " + e.getMessage());
-					er.setStatus(500);
-					return er;
-				}
-			}
-			if (stmnt1 != null) {
-				try {
-					stmnt1.close();
-				} catch (Exception e) {
-					Context.logError(this, e.getMessage());
-					
-					// return HTTP Response on error
-					HttpResponse er = new HttpResponse("Internal error: " + e.getMessage());
-					er.setStatus(500);
-					return er;
-				}
-			}
-			if (conn != null) {
-				try {
-					conn.close();
-				} catch (Exception e) {
-					Context.logError(this, e.getMessage());
-					
-					// return HTTP Response on error
-					HttpResponse er = new HttpResponse("Internal error: " + e.getMessage());
-					er.setStatus(500);
-					return er;
-				}
-			}
-		}
-	}
-	catch (Exception e)
-	{
-		Context.logError(this, e.getMessage());
-		
-		// return HTTP Response on error
-		HttpResponse er = new HttpResponse("Content data in invalid format: " + e.getMessage());
-		er.setStatus(400);
-		return er;
-	}
-}
-
-
-
-/**
- * Delete Request
- * Deletes a Request given its name. 
- * 
- *@param UserName of the Profile to be deleted.
- */
-@DELETE
-@Path("request/{name}")
-public HttpResponse deleteRequest(@PathParam("name") String userName) {
-
-String result = "";
-Connection conn = null;
-PreparedStatement stmnt = null;
-ResultSet rs = null;
-try {
-	conn = dbm.getConnection();
-	stmnt = conn.prepareStatement("DELETE FROM ContactRequest WHERE (To_UserName = ? OR From_UserName = ?);");
-	stmnt.setString(1, userName);
-	int rows = stmnt.executeUpdate(); // same works for insert
-	result = "Database updated. " + rows + " rows affected";
-	
-	// return 
-	HttpResponse r = new HttpResponse(result);
-	r.setStatus(200);
-	return r;
-	
-} catch (Exception e) {
-	// return HTTP Response on error
-	HttpResponse er = new HttpResponse("Internal error: " + e.getMessage());
-	er.setStatus(500);
-	return er;
-} finally {
-	// free resources if exception or not
-	if (rs != null) {
-		try {
-			rs.close();
-		} catch (Exception e) {
-			Context.logError(this, e.getMessage());
-			
-			// return HTTP Response on error
-			HttpResponse er = new HttpResponse("Internal error: " + e.getMessage());
-			er.setStatus(500);
-			return er;
-		}
-	}
-	if (stmnt != null) {
-		try {
-			stmnt.close();
-		} catch (Exception e) {
-			Context.logError(this, e.getMessage());
-			
-			// return HTTP Response on error
-			HttpResponse er = new HttpResponse("Internal error: " + e.getMessage());
-			er.setStatus(500);
-			return er;
-		}
-	}
-	if (conn != null) {
-		try {
-			conn.close();
-		} catch (Exception e) {
-			Context.logError(this, e.getMessage());
-			
-			// return HTTP Response on error
-			HttpResponse er = new HttpResponse("Internal error: " + e.getMessage());
-			er.setStatus(500);
-			return er;
-		}
-	}
-}
 }
 }
