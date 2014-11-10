@@ -211,8 +211,41 @@ public class IMServiceClass extends Service {
 				//check if profile already exist
 				stmnt = conn.prepareStatement("SELECT UserName FROM AccountProfile WHERE UserName = ?;");
 				stmnt.setString(1, agentName);
-				rs = stmnt.executeQuery();					
+				rs = stmnt.executeQuery();										
 					
+				// process result set
+				if(rs.next()) 
+				{
+					result = "The profile of" + agentName + "already exists!";
+					// return HTTP Response on error
+					HttpResponse er = new HttpResponse(result);
+					er.setStatus(409);
+					return er;
+				}
+
+				//Free stmnt
+				if (stmnt != null) {
+					try {
+						stmnt.close();
+					} catch (Exception e) {
+						Context.logError(this, e.getMessage());
+							
+						// return HTTP Response on error
+						HttpResponse er = new HttpResponse("Internal error: " + e.getMessage());
+						er.setStatus(500);
+						return er;
+					}
+				}
+				
+				//Create Profile				
+				stmnt = conn.prepareStatement("INSERT INTO AccountProfile (UserName, EMail, Telephone, ImageLink, NickName, Visible) VALUES (?, ?, ?, ?, ?, ?)");
+				stmnt.setString(1, agentName);
+				stmnt.setString(2, mail);
+				stmnt.setString(3, tele);
+				stmnt.setString(4, image);
+				stmnt.setString(5, nickName);
+				stmnt.setInt(6, visible);
+				
 				// process result set
 				if(rs.next()) 
 				{
