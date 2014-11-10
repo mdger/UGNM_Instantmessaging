@@ -114,6 +114,18 @@ __URL Template:__ /contact/{username}
 
 __Operations:__
 
+* __Create Contact:__ Creates a Contact If the active User received a request from the contact
+ 	* __HTTP Method:__ POST
+	* __Consumes:__ application/json; a JSON string in the following form `{'username':'username'}` ('username'=The user who should be added)
+	* __Produces:__ -
+	* __Parameter:__ authorization header, path parameter 'username'
+	* __HTTP Status Codes:__
+		* Success: 200
+		* Errors:
+			* 400: Content data in invalid format
+			* 403: Access denied
+			* 409: Could not create
+
 * __Retrieve Contact:__ Retrieves the contacts for an account given its name
 	* __HTTP Method:__ GET
 	* __Consumes:__ -
