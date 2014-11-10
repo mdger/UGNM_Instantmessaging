@@ -7,6 +7,22 @@ In the following we describe each resource including its supported operations in
 
 Profile Resource
 --
+__URL Template:__ /profile
+
+__Operations:__
+
+* __Create Profile:__ Creates a profile
+ 	* __HTTP Method:__ POST
+	* __Consumes:__ application/json; a JSON string in the following form `{'email':'email_val', 'telephone':'telephone_val', 'imageLink':'imageLink_val', 'nickname':'nickname_val', 'visible':'visible_val'}` ('email'=The email adress of the contact, 'telephone'=The telephone number of the contact, 'imageLink'=The link of the profile image, 'nickname'=The nickname of the account, 'visible'=The visibility of the profile)
+	* __Produces:__ -
+	* __Parameter:__ authorization header
+	* __HTTP Status Codes:__
+		* Success: 200
+		* Errors:
+			* 400: Content data in invalid format
+			* 403: Access denied
+			* 409: Could not create
+
 __URL Template:__ /profile/{username}
 
 __Operations:__
@@ -22,19 +38,7 @@ __Operations:__
 			* 401: Restricted content
 			* 403: Access denied 
 			* 404: Resource does not exist
-			
-* __Create Profile:__ Creates a profile given its username
- 	* __HTTP Method:__ POST
-	* __Consumes:__ application/json; a JSON string in the following form `{'email':'email_val', 'telephone':'telephone_val', 'imageLink':'imageLink_val', 'nickname':'nickname_val', 'visible':'visible_val'}` ('email'=The email adress of the contact, 'telephone'=The telephone number of the contact, 'imageLink'=The link of the profile image, 'nickname'=The nickname of the account, 'visible'=The visibility of the profile)
-	* __Produces:__ -
-	* __Parameter:__ authorization header, path parameter 'username'
-	* __HTTP Status Codes:__
-		* Success: 200
-		* Errors:
-			* 400: Content data in invalid format
-			* 403: Access denied
-			* 409: Could not create
-			
+						
 * __Update Profile:__ Updates a profile given its username
  	* __HTTP Method:__ PUT
 	* __Consumes:__ application/json; a JSON string in the following form `{'email':'email_val', 'telephone':'telephone_val', 'imageLink':'imageLink_val', 'nickname':'nickname_val', 'visible':'visible_val'}` ('email'=The email adress of the contact, 'telephone'=The telephone number of the contact, 'imageLink'=The link of the profile image, 'nickname'=The nickname of the account, 'visible'=The visibility of the profile)

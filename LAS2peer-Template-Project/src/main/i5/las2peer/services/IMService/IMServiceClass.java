@@ -223,6 +223,7 @@ public class IMServiceClass extends Service {
 						er.setStatus(409);
 						return er;
 					}
+
 							//Free stmnt
 							if (stmnt != null) {
 								try {
@@ -235,6 +236,7 @@ public class IMServiceClass extends Service {
 									er.setStatus(500);
 									return er;
 								}
+							}
 					
 					//Create Profile				
 					stmnt = conn.prepareStatement("INSERT INTO AccountProfile (UserName, EMail, Telephone, ImageLink, NickName, Visible) VALUES (?, ?, ?, ?, ?, ?)");
