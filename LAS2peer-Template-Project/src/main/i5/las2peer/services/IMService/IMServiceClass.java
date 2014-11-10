@@ -305,12 +305,13 @@ public class IMServiceClass extends Service {
 	@DELETE
 	@Path("profile/{name}")
 	public HttpResponse deleteProfile(@PathParam("name") String userName) {
-	
+		String agentName = ((UserAgent) getActiveAgent()).getLoginName();
 		String result = "";
 		Connection conn = null;
 		PreparedStatement stmnt = null;
 		ResultSet rs = null;
 		try {
+			if (agentName==userName){
 			conn = dbm.getConnection();
 			stmnt = conn.prepareStatement("DELETE FROM AccountProfile WHERE UserName = ?;");
 			stmnt.setString(1, userName);
@@ -321,7 +322,14 @@ public class IMServiceClass extends Service {
 			HttpResponse r = new HttpResponse(result);
 			r.setStatus(200);
 			return r;
-			
+			}
+			else{
+				result = "You are not authorized to delete the profle of " + userName + "!";
+				// return HTTP Response on error
+				HttpResponse er = new HttpResponse(result);
+				er.setStatus(403);
+				return er;
+			}
 		} catch (Exception e) {
 			// return HTTP Response on error
 			HttpResponse er = new HttpResponse("Internal error: " + e.getMessage());
