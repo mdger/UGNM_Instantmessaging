@@ -222,7 +222,7 @@ public class IMServiceClass extends Service {
 					stmnt.setString(6, userName);
 					int rows = stmnt.executeUpdate();
 					if(rows == 1)
-						result = "Profile successfully updated";
+						result = "Profile updated successfully";
 					else
 					{
 						result = "Resource was not found";
@@ -290,7 +290,7 @@ public class IMServiceClass extends Service {
 				stmnt.setString(1, userName);
 				int rows = stmnt.executeUpdate(); // same works for insert
 				if(rows == 1)
-					result = "Profile successfully deleted!";
+					result = "Profile deleted successfully!";
 				else
 				{
 					result = "Ressource was not found";
@@ -329,7 +329,7 @@ public class IMServiceClass extends Service {
 	/**
 	 * Retrieves a group given its name
 	 * 
-	 * @param Information of a group to be retrieved 
+	 * @param groupName Information of a group to be retrieved 
 	 * @result Group Data
 	 */
 	@GET
@@ -504,7 +504,69 @@ public class IMServiceClass extends Service {
 		}
 	}
 	
+	/**
+	 * Deletes a group 
+	 * 
+	 *@param groupName of the Profile to be deleted.
+	 */
+	@DELETE
+	@Path("group/{groupname}")
+	public HttpResponse deleteGroup(@PathParam("groupname") String groupName) {
 	
+		String result = "";
+		Connection conn = null;
+		PreparedStatement stmnt = null;
+		PreparedStatement stmnt1 = null;
+		ResultSet rs = null;
+			
+		try {
+			conn = dbm.getConnection();
+			stmnt = conn.prepareStatement("SELECT FounderName FROM Groups WHERE GroupName = ?");
+			rs = stmnt.executeQuery();
+			String founder = "";
+			if(rs.next())
+				founder = rs.getString(1);
+			else
+			{
+				result = "Resource does not exist!";
+				HttpResponse r = new HttpResponse(result);
+				r.setStatus(404);
+				return r;
+			}
+			
+			if(((UserAgent)getActiveAgent()).getLoginName().equals(founder))
+			{
+				stmnt1 = conn.prepareStatement("DELETE FROM Groups WHERE GroupName = ?;");
+				stmnt1.setString(1, groupName);
+				stmnt1.executeUpdate(); 
+				result = "Group deleted successfully";
+				
+				// return 
+				HttpResponse r = new HttpResponse(result);
+				r.setStatus(200);
+				return r;
+			}
+			else
+			{
+				result = "You are not authorized to delete the group " + groupName + "!";
+				// return HTTP Response on error
+				HttpResponse er = new HttpResponse(result);
+				er.setStatus(403);
+				return er;
+			}
+			
+		} catch (Exception e) {
+			// return HTTP Response on error
+			HttpResponse er = new HttpResponse("Internal error: " + e.getMessage());
+			er.setStatus(500);
+			return er;
+		} finally {
+			// free resources
+			HttpResponse response = freeRessources(conn, stmnt, rs);
+			if(response.getStatus() != 200)
+				return response;
+		}
+	}
 	
 	/**
 	 * This method returns messages which were send to an account. 
@@ -1797,77 +1859,7 @@ try {
 	
 	
 	
-	/**
-		 * Delete Group 
-		 * Deletes a group 
-		 * 
-		 *@param UserName of the Profile to be deleted.
-		 */
-	@DELETE
-	@Path("group/{name}")
-	public HttpResponse deleteGroup(@PathParam("name") String groupName) {
 	
-		String result = "";
-		Connection conn = null;
-		PreparedStatement stmnt = null;
-		ResultSet rs = null;
-		try {
-			conn = dbm.getConnection();
-			stmnt = conn.prepareStatement("DELETE FROM Groups WHERE GroupName = ?;");
-			stmnt.setString(1, groupName);
-			int rows = stmnt.executeUpdate(); // same works for insert
-			result = "Database updated. " + rows + " rows affected";
-			
-			// return 
-			HttpResponse r = new HttpResponse(result);
-			r.setStatus(200);
-			return r;
-			
-		} catch (Exception e) {
-			// return HTTP Response on error
-			HttpResponse er = new HttpResponse("Internal error: " + e.getMessage());
-			er.setStatus(500);
-			return er;
-		} finally {
-			// free resources if exception or not
-			if (rs != null) {
-				try {
-					rs.close();
-				} catch (Exception e) {
-					Context.logError(this, e.getMessage());
-					
-					// return HTTP Response on error
-					HttpResponse er = new HttpResponse("Internal error: " + e.getMessage());
-					er.setStatus(500);
-					return er;
-				}
-			}
-			if (stmnt != null) {
-				try {
-					stmnt.close();
-				} catch (Exception e) {
-					Context.logError(this, e.getMessage());
-					
-					// return HTTP Response on error
-					HttpResponse er = new HttpResponse("Internal error: " + e.getMessage());
-					er.setStatus(500);
-					return er;
-				}
-			}
-			if (conn != null) {
-				try {
-					conn.close();
-				} catch (Exception e) {
-					Context.logError(this, e.getMessage());
-					
-					// return HTTP Response on error
-					HttpResponse er = new HttpResponse("Internal error: " + e.getMessage());
-					er.setStatus(500);
-					return er;
-				}
-			}
-		}
-	}
 	
 	private boolean areContacts(String firstUser, String secondUser)
 	{
