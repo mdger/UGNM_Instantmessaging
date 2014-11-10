@@ -848,21 +848,20 @@ public class IMServiceClass extends Service {
 	 */
 	@GET	 
 	@Path("contact/{name}")
-	public HttpResponse getContacts(@PathParam("name") String name) {
+	public HttpResponse getContacts() {
 		String agentName = ((UserAgent) getActiveAgent()).getLoginName();
 		String result ="";
 		Connection conn = null;
 		PreparedStatement stmnt = null;
 		ResultSet rs = null;
 		try {
-			if (agentName==name) {
 				
 				// get connection from connection pool
 				conn = dbm.getConnection();
 				
 				// prepare statement
 				stmnt = conn.prepareStatement("select ap.UserName, ap.NickName from Contact as c, AccountProfile as ap where c.This_UserName= ? AND c.Contact_UserName=ap.UserName;");
-				stmnt.setString(1, name);
+				stmnt.setString(1, agentName);
 				
 				//prepare JSONArray
 				JSONArray contactArray = new JSONArray();
@@ -896,22 +895,14 @@ public class IMServiceClass extends Service {
 				}
 				else 
 				{
-					result = "No contact list found for " + name + "!";
+					result = "No contact list found for " + agentName + "!";
 					
 					// return HTTP Response on error
 					HttpResponse er = new HttpResponse(result);
 					er.setStatus(404);
 					return er;
 				}
-			}
-			else
-			{
-				result = "You are not authorized to view the contact list of " + name + "!";
-				// return HTTP Response on error
-				HttpResponse er = new HttpResponse(result);
-				er.setStatus(403);
-				return er;
-			}
+
 		} catch (Exception e) {
 			// return HTTP Response on error
 			HttpResponse er = new HttpResponse("Internal error: " + e.getMessage());
