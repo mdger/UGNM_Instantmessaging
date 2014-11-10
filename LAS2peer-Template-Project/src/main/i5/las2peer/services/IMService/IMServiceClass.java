@@ -178,9 +178,8 @@ public class IMServiceClass extends Service {
 		}
 	}
 
-	
 	/**	
-	 * Create Profile
+	 * Creates a Profile
 	 * 
 	 * @param content Data for creating the Profile encoded as JSON-String
 	 * @return Code if the sending was successfully
@@ -207,60 +206,62 @@ public class IMServiceClass extends Service {
 				
 			
 			try {
-					conn = dbm.getConnection();
+				conn = dbm.getConnection();
+				
+				//check if profile already exist
+				stmnt = conn.prepareStatement("SELECT UserName FROM AccountProfile WHERE UserName = ?;");
+				stmnt.setString(1, agentName);
+				rs = stmnt.executeQuery();					
 					
-					//check if profile already exist
-					stmnt = conn.prepareStatement("SELECT UserName FROM AccountProfile WHERE UserName = ?;");
-					stmnt.setString(1, agentName);
-					rs = stmnt.executeQuery();					
-						
-					// process result set
-					if(rs.next()) 
-					{
-						result = "The profile of" + agentName + "already exists!";
+				// process result set
+				if(rs.next()) 
+				{
+					result = "The profile of" + agentName + "already exists!";
+					// return HTTP Response on error
+					HttpResponse er = new HttpResponse(result);
+					er.setStatus(409);
+					return er;
+				}
+				
+				//Free stmnt
+				if (stmnt != null) {
+					try {
+						stmnt.close();
+					} catch (Exception e) {
+						Context.logError(this, e.getMessage());
+							
 						// return HTTP Response on error
-						HttpResponse er = new HttpResponse(result);
-						er.setStatus(409);
+						HttpResponse er = new HttpResponse("Internal error: " + e.getMessage());
+						er.setStatus(500);
 						return er;
 					}
-							//Free stmnt
-							if (stmnt != null) {
-								try {
-									stmnt.close();
-								} catch (Exception e) {
-									Context.logError(this, e.getMessage());
-										
-									// return HTTP Response on error
-									HttpResponse er = new HttpResponse("Internal error: " + e.getMessage());
-									er.setStatus(500);
-									return er;
-								}
-					
-					//Create Profile				
-					stmnt = conn.prepareStatement("INSERT INTO AccountProfile (UserName, EMail, Telephone, ImageLink, NickName, Visible) VALUES (?, ?, ?, ?, ?, ?)");
-					stmnt.setString(1, agentName);
-					stmnt.setString(2, mail);
-					stmnt.setString(3, tele);
-					stmnt.setString(4, image);
-					stmnt.setString(5, nickName);
-					stmnt.setInt(6, visible);
-					
-					int rows = stmnt.executeUpdate();
-					if(rows == 1)
-						result = "Profile created successfully";
-					else
-					{
-						result = "Resource was not found";
-						// return HTTP Response on error
-						HttpResponse er = new HttpResponse(result);
-						er.setStatus(404);
-						return er;
-					}
-					
-					// return 
-					HttpResponse r = new HttpResponse(result);
-					r.setStatus(200);
-					return r;
+				}
+			
+				//Create Profile				
+				stmnt = conn.prepareStatement("INSERT INTO AccountProfile (UserName, EMail, Telephone, ImageLink, NickName, Visible) VALUES (?, ?, ?, ?, ?, ?)");
+				stmnt.setString(1, agentName);
+				stmnt.setString(2, mail);
+				stmnt.setString(3, tele);
+				stmnt.setString(4, image);
+				stmnt.setString(5, nickName);
+				stmnt.setInt(6, visible);
+				
+				int rows = stmnt.executeUpdate();
+				if(rows == 1)
+					result = "Profile created successfully";
+				else
+				{
+					result = "Profile could not be created!";
+					// return HTTP Response on error
+					HttpResponse er = new HttpResponse(result);
+					er.setStatus(409);
+					return er;
+				}
+				
+				// return 
+				HttpResponse r = new HttpResponse(result);
+				r.setStatus(200);
+				return r;
 
 					
 			} catch (Exception e) {
@@ -275,15 +276,15 @@ public class IMServiceClass extends Service {
 					return response;
 			}
 		}
-			catch (Exception e)
-			{
-				Context.logError(this, e.getMessage());
-				
-				// return HTTP Response on error
-				HttpResponse er = new HttpResponse("Content data in invalid format: " + e.getMessage());
-				er.setStatus(400);
-				return er;
-			}
+		catch (Exception e)
+		{
+			Context.logError(this, e.getMessage());
+			
+			// return HTTP Response on error
+			HttpResponse er = new HttpResponse("Content data in invalid format: " + e.getMessage());
+			er.setStatus(400);
+			return er;
+		}
 	}
 	
 	/**	

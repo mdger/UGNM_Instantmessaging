@@ -134,7 +134,6 @@ __Operations:__
 		* Success: 200
 		* Errors:
 			* 400: Content data in invalid format
-			* 403: Access denied
 			* 409: Could not create
 			
 * __Delete Contact:__ Deletes a contact given its name
