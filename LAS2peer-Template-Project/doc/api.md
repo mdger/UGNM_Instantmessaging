@@ -19,6 +19,7 @@ __Operations:__
 	* __HTTP Status Codes:__
 		* Success: 200
 		* Errors:
+			* 401: Restricted content
 			* 403: Access denied 
 			* 404: Resource does not exist
 			

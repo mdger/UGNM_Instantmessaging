@@ -9,10 +9,10 @@ INSERT INTO AccountProfile (UserName, EMail, Telephone, ImageLink, NickName, Vis
 INSERT INTO AccountProfile (UserName, Visible)
 	VALUES ('ThirdUser', 0);
     
-INSERT INTO Contact (This_UserName, Contact_UserName) VALUES ('TestUser', 'OtherUser');
+INSERT INTO Contact (FirstUser, SecondUser) VALUES ('TestUser', 'OtherUser');
 
-INSERT INTO ContactRequest (From_UserName, To_UserName) VALUES ('TestUser', 'ThirdUser');
-INSERT INTO ContactRequest (From_UserName, To_UserName) VALUES ('ThirdUser', 'OtherUser');
+INSERT INTO ContactRequest (Sender, Receiver) VALUES ('TestUser', 'ThirdUser');
+INSERT INTO ContactRequest (Sender, Receiver) VALUES ('ThirdUser', 'OtherUser');
 
 INSERT INTO Groups (GroupName, FounderName, Description, ImageLink)
 	VALUES ('TestGroup', 'TestUser', 'A group which is created only for test purposes', 'www.somewhere.com/group.jpg');

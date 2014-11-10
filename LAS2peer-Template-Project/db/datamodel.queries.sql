@@ -3,7 +3,7 @@ SELECT EMail, Telephone FROM AccountProfile WHERE Visible = 1;
 SELECT Account.UserName, OnlineState, EMail, ImageLink 
 	FROM Account JOIN AccountProfile ON (Account.UserName = AccountProfile.UserName)
 	WHERE Visible = 0;
-SELECT * FROM ContactRequest WHERE From_UserName = 'ThirdUser' OR To_UserName = 'ThirdUser';
+SELECT * FROM ContactRequest WHERE Sender = 'ThirdUser' OR Receiver = 'ThirdUser';
 SELECT * FROM Message WHERE MessageTimeStamp = TIMESTAMP('2014-10-14 12:00:00');
 SELECT * FROM Message WHERE WasRead = 0;
 SELECT Message, MessageTimeStamp FROM Message, SendingGroup

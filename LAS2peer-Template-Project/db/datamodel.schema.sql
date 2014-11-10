@@ -44,21 +44,21 @@ CREATE TABLE IF NOT EXISTS Groups (
 
 CREATE TABLE IF NOT EXISTS Contact (
 	ContactID INT NOT NULL AUTO_INCREMENT,
-    This_UserName VARCHAR(20) NOT NULL,
-    Contact_UserName VARCHAR(20) NOT NULL,
+    FirstUser VARCHAR(20) NOT NULL,
+    SecondUser VARCHAR(20) NOT NULL,
     
     PRIMARY KEY (ContactID),
-    FOREIGN KEY (This_UserName) REFERENCES Account(UserName),
-    FOREIGN KEY (Contact_UserName) REFERENCES Account(UserName)
+    FOREIGN KEY (FirstUser) REFERENCES Account(UserName),
+    FOREIGN KEY (SecondUser) REFERENCES Account(UserName)
 );
 CREATE TABLE IF NOT EXISTS ContactRequest (
 	RequestID INT NOT NULL AUTO_INCREMENT,
-    From_UserName VARCHAR(20) NOT NULL,
-    To_UserName VARCHAR(20) NOT NULL,
+    Sender VARCHAR(20) NOT NULL,
+    Receiver VARCHAR(20) NOT NULL,
     
     PRIMARY KEY (RequestID),
-    FOREIGN KEY (From_UserName) REFERENCES Account(UserName),
-    FOREIGN KEY (To_UserName) REFERENCES Account(UserName)
+    FOREIGN KEY (Sender) REFERENCES Account(UserName),
+    FOREIGN KEY (Receiver) REFERENCES Account(UserName)
 );
 
 CREATE TABLE IF NOT EXISTS SendingSingle (
