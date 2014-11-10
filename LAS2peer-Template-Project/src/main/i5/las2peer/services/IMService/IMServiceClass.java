@@ -25,8 +25,6 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
 
-import com.nimbusds.oauth2.sdk.http.HTTPResponse;
-
 import net.minidev.json.JSONArray;
 import net.minidev.json.JSONObject;
 import net.minidev.json.JSONValue;
@@ -210,24 +208,34 @@ public class IMServiceClass extends Service {
 			PreparedStatement stmnt = null;
 			ResultSet rs = null;
 				
-		
+			
 			try {
-				if (agentName==userName){
-				conn = dbm.getConnection();
-				stmnt = conn.prepareStatement("UPDATE AccountProfile SET EMail = ?, Telephone = ?, ImageLink = ?, NickName = ?, Visible = ? WHERE UserName = ?;");
-				stmnt.setString(1, mail);
-				stmnt.setString(2, tele);
-				stmnt.setString(3, image);
-				stmnt.setString(4, nickName);
-				stmnt.setInt(5, visible);
-				stmnt.setString(6, userName);
-				int rows = stmnt.executeUpdate(); 
-				result = "Database updated. " + rows + " rows affected";
-				
-				// return 
-				HttpResponse r = new HttpResponse(result);
-				r.setStatus(200);
-				return r;
+				if (agentName.equals(userName))
+				{
+					conn = dbm.getConnection();
+					stmnt = conn.prepareStatement("UPDATE AccountProfile SET EMail = ?, Telephone = ?, ImageLink = ?, NickName = ?, Visible = ? WHERE UserName = ?;");
+					stmnt.setString(1, mail);
+					stmnt.setString(2, tele);
+					stmnt.setString(3, image);
+					stmnt.setString(4, nickName);
+					stmnt.setInt(5, visible);
+					stmnt.setString(6, userName);
+					int rows = stmnt.executeUpdate();
+					if(rows == 1)
+						result = "Profile successfully updated";
+					else
+					{
+						result = "Ressource was not found";
+						// return HTTP Response on error
+						HttpResponse er = new HttpResponse(result);
+						er.setStatus(404);
+						return er;
+					}
+					
+					// return 
+					HttpResponse r = new HttpResponse(result);
+					r.setStatus(200);
+					return r;
 				}
 				else
 				{
@@ -244,43 +252,10 @@ public class IMServiceClass extends Service {
 				er.setStatus(500);
 				return er;
 			} finally {
-				// free resources if exception or not
-				if (rs != null) {
-					try {
-						rs.close();
-					} catch (Exception e) {
-						Context.logError(this, e.getMessage());
-						
-						// return HTTP Response on error
-						HttpResponse er = new HttpResponse("Internal error: " + e.getMessage());
-						er.setStatus(500);
-						return er;
-					}
-				}
-				if (stmnt != null) {
-					try {
-						stmnt.close();
-					} catch (Exception e) {
-						Context.logError(this, e.getMessage());
-						
-						// return HTTP Response on error
-						HttpResponse er = new HttpResponse("Internal error: " + e.getMessage());
-						er.setStatus(500);
-						return er;
-					}
-				}
-				if (conn != null) {
-					try {
-						conn.close();
-					} catch (Exception e) {
-						Context.logError(this, e.getMessage());
-						
-						// return HTTP Response on error
-						HttpResponse er = new HttpResponse("Internal error: " + e.getMessage());
-						er.setStatus(500);
-						return er;
-					}
-				}
+				// free resources
+				HttpResponse response = freeRessources(conn, stmnt, rs);
+				if(response.getStatus() != 200)
+					return response;
 			}
 		}
 			catch (Exception e)
