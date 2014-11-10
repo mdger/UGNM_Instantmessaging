@@ -849,55 +849,67 @@ public class IMServiceClass extends Service {
 	@GET	 
 	@Path("contact/{name}")
 	public HttpResponse getContacts(@PathParam("name") String name) {
+		String agentName = ((UserAgent) getActiveAgent()).getLoginName();
 		String result ="";
 		Connection conn = null;
 		PreparedStatement stmnt = null;
 		ResultSet rs = null;
 		try {
-			// get connection from connection pool
-			conn = dbm.getConnection();
-			
-			// prepare statement
-			stmnt = conn.prepareStatement("select ap.UserName, ap.NickName from Contact as c, AccountProfile as ap where c.This_UserName= ? AND c.Contact_UserName=ap.UserName;");
-			stmnt.setString(1, name);
-			
-			//prepare JSONArray
-			JSONArray contactArray = new JSONArray();
-			
-			// retrieve result set
-			rs = stmnt.executeQuery();
-			
-			//differentiate situations 1) with contacts and 2) without contacts
-			boolean dataFound = false;
-			// process result set
-			// extract all the contacts and put them first in a JSON object and after that in a list
-			while (rs.next())
-			{
-				if(!dataFound) dataFound = true;
-				JSONObject contactObject = new JSONObject();
-				contactObject.put("username", rs.getString(1));
-				contactObject.put("nickname", rs.getString(2));
-				contactArray.add(contactObject);
-			}
-			
-			if (dataFound)
-			{
-				// setup resulting JSON Object
-				JSONObject jsonResult = new JSONObject();
-				jsonResult.put("contact", contactArray);
+			if (agentName==name) {
 				
-				// return HTTP response
-				HttpResponse r = new HttpResponse(jsonResult.toJSONString());
-				r.setStatus(200);
-				return r;
-			}
-			else 
-			{
-				result = "No contact list found for " + name + "!";
+				// get connection from connection pool
+				conn = dbm.getConnection();
 				
+				// prepare statement
+				stmnt = conn.prepareStatement("select ap.UserName, ap.NickName from Contact as c, AccountProfile as ap where c.This_UserName= ? AND c.Contact_UserName=ap.UserName;");
+				stmnt.setString(1, name);
+				
+				//prepare JSONArray
+				JSONArray contactArray = new JSONArray();
+				
+				// retrieve result set
+				rs = stmnt.executeQuery();
+				
+				//differentiate situations 1) with contacts and 2) without contacts
+				boolean dataFound = false;
+				// process result set
+				// extract all the contacts and put them first in a JSON object and after that in a list
+				while (rs.next())
+				{
+					if(!dataFound) dataFound = true;
+					JSONObject contactObject = new JSONObject();
+					contactObject.put("username", rs.getString(1));
+					contactObject.put("nickname", rs.getString(2));
+					contactArray.add(contactObject);
+				}
+				
+				if (dataFound)
+				{
+					// setup resulting JSON Object
+					JSONObject jsonResult = new JSONObject();
+					jsonResult.put("contact", contactArray);
+					
+					// return HTTP response
+					HttpResponse r = new HttpResponse(jsonResult.toJSONString());
+					r.setStatus(200);
+					return r;
+				}
+				else 
+				{
+					result = "No contact list found for " + name + "!";
+					
+					// return HTTP Response on error
+					HttpResponse er = new HttpResponse(result);
+					er.setStatus(404);
+					return er;
+				}
+			}
+			else
+			{
+				result = "You are not authorized to view the contact list of " + name + "!";
 				// return HTTP Response on error
 				HttpResponse er = new HttpResponse(result);
-				er.setStatus(404);
+				er.setStatus(403);
 				return er;
 			}
 		} catch (Exception e) {
