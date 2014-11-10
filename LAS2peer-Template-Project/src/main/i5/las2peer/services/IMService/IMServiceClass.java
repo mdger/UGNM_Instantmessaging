@@ -196,6 +196,7 @@ public class IMServiceClass extends Service {
 	public HttpResponse updateProfile(@PathParam("name") String userName, @ContentParam String content) {		
 		try 
 		{
+			String agentName = ((UserAgent) getActiveAgent()).getLoginName();
 			// convert string content to JSON object 
 			JSONObject profileObject = (JSONObject) JSONValue.parse(content);
 			String mail = (String) profileObject.get("email");
@@ -211,6 +212,7 @@ public class IMServiceClass extends Service {
 				
 		
 			try {
+				if (agentName==userName){
 				conn = dbm.getConnection();
 				stmnt = conn.prepareStatement("UPDATE AccountProfile SET EMail = ?, Telephone = ?, ImageLink = ?, NickName = ?, Visible = ? WHERE UserName = ?;");
 				stmnt.setString(1, mail);
@@ -226,6 +228,15 @@ public class IMServiceClass extends Service {
 				HttpResponse r = new HttpResponse(result);
 				r.setStatus(200);
 				return r;
+				}
+				else
+				{
+					result = "You are not authorized to update the profile of " + userName + "!";
+					// return HTTP Response on error
+					HttpResponse er = new HttpResponse(result);
+					er.setStatus(403);
+					return er;
+				}
 				
 			} catch (Exception e) {
 				// return HTTP Response on error
@@ -292,12 +303,13 @@ public class IMServiceClass extends Service {
 	@DELETE
 	@Path("profile/{name}")
 	public HttpResponse deleteProfile(@PathParam("name") String userName) {
-	
+		String agentName = ((UserAgent) getActiveAgent()).getLoginName();
 		String result = "";
 		Connection conn = null;
 		PreparedStatement stmnt = null;
 		ResultSet rs = null;
 		try {
+			if (agentName==userName){
 			conn = dbm.getConnection();
 			stmnt = conn.prepareStatement("DELETE FROM AccountProfile WHERE UserName = ?;");
 			stmnt.setString(1, userName);
@@ -308,7 +320,14 @@ public class IMServiceClass extends Service {
 			HttpResponse r = new HttpResponse(result);
 			r.setStatus(200);
 			return r;
-			
+			}
+			else{
+				result = "You are not authorized to delete the profle of " + userName + "!";
+				// return HTTP Response on error
+				HttpResponse er = new HttpResponse(result);
+				er.setStatus(403);
+				return er;
+			}
 		} catch (Exception e) {
 			// return HTTP Response on error
 			HttpResponse er = new HttpResponse("Internal error: " + e.getMessage());
@@ -845,58 +864,61 @@ public class IMServiceClass extends Service {
 	 */
 	@GET	 
 	@Path("contact/{name}")
-	public HttpResponse getContacts(@PathParam("name") String name) {
+	public HttpResponse getContacts() {
+		String agentName = ((UserAgent) getActiveAgent()).getLoginName();
 		String result ="";
 		Connection conn = null;
 		PreparedStatement stmnt = null;
 		ResultSet rs = null;
 		try {
-			// get connection from connection pool
-			conn = dbm.getConnection();
-			
-			// prepare statement
-			stmnt = conn.prepareStatement("select ap.UserName, ap.NickName from Contact as c, AccountProfile as ap where c.This_UserName= ? AND c.Contact_UserName=ap.UserName;");
-			stmnt.setString(1, name);
-			
-			//prepare JSONArray
-			JSONArray contactArray = new JSONArray();
-			
-			// retrieve result set
-			rs = stmnt.executeQuery();
-			
-			//differentiate situations 1) with contacts and 2) without contacts
-			boolean dataFound = false;
-			// process result set
-			// extract all the contacts and put them first in a JSON object and after that in a list
-			while (rs.next())
-			{
-				if(!dataFound) dataFound = true;
-				JSONObject contactObject = new JSONObject();
-				contactObject.put("username", rs.getString(1));
-				contactObject.put("nickname", rs.getString(2));
-				contactArray.add(contactObject);
-			}
-			
-			if (dataFound)
-			{
-				// setup resulting JSON Object
-				JSONObject jsonResult = new JSONObject();
-				jsonResult.put("contact", contactArray);
 				
-				// return HTTP response
-				HttpResponse r = new HttpResponse(jsonResult.toJSONString());
-				r.setStatus(200);
-				return r;
-			}
-			else 
-			{
-				result = "No contact list found for " + name + "!";
+				// get connection from connection pool
+				conn = dbm.getConnection();
 				
-				// return HTTP Response on error
-				HttpResponse er = new HttpResponse(result);
-				er.setStatus(404);
-				return er;
-			}
+				// prepare statement
+				stmnt = conn.prepareStatement("select ap.UserName, ap.NickName from Contact as c, AccountProfile as ap where c.This_UserName= ? AND c.Contact_UserName=ap.UserName;");
+				stmnt.setString(1, agentName);
+				
+				//prepare JSONArray
+				JSONArray contactArray = new JSONArray();
+				
+				// retrieve result set
+				rs = stmnt.executeQuery();
+				
+				//differentiate situations 1) with contacts and 2) without contacts
+				boolean dataFound = false;
+				// process result set
+				// extract all the contacts and put them first in a JSON object and after that in a list
+				while (rs.next())
+				{
+					if(!dataFound) dataFound = true;
+					JSONObject contactObject = new JSONObject();
+					contactObject.put("username", rs.getString(1));
+					contactObject.put("nickname", rs.getString(2));
+					contactArray.add(contactObject);
+				}
+				
+				if (dataFound)
+				{
+					// setup resulting JSON Object
+					JSONObject jsonResult = new JSONObject();
+					jsonResult.put("contact", contactArray);
+					
+					// return HTTP response
+					HttpResponse r = new HttpResponse(jsonResult.toJSONString());
+					r.setStatus(200);
+					return r;
+				}
+				else 
+				{
+					result = "No contact list found for " + agentName + "!";
+					
+					// return HTTP Response on error
+					HttpResponse er = new HttpResponse(result);
+					er.setStatus(404);
+					return er;
+				}
+
 		} catch (Exception e) {
 			// return HTTP Response on error
 			HttpResponse er = new HttpResponse("Internal error: " + e.getMessage());
