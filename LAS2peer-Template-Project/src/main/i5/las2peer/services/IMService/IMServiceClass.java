@@ -670,8 +670,111 @@ public class IMServiceClass extends Service {
 			HttpResponse response = freeRessources(conn, stmnt, rs);
 			if(response.getStatus() != 200)
 				return response;
+			if (stmnt1 != null) {
+				try {
+					stmnt1.close();
+				} catch (Exception e) {
+					Context.logError(this, e.getMessage());
+					
+					// return HTTP Response on error
+					HttpResponse er = new HttpResponse("Internal error: " + e.getMessage());
+					er.setStatus(500);
+					return er;
+				}
+			}
 		}
 	}
+	
+	/**
+	 * This method returns the contact list of a certain user. 
+	 * @param userName The name of the user whose contact list should be displayed
+	 * @return The data (username and nickname) of the contacts in the HTTP Response type 
+	 */
+	@GET	 
+	@Path("contact/{username}")
+	@Produces("application/json")
+	public HttpResponse getContacts(@PathParam("username") String userName) {
+		String agentName = ((UserAgent) getActiveAgent()).getLoginName();
+		String result ="";
+		Connection conn = null;
+		PreparedStatement stmnt = null;
+		ResultSet rs = null;
+		if(agentName.equals(userName))
+		{
+			try {		
+				// get connection from connection pool
+				conn = dbm.getConnection();
+				
+				// prepare statement
+				stmnt = conn.prepareStatement("SELECT UserName, NickName from Contact, AccountProfile WHERE (FirstUser = ? AND SecondUser = UserName) & _"
+						+ "OR (SecondUser = ? AND FirstUser = UserName);");
+				stmnt.setString(1, userName);
+				stmnt.setString(2, userName);
+				
+				//prepare JSONArray
+				JSONArray contactArray = new JSONArray();
+				
+				// retrieve result set
+				rs = stmnt.executeQuery();
+				
+				//differentiate situations 1) with contacts and 2) without contacts
+				boolean dataFound = false;
+				// process result set
+				// extract all the contacts and put them first in a JSON object and after that in a list
+				while (rs.next())
+				{
+					if(!dataFound) dataFound = true;
+					JSONObject contactObject = new JSONObject();
+					contactObject.put("nickname", rs.getString(1));
+					contactObject.put("username", rs.getString(2));
+					contactArray.add(contactObject);
+				}
+				
+				if (dataFound)
+				{
+					// setup resulting JSON Object
+					JSONObject jsonResult = new JSONObject();
+					jsonResult.put("contact", contactArray);
+					
+					// return HTTP response
+					HttpResponse r = new HttpResponse(jsonResult.toJSONString());
+					r.setStatus(200);
+					return r;
+				}
+				else 
+				{
+					result = "No contact list found for " + userName + "!";
+					
+					// return HTTP Response on error
+					HttpResponse er = new HttpResponse(result);
+					er.setStatus(404);
+					return er;
+				}
+	
+			} catch (Exception e) {
+				// return HTTP Response on error
+				HttpResponse er = new HttpResponse("Internal error: " + e.getMessage());
+				er.setStatus(500);
+				return er;
+			} finally {
+				// free resources
+				HttpResponse response = freeRessources(conn, stmnt, rs);
+				if(response.getStatus() != 200)
+					return response;
+			}
+		}
+		else
+		{
+			result = "You are not authorized to see the contact list of " + userName + "!";
+			
+			// return HTTP Response on error
+			HttpResponse er = new HttpResponse(result);
+			er.setStatus(404);
+			return er;
+		}
+	}
+	
+	
 	
 	/**
 	 * This method returns messages which were send to an account. 
@@ -1156,113 +1259,7 @@ public class IMServiceClass extends Service {
 		}
 	}
 	
-	/**
-	 * This method returns the contact list of a certain user. 
-	 * @param name The name of the user whose contact list should be displayed
-	 * @return The data (username and nickname) of the contacts in the HTTP Response type 
-	 */
-	@GET	 
-	@Path("contact/{name}")
-	public HttpResponse getContacts() {
-		String agentName = ((UserAgent) getActiveAgent()).getLoginName();
-		String result ="";
-		Connection conn = null;
-		PreparedStatement stmnt = null;
-		ResultSet rs = null;
-		try {
-				
-				// get connection from connection pool
-				conn = dbm.getConnection();
-				
-				// prepare statement
-				stmnt = conn.prepareStatement("select ap.UserName, ap.NickName from Contact as c, AccountProfile as ap where c.This_UserName= ? AND c.Contact_UserName=ap.UserName;");
-				stmnt.setString(1, agentName);
-				
-				//prepare JSONArray
-				JSONArray contactArray = new JSONArray();
-				
-				// retrieve result set
-				rs = stmnt.executeQuery();
-				
-				//differentiate situations 1) with contacts and 2) without contacts
-				boolean dataFound = false;
-				// process result set
-				// extract all the contacts and put them first in a JSON object and after that in a list
-				while (rs.next())
-				{
-					if(!dataFound) dataFound = true;
-					JSONObject contactObject = new JSONObject();
-					contactObject.put("username", rs.getString(1));
-					contactObject.put("nickname", rs.getString(2));
-					contactArray.add(contactObject);
-				}
-				
-				if (dataFound)
-				{
-					// setup resulting JSON Object
-					JSONObject jsonResult = new JSONObject();
-					jsonResult.put("contact", contactArray);
-					
-					// return HTTP response
-					HttpResponse r = new HttpResponse(jsonResult.toJSONString());
-					r.setStatus(200);
-					return r;
-				}
-				else 
-				{
-					result = "No contact list found for " + agentName + "!";
-					
-					// return HTTP Response on error
-					HttpResponse er = new HttpResponse(result);
-					er.setStatus(404);
-					return er;
-				}
-
-		} catch (Exception e) {
-			// return HTTP Response on error
-			HttpResponse er = new HttpResponse("Internal error: " + e.getMessage());
-			er.setStatus(500);
-			return er;
-		} finally {
-			// free resources
-			if (rs != null) {
-				try {
-					rs.close();
-				} catch (Exception e) {
-					Context.logError(this, e.getMessage());
-					
-					// return HTTP Response on error
-					HttpResponse er = new HttpResponse("Internal error: " + e.getMessage());
-					er.setStatus(500);
-					return er;
-				}
-			}
-			if (stmnt != null) {
-				try {
-					stmnt.close();
-				} catch (Exception e) {
-					Context.logError(this, e.getMessage());
-					
-					// return HTTP Response on error
-					HttpResponse er = new HttpResponse("Internal error: " + e.getMessage());
-					er.setStatus(500);
-					return er;
-				}
-			}
-			if (conn != null) {
-				try {
-					conn.close();
-				} catch (Exception e) {
-					Context.logError(this, e.getMessage());
-					
-					// return HTTP Response on error
-					HttpResponse er = new HttpResponse("Internal error: " + e.getMessage());
-					er.setStatus(500);
-					return er;
-				}
-			}
-		}
-	}
+	
 
 	/**
 	 * This method deletes a contact from the contact list
