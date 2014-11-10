@@ -776,6 +776,61 @@ public class IMServiceClass extends Service {
 		}
 	}
 	
+	//TODO Create Contact
+	
+	/**
+	 * This method deletes a contact from the contact list
+	 * @param userName The name of the contact which should be deleted
+	 * @return Success or not
+	 */
+	@DELETE 
+	@Path("contact/{username}")
+	public HttpResponse deleteContact(@PathParam("username") String userName) {
+		String result ="";
+		String agentName = ((UserAgent)getActiveAgent()).getLoginName();
+		Connection conn = null;
+		PreparedStatement stmnt = null;
+		ResultSet rs = null;
+		try {
+			// get connection from connection pool
+			conn = dbm.getConnection();
+			
+			// prepare statement
+			stmnt = conn.prepareStatement("DELETE FROM Contact WHERE (FirstUser = ? AND SecondUser = ?) OR (FirstUser = ? AND SecondUser = ?);");
+			stmnt.setString(1, userName);
+			stmnt.setString(2, agentName);
+			stmnt.setString(3, agentName);
+			stmnt.setString(4, userName);
+			int rows = stmnt.executeUpdate();
+			if(rows == 1)
+			{
+				result = "Contact deleted succesfully!";
+				//return
+				HttpResponse r = new HttpResponse(result);
+				r.setStatus(200);
+				return r;
+			}
+			else
+			{
+				result = "Contact could not be deleted!";
+				//return
+				HttpResponse r = new HttpResponse(result);
+				r.setStatus(404);
+				return r;
+			}
+		} catch (Exception e) {
+			// return HTTP Response on error
+			HttpResponse er = new HttpResponse("Internal error: " + e.getMessage());
+			er.setStatus(500);
+			return er;
+		} finally {
+			// free resources
+			HttpResponse response = freeRessources(conn, stmnt, rs);
+			if(response.getStatus() != 200)
+				return response;
+		}
+	}
+	
 	
 	
 	/**
@@ -1263,79 +1318,7 @@ public class IMServiceClass extends Service {
 	
 	
 
-	/**
-	 * This method deletes a contact from the contact list
-	 * @param name The name of the contact which should be deleted
-	 * @return Success or not
-	 */
-	@DELETE 
-	@Path("contact/{name}")
-	public HttpResponse deleteContact(@PathParam("name") String name) {
-		String result ="";
-		Connection conn = null;
-		PreparedStatement stmnt = null;
-		ResultSet rs = null;
-		try {
-			// get connection from connection pool
-			conn = dbm.getConnection();
-			
-			// prepare statement
-			stmnt = conn.prepareStatement("DELETE FROM Contact WHERE Contact_UserName = ?;");
-			stmnt.setString(1, name);
-			int rows = stmnt.executeUpdate();
-			result = "Database updated. " + rows + " rows affected";
-			
-			//return
-			HttpResponse r = new HttpResponse(result);
-			r.setStatus(200);
-			return r;
-				
-				
-			} catch (Exception e) {
-				// return HTTP Response on error
-				HttpResponse er = new HttpResponse("Internal error: " + e.getMessage());
-				er.setStatus(500);
-				return er;
-			} finally {
-				// free resources
-				if (rs != null) {
-					try {
-						rs.close();
-					} catch (Exception e) {
-						Context.logError(this, e.getMessage());
-						
-						// return HTTP Response on error
-						HttpResponse er = new HttpResponse("Internal error: " + e.getMessage());
-						er.setStatus(500);
-						return er;
-					}
-				}
-				if (stmnt != null) {
-					try {
-						stmnt.close();
-					} catch (Exception e) {
-						Context.logError(this, e.getMessage());
-						
-						// return HTTP Response on error
-						HttpResponse er = new HttpResponse("Internal error: " + e.getMessage());
-						er.setStatus(500);
-						return er;
-					}
-				}
-				if (conn != null) {
-					try {
-						conn.close();
-					} catch (Exception e) {
-						Context.logError(this, e.getMessage());
-						
-						// return HTTP Response on error
-						HttpResponse er = new HttpResponse("Internal error: " + e.getMessage());
-						er.setStatus(500);
-						return er;
-					}
-				}
-			}
-		}
+	
 	
 	 /**
 		 * This method returns all contact requests to a certain user. 
@@ -1964,7 +1947,12 @@ try {
 	
 	
 	
-	
+	/**
+	 * This method proves if two user are contacts to each other 
+	 * @param firstUser The first user
+	 * @param secondUser The second user
+	 * @return Are they contacts?
+	 */
 	private boolean areContacts(String firstUser, String secondUser)
 	{
 		Connection conn = null;
@@ -2014,6 +2002,13 @@ try {
 		return false;
 	}
 	
+	/**
+	 * This method frees the database requesting resources
+	 * @param conn The connection which will be closed
+	 * @param stmnt The statement which will be closed
+	 * @param rs The result set which will be closed
+	 * @return Successfully closed? Else failure code in the HTTP response data type
+	 */
 	private HttpResponse freeRessources(Connection conn, PreparedStatement stmnt, ResultSet rs)
 	{
 		if (rs != null) {

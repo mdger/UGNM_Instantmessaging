@@ -118,18 +118,6 @@ __URL Template:__ /contact/{username}
 
 __Operations:__
 
-* __Create Contact:__ Creates a Contact If the active User received a request from the contact
- 	* __HTTP Method:__ POST
-	* __Consumes:__ application/json; a JSON string in the following form `{'username':'username'}` ('username'=The user who should be added)
-	* __Produces:__ -
-	* __Parameter:__ authorization header, path parameter 'username'
-	* __HTTP Status Codes:__
-		* Success: 200
-		* Errors:
-			* 400: Content data in invalid format
-			* 403: Access denied
-			* 409: Could not create
-
 * __Retrieve Contact:__ Retrieves the contacts for an account given its name
 	* __HTTP Method:__ GET
 	* __Consumes:__ -
@@ -141,6 +129,18 @@ __Operations:__
 			* 403: Access denied
 			* 404: Resource does not exist
 			
+* __Create Contact:__ Creates a Contact If the active User received a request from the contact
+ 	* __HTTP Method:__ POST
+	* __Consumes:__ application/json; a JSON string in the following form `{'username':'username'}` ('username'=The user who should be added)
+	* __Produces:__ -
+	* __Parameter:__ authorization header, path parameter 'username'
+	* __HTTP Status Codes:__
+		* Success: 200
+		* Errors:
+			* 400: Content data in invalid format
+			* 403: Access denied
+			* 409: Could not create
+			
 * __Delete Contact:__ Deletes a contact given its name
  	* __HTTP Method:__ DELETE
 	* __Consumes:__ -
@@ -149,7 +149,6 @@ __Operations:__
 	* __HTTP Status Codes:__
 		* Success: 200
 		* Errors:
-			* 403: Access denied
 			* 404: Resource does not exist
 
 Request Resource
@@ -198,7 +197,7 @@ __URL Template:__ /message/single/{username}
 
 __Operations:__
 
-* __Retrieve Single Message:__ Retrieves the single messages for an conversation with a contact given its name
+* __Retrieve Single Message:__ Retrieves the single messages for an conversation with a contact given its name and deletes read messages older than 30 days and unread older than 90 days
 	* __HTTP Method:__ GET
 	* __Consumes:__ -
 	* __Produces:__ application/json; a JSON string in the following form `{'message':['text':'text_val', 'timestamp':'timestamp_val', 'sender':'sender_val' ]}` ('message'=The messages of a conversation, 'text'=The message text, 'timestamp'=The time the message was sent, 'sender'=The sender of the message)
@@ -227,7 +226,7 @@ __URL Template:__ /message/group/{groupname}
 
 __Operations:__
 
-* __Retrieve Group Message:__ Retrieves the messages for an conversation within a group given its name
+* __Retrieve Group Message:__ Retrieves the messages for an conversation within a group given its name and deletes messages older than 90 days
 	* __HTTP Method:__ GET
 	* __Consumes:__ -
 	* __Produces:__ application/json; a JSON string in the following form `{'message':['messageID':'messageID_val', 'text':'text_val', 'timestamp':'timestamp_val', 'sender':'sender_val' ]}` ('messageID'=The ID of the message, 'message'=The messages of a conversation, 'text'=The message text, 'timestamp'=The time the message was sent, 'sender'=The sender of the message)
