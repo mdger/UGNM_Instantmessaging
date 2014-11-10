@@ -189,9 +189,9 @@ public class IMServiceClass extends Service {
 	 * @return Code if the sending was successfully
 	 */
 	@PUT
-	@Path("profile/{name}")
+	@Path("profile/{username}")
 	@Consumes("application/json")
-	public HttpResponse updateProfile(@PathParam("name") String userName, @ContentParam String content) {		
+	public HttpResponse updateProfile(@PathParam("username") String userName, @ContentParam String content) {		
 		try 
 		{
 			String agentName = ((UserAgent) getActiveAgent()).getLoginName();
@@ -275,8 +275,8 @@ public class IMServiceClass extends Service {
  	 *@param userName of the Profile to be deleted.
  	 */
 	@DELETE
-	@Path("profile/{name}")
-	public HttpResponse deleteProfile(@PathParam("name") String userName) {
+	@Path("profile/{username}")
+	public HttpResponse deleteProfile(@PathParam("username") String userName) {
 		String agentName = ((UserAgent) getActiveAgent()).getLoginName();
 		String result = "";
 		Connection conn = null;
@@ -323,6 +323,99 @@ public class IMServiceClass extends Service {
 			HttpResponse response = freeRessources(conn, stmnt, rs);
 			if(response.getStatus() != 200)
 				return response;
+		}
+	}
+
+	/**
+	 * Retrieves a group given its name
+	 * 
+	 * @param Information of a group to be retrieved 
+	 * @result Group Data
+	 */
+	@GET
+	@Path("group/{groupname}")
+	@Produces("application/json")
+	public HttpResponse retrieveGroup(@PathParam("groupname") String groupName) {
+		Connection conn = null;
+		PreparedStatement stmnt = null;
+		PreparedStatement stmnt1 = null; 
+		ResultSet rs = null;
+		ResultSet rs1 = null;
+		try {
+			// get connection from connection pool
+			conn = dbm.getConnection();
+			
+			// prepare statement for the group
+			stmnt = conn.prepareStatement("SELECT GroupName, FounderName, Description, ImageLink FROM Groups WHERE GroupName = ?;");
+			stmnt.setString(1, groupName);
+			
+			// retrieve result set for the group
+			rs = stmnt.executeQuery();
+			
+			// process result set
+			if (rs.next()) 
+			{
+				// prepare statement for the members
+				stmnt1 = conn.prepareStatement("SELECT UserName FROM MemberOf WHERE GroupName = ?;");
+				stmnt1.setString(1, groupName);
+				
+				// retrieve result set for the members
+				rs1 = stmnt.executeQuery();
+				
+				// setup resulting JSON Object
+				JSONObject ro = new JSONObject();
+				ro.put("name", rs.getString(1));
+				ro.put("founder", rs.getString(2));
+				ro.put("description", rs.getString(3));
+				ro.put("imageLink", rs.getString(4));
+				
+				JSONArray memberArray = new JSONArray();
+				
+				// add the members in an array
+				while(rs1.next())
+				{
+					JSONObject member = new JSONObject();
+					member.put("username", rs1.getString(1));
+					memberArray.add(member);
+				}
+				// put the members in the JSON object 
+				ro.put("member", memberArray);
+				
+				// return HTTP Response on success
+				HttpResponse r = new HttpResponse(ro.toJSONString());
+				r.setStatus(200);
+				return r;
+				
+			} else {
+				String result = "Group does not exist: " + groupName;
+				
+				// return HTTP Response on error
+				HttpResponse er = new HttpResponse(result);
+				er.setStatus(404);
+				return er;
+			}
+		} catch (Exception e) {
+			// return HTTP Response on error
+			HttpResponse er = new HttpResponse("Internal error: " + e.getMessage());
+			er.setStatus(500);
+			return er;
+		} finally {
+			// free resources
+			HttpResponse response = freeRessources(conn, stmnt, rs);
+			if(response.getStatus() != 200)
+				return response;
+			if (stmnt1 != null) {
+				try {
+					stmnt1.close();
+				} catch (Exception e) {
+					Context.logError(this, e.getMessage());
+					
+					// return HTTP Response on error
+					HttpResponse er = new HttpResponse("Internal error: " + e.getMessage());
+					er.setStatus(500);
+					return er;
+				}
+			}
 		}
 	}
 
@@ -1615,102 +1708,7 @@ try {
 		return result;
 	}
 
-	/**
-	 * Retrieves a group given its name
-	 * 
-	 * @param Information of a group to be retrieved 
-	 * @result Group Data
-	 */
-	@GET
-	@Path("group/{name}")
-	public HttpResponse retrieveGroup(@PathParam("name") String groupName) {
-		String[] result = new String[5];
-		Connection conn = null;
-		PreparedStatement stmnt = null;
-		ResultSet rs = null;
-		try {
-			// get connection from connection pool
-			conn = dbm.getConnection();
-			
-			// prepare statement
-			stmnt = conn.prepareStatement("SELECT a.GroupName, a.FounderName, a.Description, a.ImageLink, a.MemberID FROM Groups as a, MemberOf as b WHERE a.GroupName = b.GroupName;");
-			stmnt.setString(1, groupName);
-			
-			// retrieve result set
-			rs = stmnt.executeQuery();
-			
-			// process result set
-			if (rs.next()) {
-				for (int i=1; i<=5; i++) {
-					result[i] = rs.getString(i);
-				}
-				
-				// setup resulting JSON Object
-				JSONObject ro = new JSONObject();
-				ro.put("name", result[1]);
-				ro.put("founder", result[2]);
-				ro.put("description", result[3]);
-				ro.put("imageLink", result[4]);
-				ro.put("member", result[5]);
-				
-				// return HTTP Response on success
-				HttpResponse r = new HttpResponse(ro.toJSONString());
-				r.setStatus(200);
-				return r;
-				
-			} else {
-				result[0] = "Group does not exist: " + groupName;
-				
-				// return HTTP Response on error
-				HttpResponse er = new HttpResponse(result[0]);
-				er.setStatus(404);
-				return er;
-			}
-		} catch (Exception e) {
-			// return HTTP Response on error
-			HttpResponse er = new HttpResponse("Internal error: " + e.getMessage());
-			er.setStatus(500);
-			return er;
-		} finally {
-			// free resources
-			if (rs != null) {
-				try {
-					rs.close();
-				} catch (Exception e) {
-					Context.logError(this, e.getMessage());
-					
-					// return HTTP Response on error
-					HttpResponse er = new HttpResponse("Internal error: " + e.getMessage());
-					er.setStatus(500);
-					return er;
-				}
-			}
-			if (stmnt != null) {
-				try {
-					stmnt.close();
-				} catch (Exception e) {
-					Context.logError(this, e.getMessage());
-					
-					// return HTTP Response on error
-					HttpResponse er = new HttpResponse("Internal error: " + e.getMessage());
-					er.setStatus(500);
-					return er;
-				}
-			}
-			if (conn != null) {
-				try {
-					conn.close();
-				} catch (Exception e) {
-					Context.logError(this, e.getMessage());
-					
-					// return HTTP Response on error
-					HttpResponse er = new HttpResponse("Internal error: " + e.getMessage());
-					er.setStatus(500);
-					return er;
-				}
-			}
-		}
-	}
+	
 	
 	/**
 	 * Update Group given its name
