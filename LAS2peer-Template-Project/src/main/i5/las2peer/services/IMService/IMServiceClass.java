@@ -35,7 +35,7 @@ import net.minidev.json.JSONValue;
  * that uses the LAS2peer Web-Connector for RESTful access to it.
  * 
  */
-@Path("example")
+@Path("im")
 @Version("0.1")
 public class IMServiceClass extends Service {
 
@@ -89,174 +89,7 @@ public class IMServiceClass extends Service {
 		return res;
 		
 	}
-
-	/**
-	 * Example method that shows how to retrieve a user email address from a database 
-	 * and return an HTTP response including a JSON object.
-	 * 
-	 * WARNING: THIS METHOD IS ONLY FOR DEMONSTRATIONAL PURPOSES!!! 
-	 * IT WILL REQUIRE RESPECTIVE DATABASE TABLES IN THE BACKEND, WHICH DON'T EXIST IN THE TEMPLATE.
-	 * 
-	 */
-	@GET
-	@Path("getUserEmail/{username}")
-	public HttpResponse getUserEmail(@PathParam("username") String username) {
-		String result = "";
-		Connection conn = null;
-		PreparedStatement stmnt = null;
-		ResultSet rs = null;
-		try {
-			// get connection from connection pool
-			conn = dbm.getConnection();
-			
-			// prepare statement
-			stmnt = conn.prepareStatement("SELECT email FROM users WHERE username = ?;");
-			stmnt.setString(1, username);
-			
-			// retrieve result set
-			rs = stmnt.executeQuery();
-			
-			// process result set
-			if (rs.next()) {
-				result = rs.getString(1);
-				
-				// setup resulting JSON Object
-				JSONObject ro = new JSONObject();
-				ro.put("email", result);
-
-				// return HTTP Response on success
-				HttpResponse r = new HttpResponse(ro.toJSONString());
-				r.setStatus(200);
-				return r;
-				
-			} else {
-				result = "No result for username " + username;
-				
-				// return HTTP Response on error
-				HttpResponse er = new HttpResponse(result);
-				er.setStatus(404);
-				return er;
-			}
-		} catch (Exception e) {
-			// return HTTP Response on error
-			HttpResponse er = new HttpResponse("Internal error: " + e.getMessage());
-			er.setStatus(500);
-			return er;
-		} finally {
-			// free resources
-			if (rs != null) {
-				try {
-					rs.close();
-				} catch (Exception e) {
-					Context.logError(this, e.getMessage());
-					
-					// return HTTP Response on error
-					HttpResponse er = new HttpResponse("Internal error: " + e.getMessage());
-					er.setStatus(500);
-					return er;
-				}
-			}
-			if (stmnt != null) {
-				try {
-					stmnt.close();
-				} catch (Exception e) {
-					Context.logError(this, e.getMessage());
-					
-					// return HTTP Response on error
-					HttpResponse er = new HttpResponse("Internal error: " + e.getMessage());
-					er.setStatus(500);
-					return er;
-				}
-			}
-			if (conn != null) {
-				try {
-					conn.close();
-				} catch (Exception e) {
-					Context.logError(this, e.getMessage());
-					
-					// return HTTP Response on error
-					HttpResponse er = new HttpResponse("Internal error: " + e.getMessage());
-					er.setStatus(500);
-					return er;
-				}
-			}
-		}
-	}
-
-	/**
-	 * Example method that shows how to change a user email address in a database.
-	 * 
-	 * WARNING: THIS METHOD IS ONLY FOR DEMONSTRATIONAL PURPOSES!!! 
-	 * IT WILL REQUIRE RESPECTIVE DATABASE TABLES IN THE BACKEND, WHICH DON'T EXIST IN THE TEMPLATE.
-	 * 
-	 */
-	@POST
-	@Path("setUserEmail/{username}/{email}")
-	public HttpResponse setUserEmail(@PathParam("username") String username, @PathParam("email") String email) {
 		
-		String result = "";
-		Connection conn = null;
-		PreparedStatement stmnt = null;
-		ResultSet rs = null;
-		try {
-			conn = dbm.getConnection();
-			stmnt = conn.prepareStatement("UPDATE users SET email = ? WHERE username = ?;");
-			stmnt.setString(1, email);
-			stmnt.setString(2, username);
-			int rows = stmnt.executeUpdate(); // same works for insert
-			result = "Database updated. " + rows + " rows affected";
-			
-			// return 
-			HttpResponse r = new HttpResponse(result);
-			r.setStatus(200);
-			return r;
-			
-		} catch (Exception e) {
-			// return HTTP Response on error
-			HttpResponse er = new HttpResponse("Internal error: " + e.getMessage());
-			er.setStatus(500);
-			return er;
-		} finally {
-			// free resources if exception or not
-			if (rs != null) {
-				try {
-					rs.close();
-				} catch (Exception e) {
-					Context.logError(this, e.getMessage());
-					
-					// return HTTP Response on error
-					HttpResponse er = new HttpResponse("Internal error: " + e.getMessage());
-					er.setStatus(500);
-					return er;
-				}
-			}
-			if (stmnt != null) {
-				try {
-					stmnt.close();
-				} catch (Exception e) {
-					Context.logError(this, e.getMessage());
-					
-					// return HTTP Response on error
-					HttpResponse er = new HttpResponse("Internal error: " + e.getMessage());
-					er.setStatus(500);
-					return er;
-				}
-			}
-			if (conn != null) {
-				try {
-					conn.close();
-				} catch (Exception e) {
-					Context.logError(this, e.getMessage());
-					
-					// return HTTP Response on error
-					HttpResponse er = new HttpResponse("Internal error: " + e.getMessage());
-					er.setStatus(500);
-					return er;
-				}
-			}
-		}
-	}
-	
 	/**
 	 * Retrieve Profile
 	 * Retrieves a profile 
@@ -267,7 +100,6 @@ public class IMServiceClass extends Service {
 	@GET
 	@Path("profile/{name}")
 	public HttpResponse retrieveProfile(@PathParam("name") String userName) {
-		String[] result = new String[6];
 		Connection conn = null;
 		PreparedStatement stmnt = null;
 		ResultSet rs = null;
@@ -284,17 +116,14 @@ public class IMServiceClass extends Service {
 			
 			// process result set
 			if (rs.next()) {
-				for (int i=1; i<=5; i++) {
-					result[i] = rs.getString(i);
-				}
 				
 				// setup resulting JSON Object
 				JSONObject ro = new JSONObject();
-				ro.put("email", result[1]);
-				ro.put("telephone", result[2]);
-				ro.put("imageLink", result[3]);
-				ro.put("nickname", result[4]);
-				ro.put("visible", result[5]);
+				ro.put("email", rs.getString(1));
+				ro.put("telephone", rs.getString(2));
+				ro.put("imageLink", rs.getString(3));
+				ro.put("nickname", rs.getString(4));
+				ro.put("visible", rs.getString(5));
 				
 				// return HTTP Response on success
 				HttpResponse r = new HttpResponse(ro.toJSONString());
@@ -302,10 +131,10 @@ public class IMServiceClass extends Service {
 				return r;
 				
 			} else {
-				result[0] = "No result for username " + userName;
+				String error = "No result for username " + userName;
 				
 				// return HTTP Response on error
-				HttpResponse er = new HttpResponse(result[0]);
+				HttpResponse er = new HttpResponse(error);
 				er.setStatus(404);
 				return er;
 			}
