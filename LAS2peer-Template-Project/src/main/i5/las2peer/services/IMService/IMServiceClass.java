@@ -179,7 +179,112 @@ public class IMServiceClass extends Service {
 	}
 
 	
-	//TODO Create Profile
+	/**	
+	 * Create Profile
+	 * 
+	 * @param content Data for creating the Profile encoded as JSON-String
+	 * @return Code if the sending was successfully
+	 */
+	@POST
+	@Path("profile")
+	@Consumes("application/json")
+	public HttpResponse createProfile(@ContentParam String content) {		
+		try 
+		{
+			String agentName = ((UserAgent) getActiveAgent()).getLoginName();
+			// convert string content to JSON object 
+			JSONObject profileObject = (JSONObject) JSONValue.parse(content);
+			String mail = (String) profileObject.get("email");
+			String tele = (String) profileObject.get("telephone");
+			String image = (String) profileObject.get("imageLink");
+			String nickName = (String) profileObject.get("nickname");
+			int visible = (int) profileObject.get("visible");				
+		
+			String result = "";
+			Connection conn = null;
+			PreparedStatement stmnt = null;
+			ResultSet rs = null;
+				
+			
+			try {
+					conn = dbm.getConnection();
+					
+					//check if profile already exist
+					stmnt = conn.prepareStatement("SELECT UserName FROM AccountProfile WHERE UserName = ?;");
+					stmnt.setString(1, agentName);
+					rs = stmnt.executeQuery();					
+						
+					// process result set
+					if(rs.next()) 
+					{
+						result = "The profile of" + agentName + "already exists!";
+						// return HTTP Response on error
+						HttpResponse er = new HttpResponse(result);
+						er.setStatus(409);
+						return er;
+					}
+							//Free stmnt
+							if (stmnt != null) {
+								try {
+									stmnt.close();
+								} catch (Exception e) {
+									Context.logError(this, e.getMessage());
+										
+									// return HTTP Response on error
+									HttpResponse er = new HttpResponse("Internal error: " + e.getMessage());
+									er.setStatus(500);
+									return er;
+								}
+					
+					//Create Profile				
+					stmnt = conn.prepareStatement("INSERT INTO AccountProfile (UserName, EMail, Telephone, ImageLink, NickName, Visible) VALUES (?, ?, ?, ?, ?, ?)");
+					stmnt.setString(1, agentName);
+					stmnt.setString(2, mail);
+					stmnt.setString(3, tele);
+					stmnt.setString(4, image);
+					stmnt.setString(5, nickName);
+					stmnt.setInt(6, visible);
+					
+					int rows = stmnt.executeUpdate();
+					if(rows == 1)
+						result = "Profile created successfully";
+					else
+					{
+						result = "Resource was not found";
+						// return HTTP Response on error
+						HttpResponse er = new HttpResponse(result);
+						er.setStatus(404);
+						return er;
+					}
+					
+					// return 
+					HttpResponse r = new HttpResponse(result);
+					r.setStatus(200);
+					return r;
+
+					
+			} catch (Exception e) {
+				// return HTTP Response on error
+				HttpResponse er = new HttpResponse("Internal error: " + e.getMessage());
+				er.setStatus(500);
+				return er;
+			} finally {
+				// free resources
+				HttpResponse response = freeRessources(conn, stmnt, rs);
+				if(response.getStatus() != 200)
+					return response;
+			}
+		}
+			catch (Exception e)
+			{
+				Context.logError(this, e.getMessage());
+				
+				// return HTTP Response on error
+				HttpResponse er = new HttpResponse("Content data in invalid format: " + e.getMessage());
+				er.setStatus(400);
+				return er;
+			}
+	}
 	
 	/**	
 	 * Updates a profile 
@@ -1727,7 +1832,7 @@ try {
 			stmnt = conn.prepareStatement("DELETE FROM MemberOf WHERE UserName = ? AND GroupName = ?;");
 			stmnt.setString(1, userName);
 			stmnt.setString(2, groupName);
-			int rows = stmnt.executeUpdate(); // same works for insert
+			int rows = stmnt.executeUpdate(); 
 			result = "Database updated. " + rows + " rows affected";
 			
 			// return 
