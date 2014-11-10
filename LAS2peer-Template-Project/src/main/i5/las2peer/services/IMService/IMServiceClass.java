@@ -196,9 +196,9 @@ public class IMServiceClass extends Service {
 	@Path("profile/{name}")
 	@Consumes("application/json")
 	public HttpResponse updateProfile(@PathParam("name") String userName, @ContentParam String content) {		
-		
 		try 
 		{
+			String agentName = ((UserAgent) getActiveAgent()).getLoginName();
 			// convert string content to JSON object 
 			JSONObject profileObject = (JSONObject) JSONValue.parse(content);
 			String mail = (String) profileObject.get("email");
@@ -214,6 +214,7 @@ public class IMServiceClass extends Service {
 				
 		
 			try {
+				if (agentName==userName){
 				conn = dbm.getConnection();
 				stmnt = conn.prepareStatement("UPDATE AccountProfile SET EMail = ?, Telephone = ?, ImageLink = ?, NickName = ?, Visible = ? WHERE UserName = ?;");
 				stmnt.setString(1, mail);
@@ -229,6 +230,15 @@ public class IMServiceClass extends Service {
 				HttpResponse r = new HttpResponse(result);
 				r.setStatus(200);
 				return r;
+				}
+				else
+				{
+					result = "You are not authorized to update the profile of " + userName + "!";
+					// return HTTP Response on error
+					HttpResponse er = new HttpResponse(result);
+					er.setStatus(403);
+					return er;
+				}
 				
 			} catch (Exception e) {
 				// return HTTP Response on error
