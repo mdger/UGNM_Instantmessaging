@@ -270,10 +270,9 @@ public class IMServiceClass extends Service {
 	}
 
 	/**
- 	 * Delete Profile 
    	 * Deletes a profile 
  	 * 
- 	 *@param UserName of the Profile to be deleted.
+ 	 *@param userName of the Profile to be deleted.
  	 */
 	@DELETE
 	@Path("profile/{name}")
@@ -284,20 +283,31 @@ public class IMServiceClass extends Service {
 		PreparedStatement stmnt = null;
 		ResultSet rs = null;
 		try {
-			if (agentName==userName){
-			conn = dbm.getConnection();
-			stmnt = conn.prepareStatement("DELETE FROM AccountProfile WHERE UserName = ?;");
-			stmnt.setString(1, userName);
-			int rows = stmnt.executeUpdate(); // same works for insert
-			result = "Database updated. " + rows + " rows affected";
-			
-			// return 
-			HttpResponse r = new HttpResponse(result);
-			r.setStatus(200);
-			return r;
+			if (agentName.equals(userName))
+			{
+				conn = dbm.getConnection();
+				stmnt = conn.prepareStatement("DELETE FROM AccountProfile WHERE UserName = ?;");
+				stmnt.setString(1, userName);
+				int rows = stmnt.executeUpdate(); // same works for insert
+				if(rows == 1)
+					result = "Profile successfully deleted!";
+				else
+				{
+					result = "Ressource was not found";
+					// return HTTP Response on error
+					HttpResponse er = new HttpResponse(result);
+					er.setStatus(404);
+					return er;
+				}
+				
+				// return 
+				HttpResponse r = new HttpResponse(result);
+				r.setStatus(200);
+				return r;
 			}
-			else{
-				result = "You are not authorized to delete the profle of " + userName + "!";
+			else
+			{
+				result = "You are not authorized to delete the profile of " + userName + "!";
 				// return HTTP Response on error
 				HttpResponse er = new HttpResponse(result);
 				er.setStatus(403);
@@ -309,46 +319,15 @@ public class IMServiceClass extends Service {
 			er.setStatus(500);
 			return er;
 		} finally {
-			// free resources if exception or not
-			if (rs != null) {
-				try {
-					rs.close();
-				} catch (Exception e) {
-					Context.logError(this, e.getMessage());
-					
-					// return HTTP Response on error
-					HttpResponse er = new HttpResponse("Internal error: " + e.getMessage());
-					er.setStatus(500);
-					return er;
-				}
-			}
-			if (stmnt != null) {
-				try {
-					stmnt.close();
-				} catch (Exception e) {
-					Context.logError(this, e.getMessage());
-					
-					// return HTTP Response on error
-					HttpResponse er = new HttpResponse("Internal error: " + e.getMessage());
-					er.setStatus(500);
-					return er;
-				}
-			}
-			if (conn != null) {
-				try {
-					conn.close();
-				} catch (Exception e) {
-					Context.logError(this, e.getMessage());
-					
-					// return HTTP Response on error
-					HttpResponse er = new HttpResponse("Internal error: " + e.getMessage());
-					er.setStatus(500);
-					return er;
-				}
-			}
+			// free resources
+			HttpResponse response = freeRessources(conn, stmnt, rs);
+			if(response.getStatus() != 200)
+				return response;
 		}
 	}
 
+	
+	
 	/**
 	 * This method returns messages which were send to an account. 
 	 * @param username The name of the user who got the messages
