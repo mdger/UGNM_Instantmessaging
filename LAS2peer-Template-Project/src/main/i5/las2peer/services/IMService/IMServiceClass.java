@@ -158,7 +158,7 @@ public class IMServiceClass extends Service {
 			}
 			else
 			{
-				String error = "No contact with the user " + userName;
+				String error = "The user " + userName + " is no contact!";
 				
 				// return HTTP Response on error
 				HttpResponse er = new HttpResponse(error);
@@ -225,7 +225,7 @@ public class IMServiceClass extends Service {
 						result = "Profile successfully updated";
 					else
 					{
-						result = "Ressource was not found";
+						result = "Resource was not found";
 						// return HTTP Response on error
 						HttpResponse er = new HttpResponse(result);
 						er.setStatus(404);
@@ -419,6 +419,91 @@ public class IMServiceClass extends Service {
 		}
 	}
 
+	//TODO Create Group
+	
+	/**
+	 * Updates a Group  
+	 * 
+	 * @param groupName of the Group to be updated 
+	 * @param content Data for updating the Profile encoded as JSON-String
+	 * @return Code if the sending was successfully
+	 */
+	@PUT
+	@Path("group/{groupname}")
+	@Consumes("application/json")
+	public HttpResponse updateGroup(@PathParam("groupname") String groupName, @ContentParam String content) {		
+		try 
+		{
+			// convert string content to JSON object 
+			JSONObject profileObject = (JSONObject) JSONValue.parse(content);
+			String name = (String) profileObject.get("name");
+			String founder = (String) profileObject.get("founder");
+			String desc = (String) profileObject.get("description");
+			String iLink = (String) profileObject.get("imageLink");		
+		
+			String result = "";
+			Connection conn = null;
+			PreparedStatement stmnt = null;
+			ResultSet rs = null;
+				
+			if(((UserAgent)getActiveAgent()).getLoginName().equals(founder))
+			{
+				try {
+					conn = dbm.getConnection();
+					stmnt = conn.prepareStatement("UPDATE Groups SET GroupName = ?, FounderName = ?, Description = ?, ImageLink = ? WHERE GroupName = ?;");
+					stmnt.setString(1, name);
+					stmnt.setString(2, founder);
+					stmnt.setString(3, desc);
+					stmnt.setString(4, iLink);
+					stmnt.setString(5, groupName);
+					int rows = stmnt.executeUpdate(); 
+					if(rows == 1)
+						result = "Group updated successfully";
+					else
+					{
+						// return HTTP Response on error
+						HttpResponse er = new HttpResponse("Resource does not exist!");
+						er.setStatus(404);
+						return er;
+					}
+					
+					// return 
+					HttpResponse r = new HttpResponse(result);
+					r.setStatus(200);
+					return r;
+					
+				} catch (Exception e) {
+					// return HTTP Response on error
+					HttpResponse er = new HttpResponse("Internal error: " + e.getMessage());
+					er.setStatus(500);
+					return er;
+				} finally {
+					// free resources
+					HttpResponse response = freeRessources(conn, stmnt, rs);
+					if(response.getStatus() != 200)
+						return response;
+				}
+			}
+			else
+			{
+				result = "You are not authorized to update the group " + groupName + "!";
+				// return HTTP Response on error
+				HttpResponse er = new HttpResponse(result);
+				er.setStatus(403);
+				return er;
+			}
+		}
+		catch (Exception e)
+		{
+			Context.logError(this, e.getMessage());
+			
+			// return HTTP Response on error
+			HttpResponse er = new HttpResponse("Content data in invalid format: " + e.getMessage());
+			er.setStatus(400);
+			return er;
+		}
+	}
+	
 	
 	
 	/**
@@ -1710,104 +1795,7 @@ try {
 
 	
 	
-	/**
-	 * Update Group given its name
-	 * Updates a Group  
-	 * 
-	 * @param GroupName of the Group to be updated 
-	 * @param content Data for updating the Profile encoded as JSON-String
-	 * @return Code if the sending was successfully
-	 */
-	@PUT
-	@Path("group/{name}")
-	@Consumes("application/json")
-	public HttpResponse updateGroup(@PathParam("name") String groupName, @ContentParam String content) {		
-		
-		try 
-		{
-			// convert string content to JSON object 
-			JSONObject profileObject = (JSONObject) JSONValue.parse(content);
-			String name = (String) profileObject.get("name");
-			String founder = (String) profileObject.get("founder");
-			String desc = (String) profileObject.get("description");
-			String iLink = (String) profileObject.get("imageLink");		
-		
-			String result = "";
-			Connection conn = null;
-			PreparedStatement stmnt = null;
-			ResultSet rs = null;
-				
-		
-			try {
-				conn = dbm.getConnection();
-				stmnt = conn.prepareStatement("UPDATE Groups SET GroupName = ?, FounderName = ?, Description = ?, ImageLink = ? WHERE GroupName = ?;");
-				stmnt.setString(1, name);
-				stmnt.setString(2, founder);
-				stmnt.setString(3, desc);
-				stmnt.setString(4, iLink);
-				int rows = stmnt.executeUpdate(); 
-				result = "Database updated. " + rows + " rows affected";
-				
-				// return 
-				HttpResponse r = new HttpResponse(result);
-				r.setStatus(200);
-				return r;
-				
-			} catch (Exception e) {
-				// return HTTP Response on error
-				HttpResponse er = new HttpResponse("Internal error: " + e.getMessage());
-				er.setStatus(500);
-				return er;
-			} finally {
-				// free resources if exception or not
-				if (rs != null) {
-					try {
-						rs.close();
-					} catch (Exception e) {
-						Context.logError(this, e.getMessage());
-						
-						// return HTTP Response on error
-						HttpResponse er = new HttpResponse("Internal error: " + e.getMessage());
-						er.setStatus(500);
-						return er;
-					}
-				}
-				if (stmnt != null) {
-					try {
-						stmnt.close();
-					} catch (Exception e) {
-						Context.logError(this, e.getMessage());
-						
-						// return HTTP Response on error
-						HttpResponse er = new HttpResponse("Internal error: " + e.getMessage());
-						er.setStatus(500);
-						return er;
-					}
-				}
-				if (conn != null) {
-					try {
-						conn.close();
-					} catch (Exception e) {
-						Context.logError(this, e.getMessage());
-						
-						// return HTTP Response on error
-						HttpResponse er = new HttpResponse("Internal error: " + e.getMessage());
-						er.setStatus(500);
-						return er;
-					}
-				}
-			}
-		}
-			catch (Exception e)
-			{
-				Context.logError(this, e.getMessage());
-				
-				// return HTTP Response on error
-				HttpResponse er = new HttpResponse("Content data in invalid format: " + e.getMessage());
-				er.setStatus(400);
-				return er;
-			}
-	}
+	
 	
 	/**
 		 * Delete Group 
