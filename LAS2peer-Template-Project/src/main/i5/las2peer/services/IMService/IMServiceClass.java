@@ -24,6 +24,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
+import java.sql.SQLException;
 
 import net.minidev.json.JSONArray;
 import net.minidev.json.JSONObject;
@@ -208,90 +209,38 @@ public class IMServiceClass extends Service {
 			try {
 				conn = dbm.getConnection();
 				
-				//check if profile already exist
-				stmnt = conn.prepareStatement("SELECT UserName FROM AccountProfile WHERE UserName = ?;");
-				stmnt.setString(1, agentName);
-				rs = stmnt.executeQuery();										
-					
-				// process result set
-				if(rs.next()) 
-				{
-					result = "The profile of" + agentName + "already exists!";
-					// return HTTP Response on error
-					HttpResponse er = new HttpResponse(result);
-					er.setStatus(409);
-					return er;
-				}
-
-				//Free stmnt
-				if (stmnt != null) {
-					try {
-						stmnt.close();
-					} catch (Exception e) {
-						Context.logError(this, e.getMessage());
-							
-						// return HTTP Response on error
-						HttpResponse er = new HttpResponse("Internal error: " + e.getMessage());
-						er.setStatus(500);
-						return er;
-					}
-				}
-				
-				//Create Profile				
-				stmnt = conn.prepareStatement("INSERT INTO AccountProfile (UserName, EMail, Telephone, ImageLink, NickName, Visible) VALUES (?, ?, ?, ?, ?, ?)");
-				stmnt.setString(1, agentName);
-				stmnt.setString(2, mail);
-				stmnt.setString(3, tele);
-				stmnt.setString(4, image);
-				stmnt.setString(5, nickName);
-				stmnt.setInt(6, visible);
-				
-				// process result set
-				if(rs.next()) 
-				{
-					result = "The profile of" + agentName + "already exists!";
-					// return HTTP Response on error
-					HttpResponse er = new HttpResponse(result);
-					er.setStatus(409);
-					return er;
-				}
-				
-				//Free stmnt
-				if (stmnt != null) {
-					try {
-						stmnt.close();
-					} catch (Exception e) {
-						Context.logError(this, e.getMessage());
-							
-						// return HTTP Response on error
-						HttpResponse er = new HttpResponse("Internal error: " + e.getMessage());
-						er.setStatus(500);
-						return er;
-					}
-				}
+				try {	
 			
-				//Create Profile				
-				stmnt = conn.prepareStatement("INSERT INTO AccountProfile (UserName, EMail, Telephone, ImageLink, NickName, Visible) VALUES (?, ?, ?, ?, ?, ?)");
-				stmnt.setString(1, agentName);
-				stmnt.setString(2, mail);
-				stmnt.setString(3, tele);
-				stmnt.setString(4, image);
-				stmnt.setString(5, nickName);
-				stmnt.setInt(6, visible);
-				
-				int rows = stmnt.executeUpdate();
-				if(rows == 1)
-					result = "Profile created successfully";
-				else
-				{
-					result = "Profile could not be created!";
-					// return HTTP Response on error
-					HttpResponse er = new HttpResponse(result);
-					er.setStatus(409);
-					return er;
+					//Create Profile				
+					stmnt = conn.prepareStatement("INSERT INTO AccountProfile (UserName, EMail, Telephone, ImageLink, NickName, Visible) VALUES (?, ?, ?, ?, ?, ?)");
+					stmnt.setString(1, agentName);
+					stmnt.setString(2, mail);
+					stmnt.setString(3, tele);
+					stmnt.setString(4, image);
+					stmnt.setString(5, nickName);
+					stmnt.setInt(6, visible);
+					
+					int rows = stmnt.executeUpdate();
+					if(rows == 1)
+						result = "Profile created successfully";
+					else
+					{
+						result = "Profile could not be created!";
+						// return HTTP Response on error
+						HttpResponse er = new HttpResponse(result);
+						er.setStatus(409);
+						return er;
+					}					
+					
+				} catch (SQLException e) {
+					if (e.getErrorCode() == 1022) {
+						HttpResponse er = new HttpResponse("Das Profil ist bereits vorhanden");					
+						er.setStatus(409);
+						return er;
+					}
 				}
 				
-				// return 
+				// Return Result
 				HttpResponse r = new HttpResponse(result);
 				r.setStatus(200);
 				return r;
