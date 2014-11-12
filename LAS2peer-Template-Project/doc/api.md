@@ -23,6 +23,19 @@ __Operations:__
 			* 403: Access denied
 			* 409: Could not create
 			
+* __Update Profile:__ Updates a profile of the active User
+ 	* __HTTP Method:__ PUT
+	* __Consumes:__ application/json; a JSON string in the following form `{'email':'email_val', 'telephone':'telephone_val', 'imageLink':'imageLink_val', 'nickname':'nickname_val', 'visible':'visible_val'}` ('email'=The email address of the contact, 'telephone'=The telephone number of the contact, 'imageLink'=The link of the profile image, 'nickname'=The nickname of the account, 'visible'=The visibility of the profile 1-Everyone 0-OnlyContacts)
+	* __Produces:__ -
+	* __Parameter:__ 
+	* __HTTP Status Codes:__
+		* Success: 200
+		* Errors:
+			* 400: Content data in invalid format
+			* 403: Access denied
+			* 404: Resource does not exist
+			
+			
 * __Delete Profile:__ Deletes the profile of the active User
  	* __HTTP Method:__ DELETE
 	* __Consumes:__ -
@@ -33,6 +46,7 @@ __Operations:__
 		* Errors:
 			* 403: Access denied
 			* 404: Resource does not exist
+			
 			
 
 __URL Template:__ /profile/{username}
@@ -50,18 +64,7 @@ __Operations:__
 			* 401: Restricted content
 			* 403: Access denied 
 			* 404: Resource does not exist
-						
-* __Update Profile:__ Updates a profile given its username
- 	* __HTTP Method:__ PUT
-	* __Consumes:__ application/json; a JSON string in the following form `{'email':'email_val', 'telephone':'telephone_val', 'imageLink':'imageLink_val', 'nickname':'nickname_val', 'visible':'visible_val'}` ('email'=The email address of the contact, 'telephone'=The telephone number of the contact, 'imageLink'=The link of the profile image, 'nickname'=The nickname of the account, 'visible'=The visibility of the profile 1-Everyone 0-OnlyContacts)
-	* __Produces:__ -
-	* __Parameter:__ 
-	* __HTTP Status Codes:__
-		* Success: 200
-		* Errors:
-			* 400: Content data in invalid format
-			* 403: Access denied
-			* 404: Resource does not exist
+				
 
 
 Group Resource
@@ -79,6 +82,7 @@ __Operations:__
 		* Success: 200
 		* Errors:
 			* 404: Resource does not exist
+			
 	
 * __Create Group:__ Creates a group given its name
  	* __HTTP Method:__ PUT
@@ -91,6 +95,7 @@ __Operations:__
 			* 400: Content data in invalid format
 			* 409: Could not create
 			
+			
 * __Update Group:__ Updates a group given its name
  	* __HTTP Method:__ PUT
 	* __Consumes:__ application/json; a JSON string in the following form `{'name':'name_val', 'founder':'founder_val', 'description':'description_val', 'imageLink':'imageLink_val'}` ('name'=The name of the group, 'founder'=The name of the founder of the group, 'description'=The description of the group, 'imageLink'=The link to the profile image of the group)
@@ -102,6 +107,7 @@ __Operations:__
 			* 400: Content data in invalid format
 			* 403: Access denied
 			* 404: Resource does not exist
+			
 
 * __Delete Group:__ Deletes a group given its name
  	* __HHTP Method:__ DELETE
@@ -113,6 +119,7 @@ __Operations:__
 		* Errors:
 			* 403: Access denied
 			* 404: Resource does not exist
+			
 			
 Contact Resource
 --
@@ -148,6 +155,7 @@ __Operations:__
 			* 400: Content data in invalid format
 			* 409: Could not create
 			
+			
 * __Delete Contact:__ Deletes a contact given its name
  	* __HTTP Method:__ DELETE
 	* __Consumes:__ -
@@ -176,6 +184,7 @@ __Operations:__
 			* 403: Access denied
 			* 404: resource does not exist
 			
+			
 * __Create Request:__ Sends a request to the contact given its username
  	* __HTTP Method:__ POST
 	* __Consumes:__ application/json; a JSON string in the following form `{'username':'username_val'}` ('username'=The username of the account to be requested
@@ -187,6 +196,7 @@ __Operations:__
 			* 400: Content data in invalid format
 			* 404: Resource does not exist
 			* 409: Could not create
+			
 
 * __Delete Request:__ Deletes a request given the other username to be deleted
  	* __HTTP Method:__ DELETE
@@ -198,6 +208,7 @@ __Operations:__
 		* Errors:
 			* 403: Access denied
 			* 404: Resource does not exist
+			
 			
 Single Message Resource
 --
@@ -216,6 +227,8 @@ __Operations:__
 			* 403: Access denied
 			* 404: Resource does not exist
 			
+			
+			
 * __Send Single Message:__ Sends a message to the contact given its username
  	* __HTTP Method:__ POST
 	* __Consumes:__ application/json; a JSON string in the following form `{'message':'message_val', 'timestamp':'timestamp_val'}` ('message'=The text of the message, 'timestamp'=The time the message was sent)
@@ -227,6 +240,7 @@ __Operations:__
 			* 400: Content data in invalid format
 			* 403: Access denied
 			* 404: Resource does not exist
+			
 
 Group Message Resource
 --
@@ -245,6 +259,7 @@ __Operations:__
 			* 403: Access denied
 			* 404: Resource does not exist
 			
+			
 * __Send Group Message:__ Sends a message to a group given its name
  	* __HTTP Method:__ POST
 	* __Consumes:__ application/json; a JSON string in the following form `{'message':'message_val', 'timestamp':'timestamp_val'}` ('message'=The text of the message, 'timestamp'=The time the message was sent)
@@ -257,6 +272,7 @@ __Operations:__
 			* 403: Access denied
 			* 404: Resource does not exist
 			* 409: Could not create
+			
 
 Unread Message Resource
 --
@@ -268,12 +284,13 @@ __Operations:__
 	* __HTTP Method:__ GET
 	* __Consumes:__ -
 	* __Produces:__ application/json; a JSON string in the following form `{'message':['messageID':'messageID_val','text':'text_val', 'timestamp':'timestamp_val', 'sender':'sender_val']}` ('message'=The messages of a conversation, 'text'=The message text, 'timestamp'=The time the message was sent, 'sender'=The sender of the message)
-	* __Parameter: authorization header, path parameter 'contact_username'
+	* __Parameter__: authorization header, path parameter 'contact_username'
 	* __HTTP Status Codes:__
 		* Success: 200
 		* Errors:
 			* 403: Access denied
 			* 404: Resource does not exist
+			
 			
 * __Set unread to read:__ Sets a message that was unread to the status read
  	* __HTTP Method:__ PUT
@@ -304,6 +321,7 @@ __Operations:__
 			* 403: Access denied
 			* 404: Resource does not exist
 			
+			
 * __Add Member:__ Adds a member to a group
  	* __HTTP Method:__ POST
 	* __Consumes:__ application/json; a JSON string in the following form `{'groupname':'groupname_val'}` ('groupname'=The name of the group the contact should be added to)
@@ -316,6 +334,7 @@ __Operations:__
 			* 403: Access denied
 			* 404: Resource does not exist
 			* 409: Could not create
+			
 
 * __Delete Member:__ Deletes a member out of a group given its name
  	* __HTTP Method:__ DELETE
