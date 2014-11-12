@@ -188,8 +188,68 @@ public class ServiceTest {
 		
     }
 	//TODO testUpdateGroup
+	public void testUpdateGroup()
+	{
+		MiniClient c = new MiniClient();
+		c.setAddressPort(HTTP_ADDRESS, HTTP_PORT);
+		
+		try
+		{
+			c.setLogin(Long.toString(testAgent.getId()), testPass);
+            ClientResponse result=c.sendRequest("PUT", mainPath +"group/groupname", ""); //testInput is the pathParam
+            assertEquals(200, result.getHttpCode());
+            assertTrue(result.getResponse().trim().contains("testInput")); //"testInput" name is part of response
+			System.out.println("Result of 'testExampleMethod': " + result.getResponse().trim());
+		}
+		catch(Exception e)
+		{
+			e.printStackTrace();
+			fail ( "Exception: " + e );
+		}
+		
+    }
 	//TODO testGetGroup
+	public void testGetGroup()
+	{
+		MiniClient c = new MiniClient();
+		c.setAddressPort(HTTP_ADDRESS, HTTP_PORT);
+		
+		try
+		{
+			c.setLogin(Long.toString(testAgent.getId()), testPass);
+            ClientResponse result=c.sendRequest("GET", mainPath +"group/groupname", ""); //testInput is the pathParam
+            assertEquals(200, result.getHttpCode());
+            assertTrue(result.getResponse().trim().contains("testInput")); //"testInput" name is part of response
+			System.out.println("Result of 'testExampleMethod': " + result.getResponse().trim());
+		}
+		catch(Exception e)
+		{
+			e.printStackTrace();
+			fail ( "Exception: " + e );
+		}
+		
+    }
 	//TODO testDeleteGroup
+	public void testDeleteGroup()
+	{
+		MiniClient c = new MiniClient();
+		c.setAddressPort(HTTP_ADDRESS, HTTP_PORT);
+		
+		try
+		{
+			c.setLogin(Long.toString(testAgent.getId()), testPass);
+            ClientResponse result=c.sendRequest("DELETE", mainPath +"group/groupname", ""); //testInput is the pathParam
+            assertEquals(200, result.getHttpCode());
+            assertTrue(result.getResponse().trim().contains("testInput")); //"testInput" name is part of response
+			System.out.println("Result of 'testExampleMethod': " + result.getResponse().trim());
+		}
+		catch(Exception e)
+		{
+			e.printStackTrace();
+			fail ( "Exception: " + e );
+		}
+		
+    }
 	
 	//TODO testGetMemberships
 	//TODO testAddMember
