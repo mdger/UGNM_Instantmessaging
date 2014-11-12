@@ -56,42 +56,7 @@ public class IMServiceClass extends Service {
 		dbm = new DatabaseManager(jdbcDriverClassName, jdbcLogin, jdbcPass, jdbcUrl, jdbcSchema);
 	}
 
-	/**
-	 * Simple function to validate a user login.
-	 * Basically it only serves as a "calling point" and does not really validate a user
-	 * (since this is done previously by LAS2peer itself, the user does not reach this method
-	 * if he or she is not authenticated).
-	 * 
-	 */
-	@GET
-	@Path("validate")
-	public HttpResponse validateLogin() {
-		String returnString = "";
-		returnString += "You are " + ((UserAgent) getActiveAgent()).getLoginName() + " and your login is valid!";
-		
-		HttpResponse res = new HttpResponse(returnString);
-		res.setStatus(200);
-		return res;
-	}
-
-	/**
-	 * Another example method.
-	 * 
-	 * @param myInput
-	 * 
-	 */
-	@POST
-	@Path("myMethodPath/{input}")
-	public HttpResponse exampleMethod(@PathParam("input") String myInput) {
-		String returnString = "";
-		returnString += "You have entered " + myInput + "!";
-		
-		HttpResponse res = new HttpResponse(returnString);
-		res.setStatus(200);
-		return res;
-		
-	}
-		
+			
 	/**
 	 * Retrieves a profile 
 	 * 
@@ -101,7 +66,7 @@ public class IMServiceClass extends Service {
 	@GET
 	@Path("profile/{username}")
 	@Produces("application/json")
-	public HttpResponse retrieveProfile(@PathParam("username") String userName) {
+	public HttpResponse getProfile(@PathParam("username") String userName) {
 		Connection conn = null;
 		PreparedStatement stmnt = null;
 		ResultSet rs = null;
@@ -423,7 +388,7 @@ public class IMServiceClass extends Service {
 	@GET
 	@Path("group/{groupname}")
 	@Produces("application/json")
-	public HttpResponse retrieveGroup(@PathParam("groupname") String groupName) {
+	public HttpResponse getGroup(@PathParam("groupname") String groupName) {
 		Connection conn = null;
 		PreparedStatement stmnt = null;
 		PreparedStatement stmnt1 = null; 
