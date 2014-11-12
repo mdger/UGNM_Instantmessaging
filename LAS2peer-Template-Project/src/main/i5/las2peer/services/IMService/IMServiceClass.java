@@ -339,7 +339,7 @@ public class IMServiceClass extends Service {
 					result = "Profile deleted successfully!";
 				else
 				{
-					result = "Ressource was not found";
+					result = "Resource was not found";
 					// return HTTP Response on error
 					HttpResponse er = new HttpResponse(result);
 					er.setStatus(404);
