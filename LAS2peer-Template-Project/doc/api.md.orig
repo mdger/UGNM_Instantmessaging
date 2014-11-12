@@ -242,7 +242,11 @@ __Operations:__
 		* Errors:
 			* 404: Resource does not exist
 			
-/* Beim ersten Testen wird diese Resource nicht beruecksichtig. Es kommt evtl. ��berarbeitung
+<<<<<<< HEAD
+/* Beim ersten Testen wird diese Resource nicht ber��cksichtig. Es kommt evtl. ��berarbeitung
+=======
+/* Beim ersten Testen wird diese Resource nicht ber¨¹cksichtig. Es kommt evtl. ¨¹berarbeitung
+>>>>>>> a8f0b0b6737f43d735371f40745fbe5b50968ff3
 Group Message Resource
 --
 __URL Template:__ /message/group/{groupname}
@@ -273,7 +277,11 @@ __Operations:__
 			* 403: Access denied
 			* 404: Resource does not exist
 			* 409: Could not create
-Beim ersten Testen wird diese Resource nicht beruecksichtig. Es kommt evtl. ��berarbeitung*/			
+<<<<<<< HEAD
+Beim ersten Testen wird diese Resource nicht ber��cksichtig. Es kommt evtl. ��berarbeitung*/			
+=======
+Beim ersten Testen wird diese Resource nicht ber¨¹cksichtig. Es kommt evtl. ¨¹berarbeitung*/			
+>>>>>>> a8f0b0b6737f43d735371f40745fbe5b50968ff3
 
 Unread Message Resource
 --
