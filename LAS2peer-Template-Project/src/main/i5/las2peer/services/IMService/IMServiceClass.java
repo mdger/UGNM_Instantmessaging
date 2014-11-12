@@ -1117,7 +1117,7 @@ public class IMServiceClass extends Service {
 		}
 	}
 	
-	/* vor¨¹bergehend auskommentiert
+	/* voruebergehend auskommentiert
 	/** This method sends a message to a group
 	 * @param userName The name of the group the message will be sent
 	 * @param content The content of the message encoded as JSON string
@@ -1235,7 +1235,7 @@ public class IMServiceClass extends Service {
 			return er;
 		}
 	}
-	vor¨¹bergehend auskommentiert */
+	voruebergehend auskommentiert */
 	
 
 	
