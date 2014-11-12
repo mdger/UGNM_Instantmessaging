@@ -136,15 +136,12 @@ __Operations:__
 			* 404: Resource does not exist
 
 
-__URL Template:__ profile/contact/{username}
-
-__Operations:__
 			
 * __Create Contact:__ Creates a Contact If the active User received a request from the contact
  	* __HTTP Method:__ POST
 	* __Consumes:__ application/json; a JSON string in the following form `{'username':'username'}` ('username'=The user who should be added)
 	* __Produces:__ -
-	* __Parameter:__ authorization header, path parameter 'username'
+	* __Parameter:__ authorization header,
 	* __HTTP Status Codes:__
 		* Success: 200
 		* Errors:
@@ -154,7 +151,7 @@ __Operations:__
 			
 * __Delete Contact:__ Deletes a contact given its name
  	* __HTTP Method:__ DELETE
-	* __Consumes:__ -
+	* __Consumes:__  application/json; a JSON string in the following form `{'username':'username'}` ('username'=The user who should be deleted)
 	* __Produces:__ -
 	* __Parameter:__ 
 	* __HTTP Status Codes:__
@@ -236,7 +233,7 @@ __Operations:__
 			* 403: Access denied
 			* 404: Resource does not exist
 			
-/* Beim ersten Testen wird diese Resource nicht ber¨¹cksichtig. Es kommt evtl. ¨¹berarbeitung
+/* Beim ersten Testen wird diese Resource nicht berï¿½ï¿½cksichtig. Es kommt evtl. ï¿½ï¿½berarbeitung
 Group Message Resource
 --
 __URL Template:__ /message/group/{groupname}
@@ -267,7 +264,7 @@ __Operations:__
 			* 403: Access denied
 			* 404: Resource does not exist
 			* 409: Could not create
-Beim ersten Testen wird diese Resource nicht ber¨¹cksichtig. Es kommt evtl. ¨¹berarbeitung*/			
+Beim ersten Testen wird diese Resource nicht berï¿½ï¿½cksichtig. Es kommt evtl. ï¿½ï¿½berarbeitung*/			
 
 Unread Message Resource
 --

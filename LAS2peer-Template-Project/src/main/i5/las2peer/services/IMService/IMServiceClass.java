@@ -247,7 +247,7 @@ public class IMServiceClass extends Service {
 	 * @return Code if the sending was successfully
 	 */
 	@PUT
-	@Path("profile/{username}")
+	@Path("profile")
 	@Consumes("application/json")
 	public HttpResponse updateProfile(@ContentParam String content) {		
 		try 
@@ -323,7 +323,7 @@ public class IMServiceClass extends Service {
  	 *@param userName of the Profile to be deleted.
  	 */
 	@DELETE
-	@Path("profile/{username}")
+	@Path("profile")
 	public HttpResponse deleteProfile() {
 		String agentName = ((UserAgent) getActiveAgent()).getLoginName();
 		String result = "";
@@ -703,13 +703,18 @@ public class IMServiceClass extends Service {
 	 * @return Success or not
 	 */
 	@DELETE 
-	@Path("contact/{username}")
-	public HttpResponse deleteContact(@PathParam("username") String userName) {
+	@Path("profile/contact")
+	public HttpResponse deleteContact(@ContentParam String content) {
 		String result ="";
 		String agentName = ((UserAgent)getActiveAgent()).getLoginName();
 		Connection conn = null;
 		PreparedStatement stmnt = null;
 		ResultSet rs = null;
+		
+		// convert string content to JSON object 
+					JSONObject contactObject = (JSONObject) JSONValue.parse(content);
+					String userName = (String) contactObject.get("username");
+		
 		try {
 			// get connection from connection pool
 			conn = dbm.getConnection();
