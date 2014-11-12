@@ -618,6 +618,13 @@ public class IMServiceClass extends Service {
 		}
 	}
 	
+	
+	
+	
+	
+	
+	
+	
 	/**
 	 * This method returns the contact list of a certain user. 
 	 * @param userName The name of the user whose contact list should be displayed
@@ -695,7 +702,71 @@ public class IMServiceClass extends Service {
 			}
 		}
 
-	//TODO Create Contact
+	
+	/**
+	 * This method accept a contact-request the active user got from an different user
+	 * 
+	 * @param content the username of the user requested
+	 * @return Code if the sending was successfully
+	 */
+	@PUT
+	@Consumes("application/json")
+	public HttpResponse createContact(@ContentParam String content)
+	{
+		try 
+		{
+			String result = "";
+			Connection conn = null;
+			PreparedStatement stmnt = null;
+			PreparedStatement stmnt1 = null;
+			ResultSet rs = null;		
+			
+			JSONObject contentObject = (JSONObject) JSONValue.parse(content);
+			String userName = (String) contentObject.get("username");
+			String agentName = (String) ((UserAgent) getActiveAgent()).getLoginName();
+			
+			try {
+				conn = dbm.getConnection();
+				
+				// Insert Contact into Contact Table
+				stmnt = conn.prepareStatement("INSERT INTO Contact (FirstUser, SecondUser) VALUES (?, ?);");				
+				stmnt.setString(1, userName);
+				stmnt.setString(2, agentName);
+				
+				int rows = stmnt.executeUpdate();
+				result = "Contacts updated. " + userName + " and " + agentName + " are Contacts now";
+				
+					//Delete Request from Request Table
+					HttpResponse zr = deleteRequest("{\"username\":\"" + userName + "\"}");
+				
+				// return 
+				HttpResponse r = new HttpResponse(result);
+				r.setStatus(200);
+				return r;
+				
+			} catch (Exception e) {
+				// return HTTP Response on error
+				HttpResponse er = new HttpResponse("Internal error: " + e.getMessage());
+				er.setStatus(500);
+				return er;
+			} finally {
+				
+				// free resources
+				HttpResponse response = freeRessources(conn, stmnt, rs);
+				if(response.getStatus() != 200)
+					return response;
+			}
+		}
+		catch (Exception e)
+		{
+			Context.logError(this, e.getMessage());
+			
+			// return HTTP Response on error
+			HttpResponse er = new HttpResponse("Content data in invalid format: " + e.getMessage());
+			er.setStatus(400);
+			return er;
+		}
+	}
 	
 	/**
 	 * This method deletes a contact from the contact list
@@ -1353,8 +1424,7 @@ public class IMServiceClass extends Service {
 	
 
 /**
- * This method sends a message from a user to a different user
- * @param userName The name of the user who gets the message
+ * This method sends a contact-request from the active user to a different user
  * @param content The content of the message encoded as JSON string
  * @return Code if the sending was successfully
  */
