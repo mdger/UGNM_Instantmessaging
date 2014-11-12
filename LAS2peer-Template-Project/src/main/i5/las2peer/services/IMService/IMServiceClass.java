@@ -624,7 +624,7 @@ public class IMServiceClass extends Service {
 	 * @return The data (username and nickname) of the contacts in the HTTP Response type 
 	 */
 	@GET	 
-	@Path("contact/{username}")
+	@Path("profile/contact/")
 	@Produces("application/json")
 	public HttpResponse getContacts() {
 		String agentName = ((UserAgent) getActiveAgent()).getLoginName();
@@ -1119,11 +1119,12 @@ public class IMServiceClass extends Service {
 		}
 	}
 	
+	/* vor¨¹bergehend auskommentiert
 	/** This method sends a message to a group
 	 * @param userName The name of the group the message will be sent
 	 * @param content The content of the message encoded as JSON string
 	 * @return Code if the sending was successfully
-	 */
+
 	@PUT
 	@Path("message/group/{name}")
 	@Consumes("application/json")
@@ -1236,7 +1237,7 @@ public class IMServiceClass extends Service {
 			return er;
 		}
 	}
-	
+	vor¨¹bergehend auskommentiert */
 	
 
 	
