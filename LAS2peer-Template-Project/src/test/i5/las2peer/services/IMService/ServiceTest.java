@@ -88,6 +88,12 @@ public class ServiceTest {
 	}
 	
 	
+	
+	
+	
+	
+	
+	
 	/**
 	 * Called after the tests have finished.
 	 * Shuts down the server and prints out the connector log file for reference.
@@ -114,8 +120,49 @@ public class ServiceTest {
 	
 	
 	
-	//TODO testCreatProfile
-	//TODO testUpdateProfile	
+	@Test
+	public void testCeateProfile()
+	{
+		MiniClient c = new MiniClient();
+		c.setAddressPort(HTTP_ADDRESS, HTTP_PORT);
+		
+		try
+		{
+			c.setLogin(Long.toString(testAgent.getId()), testPass);
+            ClientResponse result=c.sendRequest("POST", mainPath +"profile", "\"email\":\"test@mail.de\", \"telephone\":\"123456\", \"imageLink\":\"imageUrl\", \"nickname\":'TestNickName\", \"visible\":\"1\""); 
+            assertEquals(200, result.getHttpCode());
+            assertTrue(result.getResponse().trim().contains("successfully")); 
+			System.out.println("Result of 'testCreateProfile': " + result.getResponse().trim());
+		}
+		catch(Exception e)
+		{
+			e.printStackTrace();
+			fail ( "Exception: " + e );
+		}
+		
+    }
+	
+	@Test
+	public void testUpdateProfile()
+	{
+		MiniClient c = new MiniClient();
+		c.setAddressPort(HTTP_ADDRESS, HTTP_PORT);
+		
+		try
+		{
+			c.setLogin(Long.toString(testAgent.getId()), testPass);
+            ClientResponse result=c.sendRequest("PUT", mainPath +"profile", "{\"email\":\"test@mail.de\", \"telephone\":\"111111\", \"imageLink\":\"imageUrl\", \"nickname\":'NewNickName\", \"visible\":\"}"); 
+            assertEquals(200, result.getHttpCode());
+            assertTrue(result.getResponse().trim().contains("successfully")); 
+			System.out.println("Result of 'testUpdateProfile': " + result.getResponse().trim());
+		}
+		catch(Exception e)
+		{
+			e.printStackTrace();
+			fail ( "Exception: " + e );
+		}
+		
+    }
 	
 	/**
 	 * Tests GET PROFILE
@@ -131,9 +178,10 @@ public class ServiceTest {
 		{
 			c.setLogin(Long.toString(testAgent.getId()), testPass);
             ClientResponse result=c.sendRequest("GET", mainPath +"profile", "{'username':'" + testAgent.getLoginName() + "'}"); 
-           // assertEquals(200, result.getHttpCode());
-            //assertTrue(result.getResponse().trim().contains("")); // 
-			System.out.println("Result of 'testExampleMethod': " + result.getResponse().trim());
+            assertEquals(200, result.getHttpCode());
+            assertTrue(result.getResponse().trim().contains("NewNickName")); 
+            assertTrue(result.getResponse().trim().contains("test@mail.de")); 
+			System.out.println("Result of 'testGetProfile': " + result.getResponse().trim());
 		}
 		catch(Exception e)
 		{
@@ -143,9 +191,49 @@ public class ServiceTest {
 		
     }
 	
-	//TODO testDeleteProfile
+	@Test
+	public void testDeleteProfile()
+	{
+		MiniClient c = new MiniClient();
+		c.setAddressPort(HTTP_ADDRESS, HTTP_PORT);
+		
+		try
+		{
+			c.setLogin(Long.toString(testAgent.getId()), testPass);
+            ClientResponse result=c.sendRequest("DELETE", mainPath +"profile", ""); 
+            assertEquals(200, result.getHttpCode());
+            assertTrue(result.getResponse().trim().contains("successfully")); 
+			System.out.println("Result of 'testUpdateProfile': " + result.getResponse().trim());
+		}
+		catch(Exception e)
+		{
+			e.printStackTrace();
+			fail ( "Exception: " + e );
+		}
+		
+    }
 	
-	//TODO testCreateContact
+
+	@Test
+	public void testCeateContact()
+	{
+		MiniClient c = new MiniClient();
+		c.setAddressPort(HTTP_ADDRESS, HTTP_PORT);
+		
+		try
+		{
+			c.setLogin(Long.toString(testAgent.getId()), testPass);
+            ClientResponse result=c.sendRequest("POST", mainPath +"profile", "{\"username\":\"\"}"); 
+            assertEquals(200, result.getHttpCode());
+			System.out.println("Result of 'testCreateContact': " + result.getResponse().trim());
+		}
+		catch(Exception e)
+		{
+			e.printStackTrace();
+			fail ( "Exception: " + e );
+		}
+		
+    }
 	//TODO testGetContact
 	//TODO testDeleteContact
 	
