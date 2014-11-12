@@ -43,7 +43,7 @@ __Operations:__
  	* __HTTP Method:__ PUT
 	* __Consumes:__ application/json; a JSON string in the following form `{'email':'email_val', 'telephone':'telephone_val', 'imageLink':'imageLink_val', 'nickname':'nickname_val', 'visible':'visible_val'}` ('email'=The email adress of the contact, 'telephone'=The telephone number of the contact, 'imageLink'=The link of the profile image, 'nickname'=The nickname of the account, 'visible'=The visibility of the profile)
 	* __Produces:__ -
-	* __Parameter:__ authorization header, path parameter 'username'
+	* __Parameter:__ 
 	* __HTTP Status Codes:__
 		* Success: 200
 		* Errors:
@@ -55,7 +55,7 @@ __Operations:__
  	* __HTTP Method:__ DELETE
 	* __Consumes:__ -
 	* __Produces:__ -
-	* __Parameter:__ authorization header, path parameter 'username'
+	* __Parameter:__ 
 	* __HTTP Status Codes:__
 		* Success: 200
 		* Errors:
@@ -93,7 +93,7 @@ __Operations:__
  	* __HTTP Method:__ PUT
 	* __Consumes:__ application/json; a JSON string in the following form `{'name':'name_val', 'founder':'founder_val', 'description':'description_val', 'imageLink':'imageLink_val'}` ('name'=The name of the group, 'founder'=The name of the founder of the group, 'description'=The description of the group, 'imageLink'=The link to the profile image of the group)
 	* __Produces:__ -
-	* __Parameter:__ authorization header, path parameter 'groupname'
+	* __Parameter:__ 
 	* __HTTP Status Codes:__
 		* Success: 200
 		* Errors:
@@ -105,7 +105,7 @@ __Operations:__
  	* __HHTP Method:__ DELETE
 	* __Consumes:__ -
 	* __Produces:__ -
-	* __Parameter:__ authorization header, path parameter 'groupname'
+	* __Parameter:__ 
 	* __HTTP Status Codes:__
 		* Success: 200
 		* Errors:
@@ -122,7 +122,7 @@ __Operations:__
 	* __HTTP Method:__ GET
 	* __Consumes:__ -
 	* __Produces:__ application/json; a JSON string in the following form `{'contact':['nickname':'nickname_val', 'username':'username_val']}` ('contact'=The contacts of the user, 'nickname'=The nickname of one contact, 'username'=The username of the contact)
-	* __Parameter:__ authorization header, path parameter 'name'
+	* __Parameter:__ 
 	* __HTTP Status Codes:__
 		* Success: 200
 		* Errors:
@@ -144,7 +144,7 @@ __Operations:__
  	* __HTTP Method:__ DELETE
 	* __Consumes:__ -
 	* __Produces:__ -
-	* __Parameter:__ authorization header, path parameter 'name'
+	* __Parameter:__ 
 	* __HTTP Status Codes:__
 		* Success: 200
 		* Errors:
@@ -160,7 +160,7 @@ __Operations:__
 	* __HTTP Method:__ GET
 	* __Consumes:__ -
 	* __Produces:__ application/json; a JSON string in the following form `{'request':['nickname':'nickname_val', 'username':'username_val']}` ('request'=A request one user has done to this account, 'nickname'=The nickname of the account who requests, 'username'=The username of the account who requests)
-	* __Parameter:__ authorization header, path parameter 'username'
+	* __Parameter:__ 
 	* __HTTP Status Codes:__
 		* Success: 200
 		* Errors:
@@ -183,7 +183,7 @@ __Operations:__
  	* __HTTP Method:__ DELETE
 	* __Consumes:__ -
 	* __Produces:__ -
-	* __Parameter:__ authorization header, path parameter 'name'
+	* __Parameter:__ 
 	* __HTTP Status Codes:__
 		* Success: 200
 		* Errors:
@@ -200,7 +200,7 @@ __Operations:__
 	* __HTTP Method:__ GET
 	* __Consumes:__ -
 	* __Produces:__ application/json; a JSON string in the following form `{'message':['text':'text_val', 'timestamp':'timestamp_val', 'sender':'sender_val' ]}` ('message'=The messages of a conversation, 'text'=The message text, 'timestamp'=The time the message was sent, 'sender'=The sender of the message)
-	* __Parameter:__ authorization header, path parameter 'username'
+	* __Parameter:__ 
 	* __HTTP Status Codes:__
 		* Success: 200
 		* Errors:
@@ -259,7 +259,7 @@ __Operations:__
 	* __HTTP Method:__ GET
 	* __Consumes:__ -
 	* __Produces:__ application/json; a JSON string in the following form `{'message':['messageID':'messageID_val','text':'text_val', 'timestamp':'timestamp_val', 'sender':'sender_val']}` ('message'=The messages of a conversation, 'text'=The message text, 'timestamp'=The time the message was sent, 'sender'=The sender of the message)
-	* __Parameter:__ authorization header, path parameter 'name'
+	* __Parameter:
 	* __HTTP Status Codes:__
 		* Success: 200
 		* Errors:
