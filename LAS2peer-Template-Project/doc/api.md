@@ -47,7 +47,6 @@ __Operations:__
 		* Success: 200
 		* Errors:
 			* 400: Content data in invalid format
-			* 403: Access denied
 			* 404: Resource does not exist
 			
 			
@@ -59,7 +58,6 @@ __Operations:__
 	* __HTTP Status Codes:__
 		* Success: 200
 		* Errors:
-			* 403: Access denied
 			* 404: Resource does not exist
 			
 
@@ -135,7 +133,6 @@ __Operations:__
 	* __HTTP Status Codes:__
 		* Success: 200
 		* Errors:
-			* 403: Access denied
 			* 404: Resource does not exist
 
 
@@ -180,7 +177,6 @@ __Operations:__
 	* __HTTP Status Codes:__
 		* Success: 200
 		* Errors:
-			* 403: Access denied
 			* 404: resource does not exist
 			
 			

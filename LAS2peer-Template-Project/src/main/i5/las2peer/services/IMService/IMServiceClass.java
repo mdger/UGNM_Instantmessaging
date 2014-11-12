@@ -626,14 +626,12 @@ public class IMServiceClass extends Service {
 	@GET	 
 	@Path("contact/{username}")
 	@Produces("application/json")
-	public HttpResponse getContacts(@PathParam("username") String userName) {
+	public HttpResponse getContacts() {
 		String agentName = ((UserAgent) getActiveAgent()).getLoginName();
 		String result ="";
 		Connection conn = null;
 		PreparedStatement stmnt = null;
 		ResultSet rs = null;
-		if(agentName.equals(userName))
-		{
 			try {		
 				// get connection from connection pool
 				conn = dbm.getConnection();
@@ -641,8 +639,8 @@ public class IMServiceClass extends Service {
 				// prepare statement
 				stmnt = conn.prepareStatement("SELECT UserName, NickName from Contact, AccountProfile WHERE (FirstUser = ? AND SecondUser = UserName) & _"
 						+ "OR (SecondUser = ? AND FirstUser = UserName);");
-				stmnt.setString(1, userName);
-				stmnt.setString(2, userName);
+				stmnt.setString(1, agentName);
+				stmnt.setString(2, agentName);
 				
 				//prepare JSONArray
 				JSONArray contactArray = new JSONArray();
@@ -676,7 +674,7 @@ public class IMServiceClass extends Service {
 				}
 				else 
 				{
-					result = "No contact list found for " + userName + "!";
+					result = "No contact list found for " + agentName + "!";
 					
 					// return HTTP Response on error
 					HttpResponse er = new HttpResponse(result);
@@ -696,15 +694,7 @@ public class IMServiceClass extends Service {
 					return response;
 			}
 		}
-		else
-		{
-			result = "You are not authorized to see the contact list of " + userName + "!";
-			
-			// return HTTP Response on error
-			HttpResponse er = new HttpResponse(result);
-			er.setStatus(404);
-			return er;
-		}
+
 	}
 	
 	//TODO Create Contact
@@ -1258,7 +1248,8 @@ public class IMServiceClass extends Service {
 		 */
 	@GET
 	@Path("request/{name}")
-	public HttpResponse getRequests(@PathParam("name") String name) {
+	public HttpResponse getRequests() {
+		String agentName = ((UserAgent) getActiveAgent()).getLoginName();
 		String result ="";
 		Connection conn = null;
 		PreparedStatement stmnt = null;
@@ -1269,7 +1260,7 @@ public class IMServiceClass extends Service {
 			
 			// prepare statement
 			stmnt = conn.prepareStatement("select ap.UserName, ap.NickName from ContactRequest as cr, AccountProfile as ap where cr.To_UserName= ? AND cr.From_UserName=ap.UserName;");
-			stmnt.setString(1, name);
+			stmnt.setString(1, agentName);
 			
 			//prepare JSONArray
 			JSONArray contactArray = new JSONArray();
@@ -1303,7 +1294,7 @@ public class IMServiceClass extends Service {
 				}
 				else 
 				{
-					result = "No requests found for " + name + "!";
+					result = "No requests found for " + agentName + "!";
 					
 					// return HTTP Response on error
 					HttpResponse er = new HttpResponse(result);
@@ -1472,67 +1463,67 @@ public HttpResponse updateRequest(@PathParam("name") String userName)
 @DELETE
 @Path("request/{name}")
 public HttpResponse deleteRequest(@PathParam("name") String userName) {
-
-String result = "";
-Connection conn = null;
-PreparedStatement stmnt = null;
-ResultSet rs = null;
-try {
-	conn = dbm.getConnection();
-	stmnt = conn.prepareStatement("DELETE FROM ContactRequest WHERE (To_UserName = ? OR From_UserName = ?);");
-	stmnt.setString(1, userName);
-	int rows = stmnt.executeUpdate(); // same works for insert
-	result = "Database updated. " + rows + " rows affected";
-	
-	// return 
-	HttpResponse r = new HttpResponse(result);
-	r.setStatus(200);
-	return r;
-	
-} catch (Exception e) {
-	// return HTTP Response on error
-	HttpResponse er = new HttpResponse("Internal error: " + e.getMessage());
-	er.setStatus(500);
-	return er;
-} finally {
-	// free resources if exception or not
-	if (rs != null) {
-		try {
-			rs.close();
-		} catch (Exception e) {
-			Context.logError(this, e.getMessage());
-			
-			// return HTTP Response on error
-			HttpResponse er = new HttpResponse("Internal error: " + e.getMessage());
-			er.setStatus(500);
-			return er;
+	String agentName = ((UserAgent) getActiveAgent()).getLoginName();
+	String result = "";
+	Connection conn = null;
+	PreparedStatement stmnt = null;
+	ResultSet rs = null;
+	try {
+		conn = dbm.getConnection();
+		stmnt = conn.prepareStatement("DELETE FROM ContactRequest WHERE (To_UserName = ? OR From_UserName = ?);");
+		stmnt.setString(1, agentName);
+		int rows = stmnt.executeUpdate(); // same works for insert
+		result = "Database updated. " + rows + " rows affected";
+		
+		// return 
+		HttpResponse r = new HttpResponse(result);
+		r.setStatus(200);
+		return r;
+		
+	} catch (Exception e) {
+		// return HTTP Response on error
+		HttpResponse er = new HttpResponse("Internal error: " + e.getMessage());
+		er.setStatus(500);
+		return er;
+	} finally {
+		// free resources if exception or not
+		if (rs != null) {
+			try {
+				rs.close();
+			} catch (Exception e) {
+				Context.logError(this, e.getMessage());
+				
+				// return HTTP Response on error
+				HttpResponse er = new HttpResponse("Internal error: " + e.getMessage());
+				er.setStatus(500);
+				return er;
+			}
+		}
+		if (stmnt != null) {
+			try {
+				stmnt.close();
+			} catch (Exception e) {
+				Context.logError(this, e.getMessage());
+				
+				// return HTTP Response on error
+				HttpResponse er = new HttpResponse("Internal error: " + e.getMessage());
+				er.setStatus(500);
+				return er;
+			}
+		}
+		if (conn != null) {
+			try {
+				conn.close();
+			} catch (Exception e) {
+				Context.logError(this, e.getMessage());
+				
+				// return HTTP Response on error
+				HttpResponse er = new HttpResponse("Internal error: " + e.getMessage());
+				er.setStatus(500);
+				return er;
+			}
 		}
 	}
-	if (stmnt != null) {
-		try {
-			stmnt.close();
-		} catch (Exception e) {
-			Context.logError(this, e.getMessage());
-			
-			// return HTTP Response on error
-			HttpResponse er = new HttpResponse("Internal error: " + e.getMessage());
-			er.setStatus(500);
-			return er;
-		}
-	}
-	if (conn != null) {
-		try {
-			conn.close();
-		} catch (Exception e) {
-			Context.logError(this, e.getMessage());
-			
-			// return HTTP Response on error
-			HttpResponse er = new HttpResponse("Internal error: " + e.getMessage());
-			er.setStatus(500);
-			return er;
-		}
-	}
-}
 }
 
 	
