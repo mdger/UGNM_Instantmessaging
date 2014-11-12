@@ -82,7 +82,7 @@ __Operations:__
 			
 	
 * __Create Group:__ Creates a group given its name
- 	* __HTTP Method:__ PUT
+ 	* __HTTP Method:__ POST
 	* __Consumes:__ application/json; a JSON string in the following form `{'name':'name_val', 'founder':'founder_val', 'description':'description_val', 'imageLink':'imageLink_val'}` ('name'=The name of the group, 'founder'=The name of the founder of the group, 'description'=The description of the group, 'imageLink'=The link to the profile image of the group)
 	* __Produces:__ -
 	* __Parameter:__ path parameter 'groupname'
@@ -246,7 +246,7 @@ __Operations:__
 		* Errors:
 			* 404: Resource does not exist
 			
-/* Beim ersten Testen wird diese Resource nicht ber¨¹cksichtig. Es kommt evtl. ¨¹berarbeitung
+/* Beim ersten Testen wird diese Resource nicht berÂ¨Â¹cksichtig. Es kommt evtl. Â¨Â¹berarbeitung
 Group Message Resource
 --
 __URL Template:__ /message/group/{groupname}
@@ -277,7 +277,7 @@ __Operations:__
 			* 403: Access denied
 			* 404: Resource does not exist
 			* 409: Could not create
-Beim ersten Testen wird diese Resource nicht ber¨¹cksichtig. Es kommt evtl. ¨¹berarbeitung*/			
+Beim ersten Testen wird diese Resource nicht berÂ¨Â¹cksichtig. Es kommt evtl. Â¨Â¹berarbeitung*/			
 
 Unread Message Resource
 --
