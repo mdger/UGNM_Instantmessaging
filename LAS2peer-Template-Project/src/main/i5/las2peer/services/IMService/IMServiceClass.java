@@ -1251,7 +1251,7 @@ public class IMServiceClass extends Service {
 		 * @return The data (username and nickname) of the user who has sent a contact request in the HTTP Response type 
 		 */
 	@GET
-	@Path("request/{name}")
+	@Path("profile/contact/request")
 	public HttpResponse getRequests() {
 		String agentName = ((UserAgent) getActiveAgent()).getLoginName();
 		String result ="";
@@ -1359,9 +1359,8 @@ public class IMServiceClass extends Service {
  * @return Code if the sending was successfully
  */
 @PUT
-@Path("request/{name}")
 @Consumes("application/json")
-public HttpResponse updateRequest(@PathParam("name") String userName)
+public HttpResponse createRequest(@ContentParam String content)
 {
 	try 
 	{
@@ -1369,7 +1368,11 @@ public HttpResponse updateRequest(@PathParam("name") String userName)
 		Connection conn = null;
 		PreparedStatement stmnt = null;
 		PreparedStatement stmnt1 = null;
-		ResultSet rs = null;
+		ResultSet rs = null;		
+		
+		JSONObject contentObject = (JSONObject) JSONValue.parse(content);
+		String userName = (String) contentObject.get("username");
+		
 		try {
 			conn = dbm.getConnection();
 			
@@ -1465,13 +1468,19 @@ public HttpResponse updateRequest(@PathParam("name") String userName)
  *@param UserName of the Profile to be deleted.
  */
 @DELETE
-@Path("request/{name}")
-public HttpResponse deleteRequest(@PathParam("name") String userName) {
+@Consumes("application/json")
+@Path("profile/contact/request")
+public HttpResponse deleteRequest(@ContentParam String content) {
+	
 	String agentName = ((UserAgent) getActiveAgent()).getLoginName();
 	String result = "";
 	Connection conn = null;
 	PreparedStatement stmnt = null;
 	ResultSet rs = null;
+	
+	JSONObject contentObject = (JSONObject) JSONValue.parse(content);
+	String userName = (String) contentObject.get("username");
+	
 	try {
 		conn = dbm.getConnection();
 		stmnt = conn.prepareStatement("DELETE FROM ContactRequest WHERE (To_UserName = ? OR From_UserName = ?);");
