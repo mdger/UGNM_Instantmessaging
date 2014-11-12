@@ -457,8 +457,91 @@ public class IMServiceClass extends Service {
 		}
 	}
 
-	//TODO Create Group
-	
+	/**	
+	 * Creates a Group
+	 * 
+	 * @param content Data for creating the Profile encoded as JSON-String
+	 * @return Code if the sending was successfully
+	 */
+	@POST
+	@Path("group/{groupname}")
+	@Consumes("application/json")
+	public HttpResponse createGroup(@PathParam("groupname") String groupName,@ContentParam String content) {		
+		try 
+		{
+			// convert string content to JSON object 
+			JSONObject profileObject = (JSONObject) JSONValue.parse(content);
+			String gName = (String) profileObject.get("GroupName");
+			String founder = (String) profileObject.get("FounderName");
+			String desc = (String) profileObject.get("Description");
+			String img = (String) profileObject.get("ImageLink");
+		
+			String result = "";
+			Connection conn = null;
+			PreparedStatement stmnt = null;
+			ResultSet rs = null;
+				
+			
+			try {
+				conn = dbm.getConnection();
+				
+				try {	
+			
+					//Create Profile				
+					stmnt = conn.prepareStatement("INSERT INTO Groups (GroupName, FounderName, Description, ImageLink) VALUES (?, ?, ?, ?)");
+					stmnt.setString(1, gName);
+					stmnt.setString(2, founder);
+					stmnt.setString(3, desc);
+					stmnt.setString(4, img);
+					
+					int rows = stmnt.executeUpdate();
+					if(rows == 1)
+						result = "The Group was created successfully";
+					else
+					{
+						result = "The Group could not be created!";
+						// return HTTP Response on error
+						HttpResponse er = new HttpResponse(result);
+						er.setStatus(409);
+						return er;
+					}					
+					
+				} catch (SQLException e) {
+					if (e.getErrorCode() == 1022) {
+						HttpResponse er = new HttpResponse("The Group with the following name " + gName + " already exists!");					
+						er.setStatus(409);
+						return er;
+					}
+				}
+				
+				// Return Result
+				HttpResponse r = new HttpResponse(result);
+				r.setStatus(200);
+				return r;
+
+					
+			} catch (Exception e) {
+				// return HTTP Response on error
+				HttpResponse er = new HttpResponse("Internal error: " + e.getMessage());
+				er.setStatus(500);
+				return er;
+			} finally {
+				// free resources
+				HttpResponse response = freeRessources(conn, stmnt, rs);
+				if(response.getStatus() != 200)
+					return response;
+			}
+		}
+		catch (Exception e)
+		{
+			Context.logError(this, e.getMessage());
+			
+			// return HTTP Response on error
+			HttpResponse er = new HttpResponse("Content data in invalid format: " + e.getMessage());
+			er.setStatus(400);
+			return er;
+		}
+	}	
 	/**
 	 * Updates a Group  
 	 * 

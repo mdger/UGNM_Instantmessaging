@@ -14,6 +14,7 @@ import i5.las2peer.webConnector.client.MiniClient;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
+import java.security.acl.Group;
 
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
@@ -37,6 +38,12 @@ public class ServiceTest {
 	
 	private static UserAgent testAgent;
 	private static final String testPass = "adamspass";
+	
+	private static UserAgent testAgent2;
+	private static final String testPass2 = "adamspass";
+	
+	private static UserAgent testAgent3;
+	private static final String testPass3 = "adamspass";
 	
 	private static final String testServiceClass = "i5.las2peer.services.IMService.IMServiceClass";
 	
@@ -223,7 +230,7 @@ public class ServiceTest {
 		try
 		{
 			c.setLogin(Long.toString(testAgent.getId()), testPass);
-            ClientResponse result=c.sendRequest("POST", mainPath +"profile", "{\"username\":\"\"}"); 
+            ClientResponse result=c.sendRequest("POST", mainPath +"profile/contact", "{\"username\":\"testAgent2.getLoginName()\"}"); 
             assertEquals(200, result.getHttpCode());
 			System.out.println("Result of 'testCreateContact': " + result.getResponse().trim());
 		}
@@ -234,8 +241,50 @@ public class ServiceTest {
 		}
 		
     }
-	//TODO testGetContact
-	//TODO testDeleteContact
+	
+	
+	@Test
+	public void testGetContact()
+	{
+		MiniClient c = new MiniClient();
+		c.setAddressPort(HTTP_ADDRESS, HTTP_PORT);
+		
+		try
+		{
+			c.setLogin(Long.toString(testAgent.getId()), testPass);
+            ClientResponse result=c.sendRequest("GET", mainPath +"profile/contact", ""); 
+            assertEquals(200, result.getHttpCode());
+            assertTrue(result.getResponse().trim().contains(testAgent.getLoginName())); 
+			System.out.println("Result of 'testCreateContact': " + result.getResponse().trim());
+		}
+		catch(Exception e)
+		{
+			e.printStackTrace();
+			fail ( "Exception: " + e );
+		}
+		
+    }
+	
+	@Test
+	public void testDeleteContact()
+	{
+		MiniClient c = new MiniClient();
+		c.setAddressPort(HTTP_ADDRESS, HTTP_PORT);
+		
+		try
+		{
+			c.setLogin(Long.toString(testAgent.getId()), testPass);
+            ClientResponse result=c.sendRequest("DELETE", mainPath +"profile/contact", ""); 
+            assertEquals(200, result.getHttpCode());
+            System.out.println("Result of 'testCreateContact': " + result.getResponse().trim());
+		}
+		catch(Exception e)
+		{
+			e.printStackTrace();
+			fail ( "Exception: " + e );
+		}
+		
+    }
 	
 	//TODO testCreateRequest
 	//TODO testGetRequest
