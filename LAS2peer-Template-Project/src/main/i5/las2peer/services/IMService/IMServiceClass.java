@@ -249,7 +249,7 @@ public class IMServiceClass extends Service {
 	@PUT
 	@Path("profile/{username}")
 	@Consumes("application/json")
-	public HttpResponse updateProfile(@PathParam("username") String userName, @ContentParam String content) {		
+	public HttpResponse updateProfile(@ContentParam String content) {		
 		try 
 		{
 			String agentName = ((UserAgent) getActiveAgent()).getLoginName();
@@ -268,8 +268,6 @@ public class IMServiceClass extends Service {
 				
 			
 			try {
-				if (agentName.equals(userName))
-				{
 					conn = dbm.getConnection();
 					stmnt = conn.prepareStatement("UPDATE AccountProfile SET EMail = ?, Telephone = ?, ImageLink = ?, NickName = ?, Visible = ? WHERE UserName = ?;");
 					stmnt.setString(1, mail);
@@ -277,7 +275,7 @@ public class IMServiceClass extends Service {
 					stmnt.setString(3, image);
 					stmnt.setString(4, nickName);
 					stmnt.setInt(5, visible);
-					stmnt.setString(6, userName);
+					stmnt.setString(6, agentName);
 					int rows = stmnt.executeUpdate();
 					if(rows == 1)
 						result = "Profile updated successfully";
@@ -294,15 +292,7 @@ public class IMServiceClass extends Service {
 					HttpResponse r = new HttpResponse(result);
 					r.setStatus(200);
 					return r;
-				}
-				else
-				{
-					result = "You are not authorized to update the profile of " + userName + "!";
-					// return HTTP Response on error
-					HttpResponse er = new HttpResponse(result);
-					er.setStatus(403);
-					return er;
-				}
+
 				
 			} catch (Exception e) {
 				// return HTTP Response on error
@@ -334,18 +324,16 @@ public class IMServiceClass extends Service {
  	 */
 	@DELETE
 	@Path("profile/{username}")
-	public HttpResponse deleteProfile(@PathParam("username") String userName) {
+	public HttpResponse deleteProfile() {
 		String agentName = ((UserAgent) getActiveAgent()).getLoginName();
 		String result = "";
 		Connection conn = null;
 		PreparedStatement stmnt = null;
 		ResultSet rs = null;
 		try {
-			if (agentName.equals(userName))
-			{
 				conn = dbm.getConnection();
 				stmnt = conn.prepareStatement("DELETE FROM AccountProfile WHERE UserName = ?;");
-				stmnt.setString(1, userName);
+				stmnt.setString(1, agentName);
 				int rows = stmnt.executeUpdate(); // same works for insert
 				if(rows == 1)
 					result = "Profile deleted successfully!";
@@ -362,15 +350,7 @@ public class IMServiceClass extends Service {
 				HttpResponse r = new HttpResponse(result);
 				r.setStatus(200);
 				return r;
-			}
-			else
-			{
-				result = "You are not authorized to delete the profile of " + userName + "!";
-				// return HTTP Response on error
-				HttpResponse er = new HttpResponse(result);
-				er.setStatus(403);
-				return er;
-			}
+
 		} catch (Exception e) {
 			// return HTTP Response on error
 			HttpResponse er = new HttpResponse("Internal error: " + e.getMessage());
