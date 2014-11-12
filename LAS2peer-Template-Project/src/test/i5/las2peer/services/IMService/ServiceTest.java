@@ -114,13 +114,11 @@ public class ServiceTest {
 	
 	
 	
-
-	
+	//TODO testCreatProfile
+	//TODO testUpdateProfile	
 	
 	/**
-	 * 
 	 * Tests GET PROFILE
-	 * 
 	 */
 	
 	@Test
@@ -145,14 +143,30 @@ public class ServiceTest {
 		
     }
 	
+	//TODO testDeleteProfile
 	
-	/**
-	 * 
-	 * Tests Update PROFILE
-	 * 
-	 */
+	//TODO testCreateContact
+	//TODO testGetContact
+	//TODO testDeleteContact
 	
+	//TODO testCreateRequest
+	//TODO testGetRequest
+	//TODO testDeleteRequest
 	
+	//TODO testGetSingleMessage
+	//TODO testSendSingleMessage
+	
+	//TODO testGetUnreadMessages
+	//TODO testSetUnreadMessages
+	
+	//TODO testCreateGroup
+	//TODO testUpdateGroup
+	//TODO testGetGroup
+	//TODO testDeleteGroup
+	
+	//TODO testGetMemberships
+	//TODO testAddMember
+	//TODO testDeleteMember
 	
 	
 	/**
