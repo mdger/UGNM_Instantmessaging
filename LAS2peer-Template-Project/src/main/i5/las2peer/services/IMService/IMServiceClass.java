@@ -695,8 +695,6 @@ public class IMServiceClass extends Service {
 			}
 		}
 
-	}
-	
 	//TODO Create Contact
 	
 	/**
