@@ -240,7 +240,7 @@ __Operations:__
 			* 403: Access denied
 			* 404: Resource does not exist
 			
-
+/* Beim ersten Testen wird diese Resource nicht ber¨¹cksichtig. Es kommt evtl. ¨¹berarbeitung
 Group Message Resource
 --
 __URL Template:__ /message/group/{groupname}
@@ -271,7 +271,7 @@ __Operations:__
 			* 403: Access denied
 			* 404: Resource does not exist
 			* 409: Could not create
-			
+Beim ersten Testen wird diese Resource nicht ber¨¹cksichtig. Es kommt evtl. ¨¹berarbeitung*/			
 
 Unread Message Resource
 --
