@@ -23,6 +23,21 @@ __Operations:__
 			* 403: Access denied
 			* 409: Could not create
 			
+			
+* __Get Profile:__ Retrieves a profile given its username
+	* __HTTP Method:__ GET
+	* __Consumes:__ application/json; a JSON string in the following form `{'username':'username_val'}` ('username'= the username of the profile to be retrieved')
+	* __Produces:__ application/json; a JSON string in the following form `{'email':'email_val', 'telephone':'telephone_val', 'imageLink':'imageLink_val', 'nickname':'nickname_val', 'visible':'visible_val'}` ('email'=The email address of the contact, 'telephone'=The telephone number of the contact, 'imageLink'=The link of the profile image, 'nickname'=The nickname of the account, 'visible'=The visibility of the profile 1-Everyone 0-OnlyContacts)
+	* __Parameter:__ authorization header
+	* __HTTP Status Codes:__
+		* Success: 200
+		* Errors:
+			* 401: Restricted content
+			* 403: Access denied 
+			* 404: Resource does not exist
+			
+						
+			
 * __Update Profile:__ Updates a profile of the active User
  	* __HTTP Method:__ PUT
 	* __Consumes:__ application/json; a JSON string in the following form `{'email':'email_val', 'telephone':'telephone_val', 'imageLink':'imageLink_val', 'nickname':'nickname_val', 'visible':'visible_val'}` ('email'=The email address of the contact, 'telephone'=The telephone number of the contact, 'imageLink'=The link of the profile image, 'nickname'=The nickname of the account, 'visible'=The visibility of the profile 1-Everyone 0-OnlyContacts)
@@ -47,24 +62,8 @@ __Operations:__
 			* 403: Access denied
 			* 404: Resource does not exist
 			
+
 			
-
-__URL Template:__ /profile/{username}
-
-__Operations:__
-
-* __Get Profile:__ Retrieves a profile given its username
-	* __HTTP Method:__ GET
-	* __Consumes:__ -
-	* __Produces:__ application/json; a JSON string in the following form `{'email':'email_val', 'telephone':'telephone_val', 'imageLink':'imageLink_val', 'nickname':'nickname_val', 'visible':'visible_val'}` ('email'=The email address of the contact, 'telephone'=The telephone number of the contact, 'imageLink'=The link of the profile image, 'nickname'=The nickname of the account, 'visible'=The visibility of the profile 1-Everyone 0-OnlyContacts)
-	* __Parameter:__ authorization header, path parameter 'username'
-	* __HTTP Status Codes:__
-		* Success: 200
-		* Errors:
-			* 401: Restricted content
-			* 403: Access denied 
-			* 404: Resource does not exist
-				
 
 
 Group Resource

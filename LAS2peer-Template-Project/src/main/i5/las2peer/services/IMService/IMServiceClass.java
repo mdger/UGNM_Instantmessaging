@@ -64,15 +64,20 @@ public class IMServiceClass extends Service {
 	 * @result Profile Data
 	 */
 	@GET
-	@Path("profile/{username}")
+	@Path("profile")
+	@Consumes("application/json")
 	@Produces("application/json")
-	public HttpResponse getProfile(@PathParam("username") String userName) {
+	public HttpResponse getProfile(@ContentParam String content) {
 		Connection conn = null;
 		PreparedStatement stmnt = null;
 		ResultSet rs = null;
 		try {
 			// get connection from connection pool
 			conn = dbm.getConnection();
+			
+			// convert string content to JSON object 
+			JSONObject profileObject = (JSONObject) JSONValue.parse(content);
+			String userName = (String) profileObject.get("userName");
 			
 			// prepare statement
 			stmnt = conn.prepareStatement("SELECT EMail, Telephone, ImageLink, NickName, Visible FROM AccountProfile WHERE UserName = ?;");

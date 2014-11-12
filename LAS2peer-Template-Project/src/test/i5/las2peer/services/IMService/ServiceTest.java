@@ -40,7 +40,7 @@ public class ServiceTest {
 	
 	private static final String testServiceClass = "i5.las2peer.services.IMService.IMServiceClass";
 	
-	private static final String mainPath = "example/";
+	private static final String mainPath = "im/";
 	
 	
 	/**
@@ -113,12 +113,54 @@ public class ServiceTest {
     }
 	
 	
+	
+
+	
+	
+	/**
+	 * 
+	 * Tests GET PROFILE
+	 * 
+	 */
+	
+	@Test
+	public void testGetProfile()
+	{
+		MiniClient c = new MiniClient();
+		c.setAddressPort(HTTP_ADDRESS, HTTP_PORT);
+		
+		try
+		{
+			c.setLogin(Long.toString(testAgent.getId()), testPass);
+            ClientResponse result=c.sendRequest("GET", mainPath +"profile", "{'username':'" + testAgent.getLoginName() + "'}"); 
+           // assertEquals(200, result.getHttpCode());
+            //assertTrue(result.getResponse().trim().contains("")); // 
+			System.out.println("Result of 'testExampleMethod': " + result.getResponse().trim());
+		}
+		catch(Exception e)
+		{
+			e.printStackTrace();
+			fail ( "Exception: " + e );
+		}
+		
+    }
+	
+	
+	/**
+	 * 
+	 * Tests Update PROFILE
+	 * 
+	 */
+	
+	
+	
+	
 	/**
 	 * 
 	 * Tests the validate method.
 	 * 
 	 */
-	@Test
+	
 	public void testValidateLogin()
 	{
 		MiniClient c = new MiniClient();
@@ -147,7 +189,7 @@ public class ServiceTest {
 	 * which we give the value "testInput" in this test.
 	 * 
 	 */
-	@Test
+	
 	public void testExampleMethod()
 	{
 		MiniClient c = new MiniClient();
