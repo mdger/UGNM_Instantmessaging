@@ -320,7 +320,7 @@ public class IMServiceClass extends Service {
 	/**
    	 * Deletes a profile 
  	 * 
- 	 *@param userName of the Profile to be deleted.
+ 	 *
  	 */
 	@DELETE
 	@Path("profile")
@@ -797,7 +797,7 @@ public class IMServiceClass extends Service {
 			stmnt.setString(3, agentName);
 			stmnt.setString(4, userName);
 			int rows = stmnt.executeUpdate();
-			if(rows == 1)
+			if(rows ==1)
 			{
 				result = "Contact deleted succesfully!";
 				//return
@@ -952,6 +952,54 @@ public class IMServiceClass extends Service {
 			}
 		}
 	}
+	
+	/**
+   	 * Deletes a message 
+ 	 * 
+ 	 *@param userName of the Message sender.
+ 	 */
+	@DELETE
+	@Path("message/{username}")
+	public HttpResponse deleteMessage(@PathParam("name") String userName) {
+		String agentName = ((UserAgent) getActiveAgent()).getLoginName();
+		String result = "";
+		Connection conn = null;
+		PreparedStatement stmnt = null;
+		ResultSet rs = null;
+		try {
+				conn = dbm.getConnection();
+				stmnt = conn.prepareStatement("delete Message from Message as m inner join SendingSingle as s on s.Receiver=? and s.Sender=? and m.MessageID=s.MessageID;");
+				stmnt.setString(1, agentName);
+				stmnt.setString(2, userName);
+				int rows = stmnt.executeUpdate(); // same works for insert
+				if(rows != 0)
+					result = "Messages deleted successfully!";
+				else
+				{
+					result = "No Message was found";
+					// return HTTP Response on error
+					HttpResponse er = new HttpResponse(result);
+					er.setStatus(404);
+					return er;
+				}
+				
+				// return 
+				HttpResponse r = new HttpResponse(result);
+				r.setStatus(200);
+				return r;
+
+		} catch (Exception e) {
+			// return HTTP Response on error
+			HttpResponse er = new HttpResponse("Internal error: " + e.getMessage());
+			er.setStatus(500);
+			return er;
+		} finally {
+			// free resources
+			HttpResponse response = freeRessources(conn, stmnt, rs);
+			if(response.getStatus() != 200)
+				return response;
+		}
+	}
 
 	/**
 	 * This method sends a message from a user to a different user
@@ -1072,11 +1120,11 @@ public class IMServiceClass extends Service {
 		}
 	}
 	
-	/**
+	/** vor¨¹bergehend auslassen
 	 * This method returns the messages in a group. 
 	 * @param groupName The name of the group in which the messages are sent
 	 * @return The messages sent in a group as JSON String 
-	 */
+	 
 	@GET
 	@Path("message/group/{name}")
 	public HttpResponse getGroupMessages(@PathParam("name") String groupName)
@@ -1192,6 +1240,7 @@ public class IMServiceClass extends Service {
 			}
 		}
 	}
+	*/ 
 	
 	/* voruebergehend auskommentiert
 	/** This method sends a message to a group
