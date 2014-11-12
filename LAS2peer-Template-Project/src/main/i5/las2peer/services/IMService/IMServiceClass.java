@@ -31,10 +31,10 @@ import net.minidev.json.JSONObject;
 import net.minidev.json.JSONValue;
 
 /**
- * LAS2peer Service
+ * IM Service
  * 
- * This is a template for a very basic LAS2peer service
- * that uses the LAS2peer Web-Connector for RESTful access to it.
+ * This is a IM Service for users to communicate with each other.
+ * Enjoy it!
  * 
  */
 @Path("im")
