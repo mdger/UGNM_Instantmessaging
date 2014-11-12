@@ -14,6 +14,7 @@ import i5.las2peer.webConnector.client.MiniClient;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
+import java.security.acl.Group;
 
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
@@ -37,6 +38,12 @@ public class ServiceTest {
 	
 	private static UserAgent testAgent;
 	private static final String testPass = "adamspass";
+	
+	private static UserAgent testAgent2;
+	private static final String testPass2 = "adamspass";
+	
+	private static UserAgent testAgent3;
+	private static final String testPass3 = "adamspass";
 	
 	private static final String testServiceClass = "i5.las2peer.services.IMService.IMServiceClass";
 	
