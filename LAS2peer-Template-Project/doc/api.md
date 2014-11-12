@@ -211,7 +211,7 @@ __URL Template:__ /message/single/{username}
 
 __Operations:__
 
-* __Get Single Message:__ Retrieves the single messages for an conversation with a contact given its name and deletes read messages older than 30 days and unread older than 90 days
+* __Get Single Message:__ Retrieves the single messages for an conversation with a contact given its name
 	* __HTTP Method:__ GET
 	* __Consumes:__ -
 	* __Produces:__ application/json; a JSON string in the following form `{'message':['text':'text_val', 'timestamp':'timestamp_val', 'sender':'sender_val' ]}` ('message'=The messages of a conversation, 'text'=The message text, 'timestamp'=The time the message was sent, 'sender'=The sender of the message)
@@ -234,6 +234,16 @@ __Operations:__
 		* Errors:
 			* 400: Content data in invalid format
 			* 403: Access denied
+			* 404: Resource does not exist
+			
+* __Delete Message:__ Deletes a message given the name of its sender
+ 	* __HTTP Method:__ DELETE
+	* __Consumes:__ -
+	* __Produces:__ -
+	* __Parameter:__ path parameter 'username' (username of conversation partner)
+	* __HTTP Status Codes:__
+		* Success: 200
+		* Errors:
 			* 404: Resource does not exist
 			
 /* Beim ersten Testen wird diese Resource nicht ber¨¹cksichtig. Es kommt evtl. ¨¹berarbeitung
