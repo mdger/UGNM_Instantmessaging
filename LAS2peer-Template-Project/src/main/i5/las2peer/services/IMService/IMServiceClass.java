@@ -801,7 +801,6 @@ public class IMServiceClass extends Service {
 			String result = "";
 			Connection conn = null;
 			PreparedStatement stmnt = null;
-			PreparedStatement stmnt1 = null;
 			ResultSet rs = null;		
 			
 			JSONObject contentObject = (JSONObject) JSONValue.parse(content);
@@ -1203,7 +1202,7 @@ public class IMServiceClass extends Service {
 		}
 	}
 	
-	/** vor¨¹bergehend auslassen
+	/** vorï¿½ï¿½bergehend auslassen
 	 * This method returns the messages in a group. 
 	 * @param groupName The name of the group in which the messages are sent
 	 * @return The messages sent in a group as JSON String 

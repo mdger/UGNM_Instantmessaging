@@ -222,7 +222,7 @@ public class ServiceTest {
 	
 
 	@Test
-	public void testCeateContact()
+	public void testCreateContact()
 	{
 		MiniClient c = new MiniClient();
 		c.setAddressPort(HTTP_ADDRESS, HTTP_PORT);
@@ -286,12 +286,96 @@ public class ServiceTest {
 		
     }
 	
-	//TODO testCreateRequest
-	//TODO testGetRequest
-	//TODO testDeleteRequest
 	
-	//TODO testGetSingleMessage
+
+	/**
+	 * Test CREATE Request
+	 * testAgent schickt eine Contact-Request an testAgent2
+	 * 
+	 * test Kommt sie erfolgreich an
+	 * 
+	 * @throws Exception
+	 */
+	@Test
+	public void testCreateRequest()
+	{
+		MiniClient c = new MiniClient();
+		c.setAddressPort(HTTP_ADDRESS, HTTP_PORT);
+		
+		try
+		{
+			c.setLogin(Long.toString(testAgent.getId()), testPass);
+			ClientResponse result=c.sendRequest("POST", mainPath +"profile/contact/request", "{\"username\":\"" + testAgent2.getLoginName() + "\"}"); 
+            assertEquals(200, result.getHttpCode());
+            System.out.println("Result of 'testCreateRequest': " + result.getResponse().trim());
+		}
+		catch(Exception e)
+		{
+			e.printStackTrace();
+			fail ( "Exception: " + e );
+		}
+		
+    }
+	
+	/**
+	 * Test GET Request
+	 * testAgent2 überprüft seine Contact-Requests 
+	 * 
+	 * test Kann er sie sehen
+	 * 
+	 * @throws Exception
+	 */
+	@Test
+	public void testGetRequest()
+	{
+		MiniClient c = new MiniClient();
+		c.setAddressPort(HTTP_ADDRESS, HTTP_PORT);
+		
+		try
+		{
+			c.setLogin(Long.toString(testAgent2.getId()), testPass);
+            ClientResponse result=c.sendRequest("GET", mainPath +"profile/contact/request", ""); 
+            assertEquals(200, result.getHttpCode());
+            assertTrue(result.getResponse().trim().contains(testAgent.getLoginName())); 
+            System.out.println("Result of 'testGetRequest': " + result.getResponse().trim());
+		}
+		catch(Exception e)
+		{
+			e.printStackTrace();
+			fail ( "Exception: " + e );
+		}		
+    }
+
+	/**
+	 * Test DELETE Request
+	 * testAgent2 löscht die Kontaktanfrage von testAgent  
+	 * 
+	 * @throws Exception
+	 */
+	@Test
+	public void testDeleteRequest()
+	{
+		MiniClient c = new MiniClient();
+		c.setAddressPort(HTTP_ADDRESS, HTTP_PORT);
+		
+		try
+		{
+			c.setLogin(Long.toString(testAgent2.getId()), testPass);
+            ClientResponse result=c.sendRequest("GET", mainPath +"profile/contact/request", "{\"username\":\"" + testAgent.getLoginName() + "\"}"); 
+            assertEquals(200, result.getHttpCode());            
+            System.out.println("Result of 'testDeleteRequest': " + result.getResponse().trim());
+		}
+		catch(Exception e)
+		{
+			e.printStackTrace();
+			fail ( "Exception: " + e );
+		}		
+    }
+	
+	
 	//TODO testSendSingleMessage
+	//TODO testGetSingleMessage
+	
 	
 	//TODO testGetUnreadMessages
 	//TODO testSetUnreadMessages
@@ -317,7 +401,7 @@ public class ServiceTest {
 		}
 		
     }
-	//TODO testUpdateGroup
+	
 	public void testUpdateGroup()
 	{
 		MiniClient c = new MiniClient();
@@ -338,7 +422,7 @@ public class ServiceTest {
 		}
 		
     }
-	//TODO testGetGroup
+	
 	public void testGetGroup()
 	{
 		MiniClient c = new MiniClient();
