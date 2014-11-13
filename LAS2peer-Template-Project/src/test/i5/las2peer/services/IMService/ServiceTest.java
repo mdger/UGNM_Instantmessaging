@@ -230,7 +230,7 @@ public class ServiceTest {
 		try
 		{
 			c.setLogin(Long.toString(testAgent.getId()), testPass);
-            ClientResponse result=c.sendRequest("POST", mainPath +"profile/contact", "{\"username\":\"testAgent2.getLoginName()\"}"); 
+            ClientResponse result=c.sendRequest("POST", mainPath +"profile/contact", "{\"username\":\"" + testAgent2.getLoginName() + "\"}"); 
             assertEquals(200, result.getHttpCode());
 			System.out.println("Result of 'testCreateContact': " + result.getResponse().trim());
 		}
@@ -361,7 +361,7 @@ public class ServiceTest {
 		try
 		{
 			c.setLogin(Long.toString(testAgent2.getId()), testPass);
-            ClientResponse result=c.sendRequest("GET", mainPath +"profile/contact/request", "{\"username\":\"" + testAgent.getLoginName() + "\"}"); 
+            ClientResponse result=c.sendRequest("DELETE", mainPath +"profile/contact/request", "{\"username\":\"" + testAgent.getLoginName() + "\"}"); 
             assertEquals(200, result.getHttpCode());            
             System.out.println("Result of 'testDeleteRequest': " + result.getResponse().trim());
 		}
@@ -373,10 +373,64 @@ public class ServiceTest {
     }
 	
 	
-	//TODO testSendSingleMessage
-	//TODO testGetSingleMessage
+	/**
+	 * Test POST SingleMessage
+	 * testAgent schickt eine Nachricht an testAgent3
+	 * 	test testAgnet 3 sollte sie erhalten
+	 * 
+	 * @throws Exception
+	 */
+	@Test
+	public void testSendSingleMessage()
+	{
+		MiniClient c = new MiniClient();
+		c.setAddressPort(HTTP_ADDRESS, HTTP_PORT);
+		
+		try
+		{
+			c.setLogin(Long.toString(testAgent.getId()), testPass);
+            ClientResponse result=c.sendRequest("POST", mainPath +"message/single/" + testAgent3.getLoginName(), "{\"message\":\"Hey Agent3 :)\", \"timestamp\":\"2014-1-1 00:00:00.000 \"}"); 
+            assertEquals(200, result.getHttpCode());
+			System.out.println("Result of 'testSendSingleMessage': " + result.getResponse().trim());
+		}
+		catch(Exception e)
+		{
+			e.printStackTrace();
+			fail ( "Exception: " + e );
+		}
+		
+    }
 	
+	/**
+	 * Test GET SingleMessage
+	 * testAgent3 überprüft seine Nachrichten
+	 * 	test testAgent3 sollte eine von testAgent erhalten haben
+	 * 
+	 * @throws Exception
+	 */
+	@Test
+	public void testGetSingleMessage()
+	{
+		MiniClient c = new MiniClient();
+		c.setAddressPort(HTTP_ADDRESS, HTTP_PORT);
+		
+		try
+		{
+			c.setLogin(Long.toString(testAgent3.getId()), testPass);
+            ClientResponse result=c.sendRequest("GET", mainPath + "message/single/" + testAgent.getLoginName(), ""); 
+            assertEquals(200, result.getHttpCode());
+            assertTrue(result.getResponse().trim().contains("Hey"));            
+			System.out.println("Result of 'testGetSingleMessage': " + result.getResponse().trim());
+		}
+		catch(Exception e)
+		{
+			e.printStackTrace();
+			fail ( "Exception: " + e );
+		}
+		
+    }
 	
+
 	//TODO testGetUnreadMessages
 	//TODO testSetUnreadMessages
 	
