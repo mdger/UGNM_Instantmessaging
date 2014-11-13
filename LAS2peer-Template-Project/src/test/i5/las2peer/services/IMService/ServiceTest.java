@@ -40,10 +40,10 @@ public class ServiceTest {
 	private static final String testPass = "adamspass";
 	
 	private static UserAgent testAgent2;
-	private static final String testPass2 = "adamspass";
+	private static final String testPass2 = "evaspass";
 	
 	private static UserAgent testAgent3;
-	private static final String testPass3 = "adamspass";
+	private static final String testPass3 = "abelspass";
 	
 	private static final String testServiceClass = "i5.las2peer.services.IMService.IMServiceClass";
 	
@@ -79,6 +79,8 @@ public class ServiceTest {
 		connector.start ( node );
         Thread.sleep(1000); //wait a second for the connector to become ready
 		testAgent = MockAgentFactory.getAdam();
+		testAgent2 = MockAgentFactory.getEve();
+		testAgent3 = MockAgentFactory.getAbel();
 		
         connector.updateServiceList();
         //avoid timing errors: wait for the repository manager to get all services before continuing
@@ -95,10 +97,7 @@ public class ServiceTest {
 	}
 	
 	
-	
-	
-	
-	
+		
 	
 	
 	/**
@@ -125,10 +124,18 @@ public class ServiceTest {
 		
     }
 	
-	
+	/**
+	 * Test POST Profile
+	 * Erstellt ein Profil für testAgent.
+	 * 
+	 * test Wird es erfolgreich erstellt.
+	 * test Lässt sich ein zweites Profil für testAgent anlegen (sollte nicht sein)
+	 * 
+	 * @throws Exception
+	 */
 	
 	@Test
-	public void testCeateProfile()
+	public void testCreateProfile()
 	{
 		MiniClient c = new MiniClient();
 		c.setAddressPort(HTTP_ADDRESS, HTTP_PORT);
@@ -137,17 +144,29 @@ public class ServiceTest {
 		{
 			c.setLogin(Long.toString(testAgent.getId()), testPass);
             ClientResponse result=c.sendRequest("POST", mainPath +"profile", "\"email\":\"test@mail.de\", \"telephone\":\"123456\", \"imageLink\":\"imageUrl\", \"nickname\":'TestNickName\", \"visible\":\"1\""); 
-            assertEquals(200, result.getHttpCode());
-            assertTrue(result.getResponse().trim().contains("successfully")); 
-			System.out.println("Result of 'testCreateProfile': " + result.getResponse().trim());
+            assertEquals(200, result.getHttpCode());            
+			System.out.println("'CreateProfile'-Profil für testAgent erstellt: " + result.getResponse().trim());
+						
+            result=c.sendRequest("POST", mainPath +"profile", "\"email\":\"test@mail.de\", \"telephone\":\"555555\", \"imageLink\":\"imageUrl\", \"nickname\":'TestNickName\", \"visible\":\"1\""); 
+            assertEquals(409, result.getHttpCode());            
+			System.out.println("'CreateProfile'-Kein Zweites konnte angelegt werden" + result.getResponse().trim());
+			
 		}
 		catch(Exception e)
 		{
 			e.printStackTrace();
 			fail ( "Exception: " + e );
-		}
-		
-    }
+		}					
+    }	
+	
+	/**
+	 * Test UPDATE Profile
+	 * Verändert das Profil von testAgent
+	 * 
+	 * test Wird es erfolgreich verändert
+	 * 
+	 * @throws Exception
+	 */
 	
 	@Test
 	public void testUpdateProfile()
@@ -160,7 +179,6 @@ public class ServiceTest {
 			c.setLogin(Long.toString(testAgent.getId()), testPass);
             ClientResponse result=c.sendRequest("PUT", mainPath +"profile", "{\"email\":\"test@mail.de\", \"telephone\":\"111111\", \"imageLink\":\"imageUrl\", \"nickname\":'NewNickName\", \"visible\":\"}"); 
             assertEquals(200, result.getHttpCode());
-            assertTrue(result.getResponse().trim().contains("successfully")); 
 			System.out.println("Result of 'testUpdateProfile': " + result.getResponse().trim());
 		}
 		catch(Exception e)
@@ -172,7 +190,12 @@ public class ServiceTest {
     }
 	
 	/**
-	 * Tests GET PROFILE
+	 * Test GET Profile
+	 * Fragt nach dem Profil von testAgent.
+	 * 
+	 * test Wird es ordentlich angezeigt
+	 * 
+	 * @throws Exception
 	 */
 	
 	@Test
@@ -221,78 +244,12 @@ public class ServiceTest {
     }
 	
 
-	@Test
-	public void testCreateContact()
-	{
-		MiniClient c = new MiniClient();
-		c.setAddressPort(HTTP_ADDRESS, HTTP_PORT);
-		
-		try
-		{
-			c.setLogin(Long.toString(testAgent.getId()), testPass);
-            ClientResponse result=c.sendRequest("POST", mainPath +"profile/contact", "{\"username\":\"" + testAgent2.getLoginName() + "\"}"); 
-            assertEquals(200, result.getHttpCode());
-			System.out.println("Result of 'testCreateContact': " + result.getResponse().trim());
-		}
-		catch(Exception e)
-		{
-			e.printStackTrace();
-			fail ( "Exception: " + e );
-		}
-		
-    }
-	
-	
-	@Test
-	public void testGetContact()
-	{
-		MiniClient c = new MiniClient();
-		c.setAddressPort(HTTP_ADDRESS, HTTP_PORT);
-		
-		try
-		{
-			c.setLogin(Long.toString(testAgent.getId()), testPass);
-            ClientResponse result=c.sendRequest("GET", mainPath +"profile/contact", ""); 
-            assertEquals(200, result.getHttpCode());
-            assertTrue(result.getResponse().trim().contains(testAgent.getLoginName())); 
-			System.out.println("Result of 'testCreateContact': " + result.getResponse().trim());
-		}
-		catch(Exception e)
-		{
-			e.printStackTrace();
-			fail ( "Exception: " + e );
-		}
-		
-    }
-	
-	@Test
-	public void testDeleteContact()
-	{
-		MiniClient c = new MiniClient();
-		c.setAddressPort(HTTP_ADDRESS, HTTP_PORT);
-		
-		try
-		{
-			c.setLogin(Long.toString(testAgent.getId()), testPass);
-            ClientResponse result=c.sendRequest("DELETE", mainPath +"profile/contact", ""); 
-            assertEquals(200, result.getHttpCode());
-            System.out.println("Result of 'testCreateContact': " + result.getResponse().trim());
-		}
-		catch(Exception e)
-		{
-			e.printStackTrace();
-			fail ( "Exception: " + e );
-		}
-		
-    }
-	
-	
-
 	/**
-	 * Test CREATE Request
+	 * Test POST Request
 	 * testAgent schickt eine Contact-Request an testAgent2
+	 * testAgent schickt eine Contact-Request an testAgent3
 	 * 
-	 * test Kommt sie erfolgreich an
+	 * test Kommen sie erfolgreich an
 	 * 
 	 * @throws Exception
 	 */
@@ -308,6 +265,9 @@ public class ServiceTest {
 			ClientResponse result=c.sendRequest("POST", mainPath +"profile/contact/request", "{\"username\":\"" + testAgent2.getLoginName() + "\"}"); 
             assertEquals(200, result.getHttpCode());
             System.out.println("Result of 'testCreateRequest': " + result.getResponse().trim());
+            
+            result=c.sendRequest("POST", mainPath +"profile/contact/request", "{\"username\":\"" + testAgent3.getLoginName() + "\"}"); 
+            assertEquals(200, result.getHttpCode());
 		}
 		catch(Exception e)
 		{
@@ -373,6 +333,72 @@ public class ServiceTest {
     }
 	
 	
+	
+	
+	/**
+	 * Test POST Contact
+	 * testAgent3 fügt testAgent1 seinen Kontakten hinzu.
+
+	 * 
+	 * 	test Fügt Agent3 ihn erfolgreich hinzu
+
+	 * 
+	 * @throws Exception
+	 */
+	@Test
+	public void testCreateContact()
+	{
+		MiniClient c = new MiniClient();
+		c.setAddressPort(HTTP_ADDRESS, HTTP_PORT);
+		
+		try
+		{
+			c.setLogin(Long.toString(testAgent.getId()), testPass);
+            ClientResponse result=c.sendRequest("POST", mainPath +"profile/contact", "{\"username\":\"" + testAgent3.getLoginName() + "\"}"); 
+            assertEquals(200, result.getHttpCode());
+			System.out.println("Result of 'testCreateContact': " + result.getResponse().trim());
+			
+			
+		}
+		catch(Exception e)
+		{
+			e.printStackTrace();
+			fail ( "Exception: " + e );
+		}
+		
+    }
+	
+	
+	/**
+	 * Test GET Contact
+	 * Zeigt die Kontakte von testAgent
+	 * 
+	 * @throws Exception
+	 */
+	@Test
+	public void testGetContact()
+	{
+		MiniClient c = new MiniClient();
+		c.setAddressPort(HTTP_ADDRESS, HTTP_PORT);
+		
+		try
+		{
+			c.setLogin(Long.toString(testAgent.getId()), testPass);
+            ClientResponse result=c.sendRequest("GET", mainPath +"profile/contact", ""); 
+            assertEquals(200, result.getHttpCode());
+            assertTrue(result.getResponse().trim().contains(testAgent.getLoginName())); 
+			System.out.println("Result of 'testCreateContact': " + result.getResponse().trim());
+		}
+		catch(Exception e)
+		{
+			e.printStackTrace();
+			fail ( "Exception: " + e );
+		}
+		
+    }
+	
+	
+	
 	/**
 	 * Test POST SingleMessage
 	 * testAgent schickt eine Nachricht an testAgent3
@@ -430,7 +456,37 @@ public class ServiceTest {
 		
     }
 	
+	
+	
+	/**
+	 * Test DELETE Contact
+	 * testAgent löscht testAgent3 aus seiner Kontaktliste.
+	 * 
+	 * @throws Exception
+	 */
+	@Test
+	public void testDeleteContact()
+	{
+		MiniClient c = new MiniClient();
+		c.setAddressPort(HTTP_ADDRESS, HTTP_PORT);
+		
+		try
+		{
+			c.setLogin(Long.toString(testAgent.getId()), testPass);
+            ClientResponse result=c.sendRequest("DELETE", mainPath +"profile/contact", "{\"username\":\"" + testAgent3.getLoginName() + "\"}"); 
+            assertEquals(200, result.getHttpCode());
+            System.out.println("Result of 'testCreateContact': " + result.getResponse().trim());
+		}
+		catch(Exception e)
+		{
+			e.printStackTrace();
+			fail ( "Exception: " + e );
+		}
+		
+    }
+	
 
+	//TODO testDeleteMessages
 	//TODO testGetUnreadMessages
 	//TODO testSetUnreadMessages
 	
@@ -467,7 +523,7 @@ public class ServiceTest {
             ClientResponse result=c.sendRequest("PUT", mainPath +"group/groupname", ""); //testInput is the pathParam
             assertEquals(200, result.getHttpCode());
             assertTrue(result.getResponse().trim().contains("testInput")); //"testInput" name is part of response
-			System.out.println("Result of 'testExampleMethod': " + result.getResponse().trim());
+			System.out.println("Result of 'testUpdateGroup': " + result.getResponse().trim());
 		}
 		catch(Exception e)
 		{
@@ -488,7 +544,7 @@ public class ServiceTest {
             ClientResponse result=c.sendRequest("GET", mainPath +"group/groupname", ""); //testInput is the pathParam
             assertEquals(200, result.getHttpCode());
             assertTrue(result.getResponse().trim().contains("testInput")); //"testInput" name is part of response
-			System.out.println("Result of 'testExampleMethod': " + result.getResponse().trim());
+			System.out.println("Result of 'testGetGroup': " + result.getResponse().trim());
 		}
 		catch(Exception e)
 		{
@@ -509,7 +565,7 @@ public class ServiceTest {
             ClientResponse result=c.sendRequest("DELETE", mainPath +"group/groupname", ""); //testInput is the pathParam
             assertEquals(200, result.getHttpCode());
             assertTrue(result.getResponse().trim().contains("testInput")); //"testInput" name is part of response
-			System.out.println("Result of 'testExampleMethod': " + result.getResponse().trim());
+			System.out.println("Result of 'testDeleteGroup': " + result.getResponse().trim());
 		}
 		catch(Exception e)
 		{
@@ -524,62 +580,8 @@ public class ServiceTest {
 	//TODO testDeleteMember
 	
 	
-	/**
-	 * 
-	 * Tests the validate method.
-	 * 
-	 */
-	
-	public void testValidateLogin()
-	{
-		MiniClient c = new MiniClient();
-		c.setAddressPort(HTTP_ADDRESS, HTTP_PORT);
-		
-		try
-		{
-			c.setLogin(Long.toString(testAgent.getId()), testPass);
-            ClientResponse result=c.sendRequest("GET", mainPath +"validate", "");
-            assertEquals(200, result.getHttpCode());
-            assertTrue(result.getResponse().trim().contains("adam")); //login name is part of response
-			System.out.println("Result of 'testValidateLogin': " + result.getResponse().trim());
-		}
-		catch(Exception e)
-		{
-			e.printStackTrace();
-			fail ( "Exception: " + e );
-		}
-		
-    }
-	
-	
-	/**
-	 * 
-	 * Test the example method that consumes one path parameter
-	 * which we give the value "testInput" in this test.
-	 * 
-	 */
-	
-	public void testExampleMethod()
-	{
-		MiniClient c = new MiniClient();
-		c.setAddressPort(HTTP_ADDRESS, HTTP_PORT);
-		
-		try
-		{
-			c.setLogin(Long.toString(testAgent.getId()), testPass);
-            ClientResponse result=c.sendRequest("POST", mainPath +"myMethodPath/testInput", ""); //testInput is the pathParam
-            assertEquals(200, result.getHttpCode());
-            assertTrue(result.getResponse().trim().contains("testInput")); //"testInput" name is part of response
-			System.out.println("Result of 'testExampleMethod': " + result.getResponse().trim());
-		}
-		catch(Exception e)
-		{
-			e.printStackTrace();
-			fail ( "Exception: " + e );
-		}
-		
-    }
 
+	
 	/**
 	 * Test the ServiceClass for valid rest mapping.
 	 * Important for development.

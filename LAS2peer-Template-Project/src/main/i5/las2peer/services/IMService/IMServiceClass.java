@@ -334,7 +334,7 @@ public class IMServiceClass extends Service {
 				conn = dbm.getConnection();
 				stmnt = conn.prepareStatement("DELETE FROM AccountProfile WHERE UserName = ?;");
 				stmnt.setString(1, agentName);
-				int rows = stmnt.executeUpdate(); // same works for insert
+				int rows = stmnt.executeUpdate(); 
 				if(rows == 1)
 					result = "Profile deleted successfully!";
 				else
@@ -1053,7 +1053,7 @@ public class IMServiceClass extends Service {
 				stmnt = conn.prepareStatement("delete Message from Message as m inner join SendingSingle as s on s.Receiver=? and s.Sender=? and m.MessageID=s.MessageID;");
 				stmnt.setString(1, agentName);
 				stmnt.setString(2, userName);
-				int rows = stmnt.executeUpdate(); // same works for insert
+				int rows = stmnt.executeUpdate(); 
 				if(rows != 0)
 					result = "Messages deleted successfully!";
 				else
@@ -1686,7 +1686,7 @@ public HttpResponse deleteRequest(@ContentParam String content) {
 		conn = dbm.getConnection();
 		stmnt = conn.prepareStatement("DELETE FROM ContactRequest WHERE (To_UserName = ? OR From_UserName = ?);");
 		stmnt.setString(1, agentName);
-		int rows = stmnt.executeUpdate(); // same works for insert
+		int rows = stmnt.executeUpdate(); 
 		result = "Database updated. " + rows + " rows affected";
 		
 		// return 
@@ -2101,7 +2101,7 @@ public HttpResponse deleteRequest(@ContentParam String content) {
 			stmnt.setString(2, secondUser);
 			stmnt.setString(3, secondUser);
 			stmnt.setString(4, firstUser);
-			int rows = stmnt.executeUpdate(); // same works for insert
+			int rows = stmnt.executeUpdate(); 
 			if (rows == 0) 
 				return false;
 			else 
