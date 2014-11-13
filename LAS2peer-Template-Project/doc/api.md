@@ -9,11 +9,13 @@ Profile Resource
 --
 __URL Template:__ /profile
 
+__Description:__ The profile resource is used to manage the profile information of the user. Every User can choose a Nickname, which will displayed in Conversations. It may also specify additional information , such as email address , phone number and a link to an image.And he can control whether their profile information is public , or only visible to his contacts. 
+
 __Operations:__
 
-* __Create Profile:__ Creates a profile
+* __Create Profile:__ Creates a profile for the active User.
  	* __HTTP Method:__ POST
-	* __Consumes:__ application/json; a JSON string in the following form `{'email':'email_val', 'telephone':'telephone_val', 'imageLink':'imageLink_val', 'nickname':'nickname_val', 'visible':'visible_val'}` ('email'=The email adress of the contact, 'telephone'=The telephone number of the contact, 'imageLink'=The link of the profile image, 'nickname'=The nickname of the account, 'visible'=The visibility of the profile)
+	* __Consumes:__ application/json; a JSON string in the following form `{'email':'email_val', 'telephone':'telephone_val', 'imageLink':'imageLink_val', 'nickname':'nickname_val', 'visible':'visible_val'}` ('email'=The email address of the user, 'telephone'=The telephone number of the user, 'imageLink'=The link of the profile image, 'nickname'=The nickname of the user, 'visible'=The visibility of the profile (1=public, 0=only contacts))
 	* __Produces:__ -
 	* __Parameter:__ authorization header
 	* __HTTP Status Codes:__
@@ -24,10 +26,10 @@ __Operations:__
 			* 409: Could not create
 			
 			
-* __Get Profile:__ Retrieves a profile given its username
+* __Get Profile:__ Retrieves the profile of a user. Given by his username coded in JSON.
 	* __HTTP Method:__ GET
 	* __Consumes:__ application/json; a JSON string in the following form `{'username':'username_val'}` ('username'= the username of the profile to be retrieved')
-	* __Produces:__ application/json; a JSON string in the following form `{'email':'email_val', 'telephone':'telephone_val', 'imageLink':'imageLink_val', 'nickname':'nickname_val', 'visible':'visible_val'}` ('email'=The email address of the contact, 'telephone'=The telephone number of the contact, 'imageLink'=The link of the profile image, 'nickname'=The nickname of the account, 'visible'=The visibility of the profile 1-Everyone 0-OnlyContacts)
+	* __Produces:__ application/json; a JSON string in the following form `{'email':'email_val', 'telephone':'telephone_val', 'imageLink':'imageLink_val', 'nickname':'nickname_val', 'visible':'visible_val'}` ('email'=The email address of the user, 'telephone'=The telephone number of the user, 'imageLink'=The link of the profile image, 'nickname'=The nickname of the user, 'visible'=The visibility of the profile 1-Everyone 0-OnlyContacts)
 	* __Parameter:__ authorization header
 	* __HTTP Status Codes:__
 		* Success: 200
@@ -38,9 +40,9 @@ __Operations:__
 			
 						
 			
-* __Update Profile:__ Updates a profile of the active User
+* __Update Profile:__ Updates the profile Information of the active User.
  	* __HTTP Method:__ PUT
-	* __Consumes:__ application/json; a JSON string in the following form `{'email':'email_val', 'telephone':'telephone_val', 'imageLink':'imageLink_val', 'nickname':'nickname_val', 'visible':'visible_val'}` ('email'=The email address of the contact, 'telephone'=The telephone number of the contact, 'imageLink'=The link of the profile image, 'nickname'=The nickname of the account, 'visible'=The visibility of the profile 1-Everyone 0-OnlyContacts)
+	* __Consumes:__ application/json; a JSON string in the following form `{'email':'email_val', 'telephone':'telephone_val', 'imageLink':'imageLink_val', 'nickname':'nickname_val', 'visible':'visible_val'}` ('email'=The email address of the user, 'telephone'=The telephone number of the user, 'imageLink'=The link of the profile image, 'nickname'=The nickname of the user, 'visible'=The visibility of the profile 1-Everyone 0-OnlyContacts)
 	* __Produces:__ -
 	* __Parameter:__ 
 	* __HTTP Status Codes:__
@@ -50,7 +52,7 @@ __Operations:__
 			* 404: Resource does not exist
 			
 			
-* __Delete Profile:__ Deletes the profile of the active User
+* __Delete Profile:__ Deletes the profile of the active User.
  	* __HTTP Method:__ DELETE
 	* __Consumes:__ -
 	* __Produces:__ -
@@ -78,7 +80,7 @@ __Operations:__
 	* __HTTP Status Codes:__
 		* Success: 200
 		* Errors:
-			* 404: Resource does not exist
+			* 404: Resource does not exist			
 			
 	
 * __Create Group:__ Creates a group given its name
@@ -123,9 +125,11 @@ Contact Resource
 
 __URL Template:__ profile/contact/
 
+__Description:__ This resource manage the contact-lists of users. Users can communicate only if they are contacts.
+
 __Operations:__
 
-* __Get Contact:__ Retrieves the contacts for the active User
+* __Get Contact:__ Retrieves all contacts of the active User.
 	* __HTTP Method:__ GET
 	* __Consumes:__ -
 	* __Produces:__ application/json; a JSON string in the following form `{'contact':['nickname':'nickname_val', 'username':'username_val']}` ('contact'=The contacts of the user, 'nickname'=The nickname of one contact, 'username'=The username of the contact)
@@ -136,7 +140,7 @@ __Operations:__
 			* 404: Resource does not exist
 
 			
-* __Create Contact:__ Creates a Contact If the active User received a request from the contact
+* __Create Contact:__ Creates a Contact If the active User received a request from the contact.
  	* __HTTP Method:__ POST
 	* __Consumes:__ application/json; a JSON string in the following form `{'username':'username'}` ('username'=The user who should be added)
 	* __Produces:__ -
@@ -148,7 +152,7 @@ __Operations:__
 			* 409: Could not create
 			
 			
-* __Delete Contact:__ Deletes a contact given its name
+* __Delete Contact:__ Deletes a contact from the contact list, given by his name coded in JSON.
  	* __HTTP Method:__ DELETE
 	* __Consumes:__ application/json; a JSON string in the following form `{'username':'username'}` ('username'=The user who should be deleted)
 	* __Produces:__ -
@@ -161,11 +165,13 @@ __Operations:__
 Request Resource
 --
 
+__Description:__ This Resource manage the Contact-Requests. To take someone in your contact list , you have to send a contact request. These can be accepted or rejected.
+
 __URL Template:__ profile/contact/request/
 
 __Operations:__
 
-* __Get Request:__ Retrieves the contact requests for the active User
+* __Get Request:__ Retrieves all open contact requests for the active User.
 	* __HTTP Method:__ GET
 	* __Consumes:__ -
 	* __Produces:__ application/json; a JSON string in the following form `{'request':['nickname':'nickname_val', 'username':'username_val']}` ('request'=A request one user has done to this account, 'nickname'=The nickname of the account who requests, 'username'=The username of the account who requests)
@@ -176,7 +182,7 @@ __Operations:__
 			* 404: resource does not exist
 			
 			
-* __Create Request:__ Sends a request to the contact given its username
+* __Create Request:__ Sends a contact request to a other user given by his username coded in JSON.
  	* __HTTP Method:__ POST
 	* __Consumes:__ application/json; a JSON string in the following form `{'username':'username_val'}` ('username'=The username of the account to be requested
 	* __Produces:__ -
@@ -189,9 +195,9 @@ __Operations:__
 			* 409: Could not create
 			
 
-* __Delete Request:__ Deletes a request given the other username to be deleted
+* __Delete Request:__ Deletes a contact request given the other username to be deleted
  	* __HTTP Method:__ DELETE
-	* __Consumes:__ application/json; a JSON string in the following form `{'username':'username_val'}` ('username'=The username of the account to be requested
+	* __Consumes:__ application/json; a JSON string in the following form `{'username':'username_val'}` ('username'=The username of the account to be deleted.
 	* __Produces:__ -
 	* __Parameter:__ 
 	* __HTTP Status Codes:__
@@ -203,6 +209,8 @@ __Operations:__
 			
 Single Message Resource
 --
+__Description:__ This resource is used to manage messages that are sent between two users.
+
 __URL Template:__ /message/single/{username}
 
 __Operations:__
