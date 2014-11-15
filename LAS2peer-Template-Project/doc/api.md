@@ -14,11 +14,11 @@ __Description:__ The profile resource is used to manage the profile information 
 __Operations:__
 
 * __Create Profile:__ Creates a profile for the active User.
- 	* __HTTP Method:__ POST
-	* __Consumes:__ application/json; a JSON string in the following form `{'email':'email_val', 'telephone':'telephone_val', 'imageLink':'imageLink_val', 'nickname':'nickname_val', 'visible':'visible_val'}` ('email'=The email address of the user, 'telephone'=The telephone number of the user, 'imageLink'=The link of the profile image, 'nickname'=The nickname of the user, 'visible'=The visibility of the profile (1=public, 0=only contacts))
-	* __Produces:__ -
-	* __Parameter:__ authorization header
-	* __HTTP Status Codes:__
+	* __HTTP Method:__ POST
+ 	* __Consumes:__ application/json; a JSON string in the following form `{'email':'email_val', 'telephone':'telephone_val', 'imageLink':'imageLink_val', 'nickname':'nickname_val', 'visible':'visible_val'}` ('email'=The email address of the user, 'telephone'=The telephone number of the user, 'imageLink'=The link of the profile image, 'nickname'=The nickname of the user, 'visible'=The visibility of the profile (1=public, 0=only contacts))
+ 	* __Produces:__ -
+ 	* __Parameter:__ authorization header
+ 	* __HTTP Status Codes:__
 		* Success: 200
 		* Errors:
 			* 400: Content data in invalid format
@@ -28,10 +28,10 @@ __Operations:__
 			
 * __Get Profile:__ Retrieves the profile of a user. Given by his username coded in JSON.
 	* __HTTP Method:__ GET
-	* __Consumes:__ application/json; a JSON string in the following form `{'username':'username_val'}` ('username'= the username of the profile to be retrieved')
-	* __Produces:__ application/json; a JSON string in the following form `{'email':'email_val', 'telephone':'telephone_val', 'imageLink':'imageLink_val', 'nickname':'nickname_val', 'visible':'visible_val'}` ('email'=The email address of the user, 'telephone'=The telephone number of the user, 'imageLink'=The link of the profile image, 'nickname'=The nickname of the user, 'visible'=The visibility of the profile 1-Everyone 0-OnlyContacts)
-	* __Parameter:__ authorization header
-	* __HTTP Status Codes:__
+ 	* __Consumes:__ application/json; a JSON string in the following form `{'username':'username_val'}` ('username'= the username of the profile to be retrieved')
+ 	* __Produces:__ application/json; a JSON string in the following form `{'email':'email_val', 'telephone':'telephone_val', 'imageLink':'imageLink_val', 'nickname':'nickname_val', 'visible':'visible_val'}` ('email'=The email address of the user, 'telephone'=The telephone number of the user, 'imageLink'=The link of the profile image, 'nickname'=The nickname of the user, 'visible'=The visibility of the profile 1-Everyone 0-OnlyContacts)
+ 	* __Parameter:__ authorization header
+ 	* __HTTP Status Codes:__
 		* Success: 200
 		* Errors:
 			* 401: Restricted content
@@ -60,63 +60,6 @@ __Operations:__
 	* __HTTP Status Codes:__
 		* Success: 200
 		* Errors:
-			* 404: Resource does not exist
-			
-
-			
-
-
-Group Resource
---
-__URL Template:__ /group/{groupname}
-
-__Operations:__
-
-* __Get Group:__ Retrieves a group given its name
-	* __HTTP Method:__ GET
-	* __Consumes:__ -
-	* __Produces:__ application/json; a JSON string in the following form `{'name':'name_val', 'founder':'founder_val', 'description':'description_val', 'imageLink':'imageLink_val', 'member':['username':'username_val']}` ('name'=The name of the group, 'founder'=The name of the founder of the group, 'description'=The description of the group, 'imageLink'=The link to the profile image of the group, 'member'=The members of the group, except the founder, 'username'=The username of a member)
-	* __Parameter:__ path parameter 'groupname'
-	* __HTTP Status Codes:__
-		* Success: 200
-		* Errors:
-			* 404: Resource does not exist			
-			
-	
-* __Create Group:__ Creates a group given its name
- 	* __HTTP Method:__ POST
-	* __Consumes:__ application/json; a JSON string in the following form `{'name':'name_val', 'founder':'founder_val', 'description':'description_val', 'imageLink':'imageLink_val'}` ('name'=The name of the group, 'founder'=The name of the founder of the group, 'description'=The description of the group, 'imageLink'=The link to the profile image of the group)
-	* __Produces:__ -
-	* __Parameter:__ path parameter 'groupname'
-	* __HTTP Status Codes:__
-		* Success: 200
-		* Errors:
-			* 400: Content data in invalid format
-			* 409: Could not create
-			
-			
-* __Update Group:__ Updates a group given its name
- 	* __HTTP Method:__ PUT
-	* __Consumes:__ application/json; a JSON string in the following form `{'name':'name_val', 'founder':'founder_val', 'description':'description_val', 'imageLink':'imageLink_val'}` ('name'=The name of the group, 'founder'=The name of the founder of the group, 'description'=The description of the group, 'imageLink'=The link to the profile image of the group)
-	* __Produces:__ -
-	* __Parameter:__ 
-	* __HTTP Status Codes:__
-		* Success: 200
-		* Errors:
-			* 400: Content data in invalid format
-			* 403: Access denied
-			* 404: Resource does not exist
-			
-
-* __Delete Group:__ Deletes a group given its name
- 	* __HHTP Method:__ DELETE
-	* __Consumes:__ -
-	* __Produces:__ -
-	* __Parameter:__ 
-	* __HTTP Status Codes:__
-		* Success: 200
-		* Errors:
-			* 403: Access denied
 			* 404: Resource does not exist
 			
 			
@@ -173,10 +116,10 @@ __Operations:__
 
 * __Get Request:__ Retrieves all open contact requests for the active User.
 	* __HTTP Method:__ GET
-	* __Consumes:__ -
-	* __Produces:__ application/json; a JSON string in the following form `{'request':['nickname':'nickname_val', 'username':'username_val']}` ('request'=A request one user has done to this account, 'nickname'=The nickname of the account who requests, 'username'=The username of the account who requests)
-	* __Parameter:__ 
-	* __HTTP Status Codes:__
+ 	* __Consumes:__ -
+ 	* __Produces:__ application/json; a JSON string in the following form `{'request':['nickname':'nickname_val', 'username':'username_val']}` ('request'=A request one user has done to this account, 'nickname'=The nickname of the account who requests, 'username'=The username of the account who requests)
+ 	* __Parameter:__ 
+ 	* __HTTP Status Codes:__
 		* Success: 200
 		* Errors:
 			* 404: resource does not exist
@@ -195,7 +138,7 @@ __Operations:__
 			* 409: Could not create
 			
 
-* __Delete Request:__ Deletes a contact request given the other username to be deleted
+* __Delete Request:__ Deletes a contact request given the other username to be deleted coded in JSON
  	* __HTTP Method:__ DELETE
 	* __Consumes:__ application/json; a JSON string in the following form `{'username':'username_val'}` ('username'=The username of the account to be deleted.
 	* __Produces:__ -
@@ -209,38 +152,38 @@ __Operations:__
 			
 Single Message Resource
 --
-__Description:__ This resource is used to manage messages that are sent between two users.
+__Description:__ This resource is used to manage messages that are send between two users.
 
 __URL Template:__ /message/single/{username}
 
 __Operations:__
 
-* __Get Single Message:__ Retrieves the single messages for an conversation with a contact given its name
+* __Get Single Message:__ Retrieves the single messages for an conversation with a contact given its username as path parameter
 	* __HTTP Method:__ GET
-	* __Consumes:__ -
-	* __Produces:__ application/json; a JSON string in the following form `{'message':['text':'text_val', 'timestamp':'timestamp_val', 'sender':'sender_val' ]}` ('message'=The messages of a conversation, 'text'=The message text, 'timestamp'=The time the message was sent, 'sender'=The sender of the message)
-	* __Parameter:__ authorization header, path parameter 'username' (username of conversation partner)
-	* __HTTP Status Codes:__
+	 * __Consumes:__ -
+	 * __Produces:__ application/json; a JSON string in the following form `{'message':['text':'text_val', 'timestamp':'timestamp_val', 'sender':'sender_val' ]}` ('message'=The messages of a conversation, 'text'=The message text, 'timestamp'=The time the message was sent, 'sender'=The sender of the message)
+	 * __Parameter:__ authorization header, path parameter 'username' (username of conversation partner)
+	 * __HTTP Status Codes:__
 		* Success: 200
 		* Errors:
 			* 403: Access denied
-			* 404: Resource does not exist
+			* 404: Resource does not exist			
 			
 			
-			
-* __Send Single Message:__ Sends a message to the contact given its username
- 	* __HTTP Method:__ POST
-	* __Consumes:__ application/json; a JSON string in the following form `{'message':'message_val', 'timestamp':'timestamp_val'}` ('message'=The text of the message, 'timestamp'=The time the message was sent)
-	* __Produces:__ -
-	* __Parameter:__ authorization header, path parameter 'username' (username of conversation partner)
-	* __HTTP Status Codes:__
+* __Send Single Message:__ Sends a single message to the contact given its username as path parameter
+	* __HTTP Method:__ POST
+ 	* __Consumes:__ application/json; a JSON string in the following form `{'message':'message_val', 'timestamp':'timestamp_val'}` ('message'=The text of the message, 'timestamp'=The time the message was sent)
+ 	* __Produces:__ -
+ 	* __Parameter:__ authorization header, path parameter 'username' (username of conversation partner)
+ 	* __HTTP Status Codes:__
 		* Success: 200
 		* Errors:
 			* 400: Content data in invalid format
 			* 403: Access denied
 			* 404: Resource does not exist
 			
-* __Delete Message:__ Deletes a message given the name of its sender
+			
+* __Delete Message:__ Deletes all messages you got from a single-message-conversation given the name of its sender as path parameter
  	* __HTTP Method:__ DELETE
 	* __Consumes:__ -
 	* __Produces:__ -
@@ -250,7 +193,42 @@ __Operations:__
 		* Errors:
 			* 404: Resource does not exist
 			
-/* Beim ersten Testen wird diese Resource nicht beruecksichtig. Es kommt evtl. ï¿½ï¿½berarbeitung
+
+Unread Message Resource
+--
+__Description:__ This resource is used to manage single messages that are unread
+
+__URL Template:__ /message/single/unread/{contact_username}
+
+__Operations:__
+
+* __Get Unread Messages:__ Retrieves all the unread messages from a conversation
+	* __HTTP Method:__ GET
+	* __Consumes:__ -
+	* __Produces:__ application/json; a JSON string in the following form `{'message':['messageID':'messageID_val','text':'text_val', 'timestamp':'timestamp_val', 'sender':'sender_val']}` ('message'=The messages of a conversation, 'text'=The message text, 'timestamp'=The time the message was sent, 'sender'=The sender of the message)
+	* __Parameter__: authorization header, path parameter 'contact_username'
+	* __HTTP Status Codes:__
+		* Success: 200
+		* Errors:
+			* 403: Access denied
+			* 404: Resource does not exist
+			
+			
+* __Set unread to read:__ Sets a message that was unread to the status read
+ 	* __HTTP Method:__ PUT
+	* __Consumes:__ application/json; a JSON string in the following form `{'messageID':'messageID_val'}` ('messageID'=The ID of the message)
+	* __Produces:__ -
+	* __Parameter:__ authorization header, path parameter 'contact_username'
+	* __HTTP Status Codes:__
+		* Success: 200
+		* Errors:
+			* 400: Content data in invalid format
+			* 403: Access denied
+			* 404: Resource does not exist
+
+
+
+/* Beim ersten Testen wird diese Resource nicht beruecksichtig. Es kommt evtl. eine Überarbeitung
 Group Message Resource
 --
 __URL Template:__ /message/group/{groupname}
@@ -283,35 +261,62 @@ __Operations:__
 			* 409: Could not create
 Beim ersten Testen wird diese Resource nicht beruecksichtig. Es kommt evtl. ï¿½ï¿½berarbeitung*/			
 
-Unread Message Resource
+
+
+
+Group Resource
 --
-__URL Template:__ /message/single/unread/{contact_username}
+__URL Template:__ /group/{groupname}
 
 __Operations:__
 
-* __Get Unread Messages:__ Retrieves all the unread messages from a conversation
+* __Get Group:__ Retrieves a group given its name
 	* __HTTP Method:__ GET
 	* __Consumes:__ -
-	* __Produces:__ application/json; a JSON string in the following form `{'message':['messageID':'messageID_val','text':'text_val', 'timestamp':'timestamp_val', 'sender':'sender_val']}` ('message'=The messages of a conversation, 'text'=The message text, 'timestamp'=The time the message was sent, 'sender'=The sender of the message)
-	* __Parameter__: authorization header, path parameter 'contact_username'
+	* __Produces:__ application/json; a JSON string in the following form `{'name':'name_val', 'founder':'founder_val', 'description':'description_val', 'imageLink':'imageLink_val', 'member':['username':'username_val']}` ('name'=The name of the group, 'founder'=The name of the founder of the group, 'description'=The description of the group, 'imageLink'=The link to the profile image of the group, 'member'=The members of the group, except the founder, 'username'=The username of a member)
+	* __Parameter:__ path parameter 'groupname'
 	* __HTTP Status Codes:__
 		* Success: 200
 		* Errors:
-			* 403: Access denied
-			* 404: Resource does not exist
+			* 404: Resource does not exist			
 			
-			
-* __Set unread to read:__ Sets a message that was unread to the status read
- 	* __HTTP Method:__ PUT
-	* __Consumes:__ application/json; a JSON string in the following form `{'messageID':'messageID_val'}` ('messageID'=The ID of the message)
+	
+* __Create Group:__ Creates a group given its name
+ 	* __HTTP Method:__ POST
+	* __Consumes:__ application/json; a JSON string in the following form `{'name':'name_val', 'founder':'founder_val', 'description':'description_val', 'imageLink':'imageLink_val'}` ('name'=The name of the group, 'founder'=The name of the founder of the group, 'description'=The description of the group, 'imageLink'=The link to the profile image of the group)
 	* __Produces:__ -
-	* __Parameter:__ authorization header, path parameter 'contact_username'
+	* __Parameter:__ path parameter 'groupname'
+	* __HTTP Status Codes:__
+		* Success: 200
+		* Errors:
+			* 400: Content data in invalid format
+			* 409: Could not create
+			
+			
+* __Update Group:__ Updates a group given its name
+ 	* __HTTP Method:__ PUT
+	* __Consumes:__ application/json; a JSON string in the following form `{'name':'name_val', 'founder':'founder_val', 'description':'description_val', 'imageLink':'imageLink_val'}` ('name'=The name of the group, 'founder'=The name of the founder of the group, 'description'=The description of the group, 'imageLink'=The link to the profile image of the group)
+	* __Produces:__ -
+	* __Parameter:__ 
 	* __HTTP Status Codes:__
 		* Success: 200
 		* Errors:
 			* 400: Content data in invalid format
 			* 403: Access denied
 			* 404: Resource does not exist
+			
+
+* __Delete Group:__ Deletes a group given its name
+ 	* __HHTP Method:__ DELETE
+	* __Consumes:__ -
+	* __Produces:__ -
+	* __Parameter:__ 
+	* __HTTP Status Codes:__
+		* Success: 200
+		* Errors:
+			* 403: Access denied
+			* 404: Resource does not exist
+
 
 Member Resource
 --
