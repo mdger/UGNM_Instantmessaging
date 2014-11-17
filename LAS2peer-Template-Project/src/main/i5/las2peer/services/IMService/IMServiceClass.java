@@ -56,13 +56,14 @@ public class IMServiceClass extends Service {
 		dbm = new DatabaseManager(jdbcDriverClassName, jdbcLogin, jdbcPass, jdbcUrl, jdbcSchema);
 	}
 
-			
+	
+		
 	/**
 	 * Retrieves a profile 
 	 * 
 	 * @param userName of the Profile to be Retrieved 
 	 * @result Profile Data
-	 */
+	*/ 
 	@GET
 	@Path("profile")
 	@Consumes("application/json")
@@ -245,7 +246,7 @@ public class IMServiceClass extends Service {
 	 * @param userName UserName of the Profile to be updated 
 	 * @param content Data for updating the Profile encoded as JSON-String
 	 * @return Code if the sending was successfully
-	 */
+	*/
 	@PUT
 	@Path("profile")
 	@Consumes("application/json")
@@ -321,7 +322,7 @@ public class IMServiceClass extends Service {
    	 * Deletes a profile 
  	 * 
  	 *
- 	 */
+ 	*/ 
 	@DELETE
 	@Path("profile")
 	public HttpResponse deleteProfile() {
@@ -369,7 +370,7 @@ public class IMServiceClass extends Service {
 	 * 
 	 * @param groupName Information of a group to be retrieved 
 	 * @result Group Data
-	 */
+	*/ 
 	@GET
 	@Path("group/{groupname}")
 	@Produces("application/json")
@@ -462,7 +463,7 @@ public class IMServiceClass extends Service {
 	 * 
 	 * @param content Data for creating the Profile encoded as JSON-String
 	 * @return Code if the sending was successfully
-	 */
+	*/ 
 	@POST
 	@Path("group/{groupname}")
 	@Consumes("application/json")
@@ -548,7 +549,7 @@ public class IMServiceClass extends Service {
 	 * @param groupName of the Group to be updated 
 	 * @param content Data for updating the Profile encoded as JSON-String
 	 * @return Code if the sending was successfully
-	 */
+	*/ 
 	@PUT
 	@Path("group/{groupname}")
 	@Consumes("application/json")
@@ -629,7 +630,7 @@ public class IMServiceClass extends Service {
 	 * Deletes a group 
 	 * 
 	 *@param groupName of the Profile to be deleted.
-	 */
+	*/
 	@DELETE
 	@Path("group/{groupname}")
 	public HttpResponse deleteGroup(@PathParam("groupname") String groupName) {
@@ -712,9 +713,9 @@ public class IMServiceClass extends Service {
 	 * This method returns the contact list of a certain user. 
 	 * @param userName The name of the user whose contact list should be displayed
 	 * @return The data (username and nickname) of the contacts in the HTTP Response type 
-	 */
+	*/ 
 	@GET	 
-	@Path("profile/contact/")
+	@Path("profile/contact")
 	@Produces("application/json")
 	public HttpResponse getContacts() {
 		String agentName = ((UserAgent) getActiveAgent()).getLoginName();
@@ -791,9 +792,10 @@ public class IMServiceClass extends Service {
 	 * 
 	 * @param content the username of the user requested
 	 * @return Code if the sending was successfully
-	 */
+	*/ 
 	@PUT
 	@Consumes("application/json")
+	@Path("profile/contact")
 	public HttpResponse createContact(@ContentParam String content)
 	{
 		try 
@@ -854,7 +856,7 @@ public class IMServiceClass extends Service {
 	 * This method deletes a contact from the contact list
 	 * @param userName The name of the contact which should be deleted
 	 * @return Success or not
-	 */
+	*/
 	@DELETE 
 	@Path("profile/contact")
 	public HttpResponse deleteContact(@ContentParam String content) {
@@ -914,10 +916,10 @@ public class IMServiceClass extends Service {
 	 * This method returns messages which were send to an account. 
 	 * @param username The name of the user who got the messages
 	 * @return The messages for the user as HTTP Response type 
-	 */
+	*/ 
 	@GET
-	@Path("message/single/{name}")
-	public HttpResponse getSingleMessages(@PathParam("name") String userName)
+	@Path("message/single/{username}")
+	public HttpResponse getSingleMessages(@PathParam("username") String userName)
 	{
 		String agentName = ((UserAgent) getActiveAgent()).getLoginName();
 		Connection conn = null;
@@ -1039,10 +1041,10 @@ public class IMServiceClass extends Service {
    	 * Deletes a message 
  	 * 
  	 *@param userName of the Message sender.
- 	 */
+ 	*/ 
 	@DELETE
 	@Path("message/{username}")
-	public HttpResponse deleteMessage(@PathParam("name") String userName) {
+	public HttpResponse deleteMessage(@PathParam("username") String userName) {
 		String agentName = ((UserAgent) getActiveAgent()).getLoginName();
 		String result = "";
 		Connection conn = null;
@@ -1088,11 +1090,12 @@ public class IMServiceClass extends Service {
 	 * @param userName The name of the user who gets the message
 	 * @param content The content of the message encoded as JSON string
 	 * @return Code if the sending was successfully
-	 */
+	 **/
+	 
 	@PUT
-	@Path("message/single/{name}")
+	@Path("message/single/{username}")
 	@Consumes("application/json")
-	public HttpResponse sendSingleMessage(@PathParam("name") String userName, @ContentParam String content)
+	public HttpResponse sendSingleMessage(@PathParam("username") String userName, @ContentParam String content)
 	{
 		try 
 		{
@@ -1451,7 +1454,7 @@ public class IMServiceClass extends Service {
 		 * This method returns all contact requests to a certain user. 
 		 * @param name The name of the user to whom contact request were sent
 		 * @return The data (username and nickname) of the user who has sent a contact request in the HTTP Response type 
-		 */
+		*/
 	@GET
 	@Path("profile/contact/request")
 	public HttpResponse getRequests() {
