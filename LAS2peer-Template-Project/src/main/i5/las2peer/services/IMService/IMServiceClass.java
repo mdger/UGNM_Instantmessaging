@@ -69,16 +69,17 @@ public class IMServiceClass extends Service {
 	@Consumes("application/json")
 	@Produces("application/json")
 	public HttpResponse getProfile(@ContentParam String content) {
+		
 		Connection conn = null;
 		PreparedStatement stmnt = null;
 		ResultSet rs = null;
+		
 		try {
 			// get connection from connection pool
-			conn = dbm.getConnection();
-			
-			// convert string content to JSON object 
+			conn = dbm.getConnection();			
+						 
 			JSONObject profileObject = (JSONObject) JSONValue.parse(content);
-			String userName = (String) profileObject.get("userName");
+			String userName = (String) profileObject.get("username");
 			
 			// prepare statement
 			stmnt = conn.prepareStatement("SELECT EMail, Telephone, ImageLink, NickName, Visible FROM AccountProfile WHERE UserName = ?;");
@@ -204,10 +205,13 @@ public class IMServiceClass extends Service {
 					}					
 					
 				} catch (SQLException e) {
-					if (e.getErrorCode() == 1022) {
+					if (e.getErrorCode() == 1062) {
 						HttpResponse er = new HttpResponse("Das Profil ist bereits vorhanden");					
 						er.setStatus(409);
 						return er;
+					} else {
+						HttpResponse er = new HttpResponse("Datenbank Fehler");					
+						er.setStatus(500);
 					}
 				}
 				

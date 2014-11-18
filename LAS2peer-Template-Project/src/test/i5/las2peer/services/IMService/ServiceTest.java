@@ -4,6 +4,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import i5.las2peer.p2p.LocalNode;
+import i5.las2peer.restMapper.data.Pair;
 import i5.las2peer.security.ServiceAgent;
 import i5.las2peer.security.UserAgent;
 import i5.las2peer.services.IMService.IMServiceClass;
@@ -11,10 +12,12 @@ import i5.las2peer.testing.MockAgentFactory;
 import i5.las2peer.webConnector.WebConnector;
 import i5.las2peer.webConnector.client.ClientResponse;
 import i5.las2peer.webConnector.client.MiniClient;
+import i5.las2peer.services.IMService.database.DatabaseManager;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
-import java.security.acl.Group;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
 
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
@@ -38,18 +41,21 @@ public class ServiceTest {
 	
 	private static UserAgent testAgent;
 	private static final String testPass = "adamspass";
+	private static String agentName1 = "";
 	
 	private static UserAgent testAgent2;
 	private static final String testPass2 = "evaspass";
+	private static String agentName2 = "";
 	
 	private static UserAgent testAgent3;
 	private static final String testPass3 = "abelspass";
-	
+	private static String agentName3 = "";
+			
 	private static final String testServiceClass = "i5.las2peer.services.IMService.IMServiceClass";
 	
 	private static final String mainPath = "im/";
 	
-	
+
 	/**
 	 * Called before the tests start.
 	 * 
@@ -82,6 +88,10 @@ public class ServiceTest {
 		testAgent2 = MockAgentFactory.getEve();
 		testAgent3 = MockAgentFactory.getAbel();
 		
+		agentName1 = testAgent.getLoginName();
+		agentName2 = testAgent2.getLoginName();
+		agentName3 = testAgent3.getLoginName();
+		
         connector.updateServiceList();
         //avoid timing errors: wait for the repository manager to get all services before continuing
         try
@@ -93,10 +103,12 @@ public class ServiceTest {
         {
             e.printStackTrace();
         }
-		
+        
+      
+        
 	}
 	
-	
+	//TODO Init Database
 		
 	
 	
@@ -122,19 +134,36 @@ public class ServiceTest {
 		
 		System.out.println(logStream.toString());
 		
+		
     }
+	
+	//TODO Reset Database
+	
+	
+	
+	@Test
+	public void testProfile()
+	{
+	
+		testCreateProfile();
+		testUpdateProfile();
+		testDeleteProfile();		
+		
+	}
+	
 	
 	/**
 	 * Test POST Profile
 	 * Erstellt ein Profil für testAgent.
 	 * 
-	 * test Wird es erfolgreich erstellt.
+	 * test Wird ein Falsch Formatierten JSON erkannt.
+	 * test Wird erfolgreich ein Profil erstellt.
 	 * test Lässt sich ein zweites Profil für testAgent anlegen (sollte nicht sein)
 	 * 
 	 * @throws Exception
 	 */
 	
-	@Test
+	//@Test
 	public void testCreateProfile()
 	{
 		MiniClient c = new MiniClient();
@@ -142,14 +171,20 @@ public class ServiceTest {
 		
 		try
 		{
+			
 			c.setLogin(Long.toString(testAgent.getId()), testPass);
-            ClientResponse result=c.sendRequest("POST", mainPath +"profile", "\"email\":\"test@mail.de\", \"telephone\":\"123456\", \"imageLink\":\"imageUrl\", \"nickname\":'TestNickName\", \"visible\":\"1\""); 
+			
+            ClientResponse result3=c.sendRequest("POST", mainPath +"profile", "{\"Irgendwas\":\"Anderes\"}", "application/json", "*/*", new Pair[]{}); 
+            assertEquals(400, result3.getHttpCode());            
+			System.out.println("'CreateProfile'-Falsches Format erkannt: " + result3.getResponse().trim());		
+						
+            ClientResponse result=c.sendRequest("POST", mainPath +"profile", "{\"email\":\"test@mail.de\", \"telephone\":\"123456\", \"imageLink\":\"imageUrl\", \"nickname\":\"TestNickName\", \"visible\":1}", "application/json", "*/*", new Pair[]{}); 
             assertEquals(200, result.getHttpCode());            
 			System.out.println("'CreateProfile'-Profil für testAgent erstellt: " + result.getResponse().trim());
 						
-            result=c.sendRequest("POST", mainPath +"profile", "\"email\":\"test@mail.de\", \"telephone\":\"555555\", \"imageLink\":\"imageUrl\", \"nickname\":'TestNickName\", \"visible\":\"1\""); 
-            assertEquals(409, result.getHttpCode());            
-			System.out.println("'CreateProfile'-Kein Zweites konnte angelegt werden" + result.getResponse().trim());
+			ClientResponse result2=c.sendRequest("POST", mainPath +"profile", "{\"email\":\"ntest@mail.de\", \"telephone\":\"111111\", \"imageLink\":\"imageUrl\", \"nickname\":\"TestNickName\", \"visible\":1}", "application/json", "*/*", new Pair[]{});
+			assertEquals(409, result2.getHttpCode());            
+			System.out.println("'CreateProfile'-Kein Zweites konnte angelegt werden" + result2.getResponse().trim());
 			
 		}
 		catch(Exception e)
@@ -163,12 +198,13 @@ public class ServiceTest {
 	 * Test UPDATE Profile
 	 * Verändert das Profil von testAgent
 	 * 
+	 * test	Wird Falsche Eingabe erkannt
 	 * test Wird es erfolgreich verändert
 	 * 
 	 * @throws Exception
 	 */
 	
-	@Test
+	//@Test
 	public void testUpdateProfile()
 	{
 		MiniClient c = new MiniClient();
@@ -177,7 +213,12 @@ public class ServiceTest {
 		try
 		{
 			c.setLogin(Long.toString(testAgent.getId()), testPass);
-            ClientResponse result=c.sendRequest("PUT", mainPath +"profile", "{\"email\":\"test@mail.de\", \"telephone\":\"111111\", \"imageLink\":\"imageUrl\", \"nickname\":'NewNickName\", \"visible\":\"}"); 
+			
+			ClientResponse result3=c.sendRequest("PUT", mainPath +"profile", "{\"Irgendwas\":\"Anderes\"}", "application/json", "*/*", new Pair[]{}); 
+	        assertEquals(400, result3.getHttpCode());            
+			System.out.println("'UpdateProfile'-wrong entry detected: " + result3.getResponse().trim());				
+			
+            ClientResponse result=c.sendRequest("PUT", mainPath +"profile", "{\"email\":\"test@mail.de\", \"telephone\":\"1111111\", \"imageLink\":\"imageUrl\", \"nickname\":\"NewNickName\", \"visible\":1}", "application/json", "*/*", new Pair[]{}); 
             assertEquals(200, result.getHttpCode());
 			System.out.println("Result of 'testUpdateProfile': " + result.getResponse().trim());
 		}
@@ -198,7 +239,7 @@ public class ServiceTest {
 	 * @throws Exception
 	 */
 	
-	@Test
+	//@Test
 	public void testGetProfile()
 	{
 		MiniClient c = new MiniClient();
@@ -207,7 +248,8 @@ public class ServiceTest {
 		try
 		{
 			c.setLogin(Long.toString(testAgent.getId()), testPass);
-            ClientResponse result=c.sendRequest("GET", mainPath +"profile", "{'username':'" + testAgent.getLoginName() + "'}"); 
+            
+			ClientResponse result=c.sendRequest("GET", mainPath +"profile", "{\"username\":\"adam\"}", "application/json", "application/json", new Pair[]{}); 
             assertEquals(200, result.getHttpCode());
             assertTrue(result.getResponse().trim().contains("NewNickName")); 
             assertTrue(result.getResponse().trim().contains("test@mail.de")); 
@@ -221,7 +263,7 @@ public class ServiceTest {
 		
     }
 	
-	@Test
+	//@Test
 	public void testDeleteProfile()
 	{
 		MiniClient c = new MiniClient();
@@ -253,7 +295,7 @@ public class ServiceTest {
 	 * 
 	 * @throws Exception
 	 */
-	@Test
+	//@Test
 	public void testCreateRequest()
 	{
 		MiniClient c = new MiniClient();
@@ -285,7 +327,7 @@ public class ServiceTest {
 	 * 
 	 * @throws Exception
 	 */
-	@Test
+	//@Test
 	public void testGetRequest()
 	{
 		MiniClient c = new MiniClient();
@@ -312,7 +354,7 @@ public class ServiceTest {
 	 * 
 	 * @throws Exception
 	 */
-	@Test
+	//@Test
 	public void testDeleteRequest()
 	{
 		MiniClient c = new MiniClient();
@@ -345,7 +387,7 @@ public class ServiceTest {
 	 * 
 	 * @throws Exception
 	 */
-	@Test
+	//@Test
 	public void testCreateContact()
 	{
 		MiniClient c = new MiniClient();
@@ -375,7 +417,7 @@ public class ServiceTest {
 	 * 
 	 * @throws Exception
 	 */
-	@Test
+	//@Test
 	public void testGetContact()
 	{
 		MiniClient c = new MiniClient();
@@ -406,7 +448,7 @@ public class ServiceTest {
 	 * 
 	 * @throws Exception
 	 */
-	@Test
+	//@Test
 	public void testSendSingleMessage()
 	{
 		MiniClient c = new MiniClient();
@@ -434,7 +476,7 @@ public class ServiceTest {
 	 * 
 	 * @throws Exception
 	 */
-	@Test
+	//@Test
 	public void testGetSingleMessage()
 	{
 		MiniClient c = new MiniClient();
@@ -464,7 +506,7 @@ public class ServiceTest {
 	 * 
 	 * @throws Exception
 	 */
-	@Test
+	//@Test
 	public void testDeleteContact()
 	{
 		MiniClient c = new MiniClient();
@@ -490,7 +532,7 @@ public class ServiceTest {
 	//TODO testGetUnreadMessages
 	//TODO testSetUnreadMessages
 	
-	//TODO testCreateGroup
+	//@Test
 	public void testCreateGroup()
 	{
 		MiniClient c = new MiniClient();
@@ -511,7 +553,7 @@ public class ServiceTest {
 		}
 		
     }
-	
+	//@Test
 	public void testUpdateGroup()
 	{
 		MiniClient c = new MiniClient();
@@ -532,7 +574,7 @@ public class ServiceTest {
 		}
 		
     }
-	
+	//@Test
 	public void testGetGroup()
 	{
 		MiniClient c = new MiniClient();
@@ -553,7 +595,7 @@ public class ServiceTest {
 		}
 		
     }
-	//TODO testDeleteGroup
+	//@Test
 	public void testDeleteGroup()
 	{
 		MiniClient c = new MiniClient();
