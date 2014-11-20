@@ -69,6 +69,178 @@ TemplateServiceClient.prototype.postMethod = function(input, successCallback, er
 	);
 };
 
+
+/**
+* CREATE Profile
+*/
+TemplateServiceClient.prototype.postProfile = function(content, successCallback, errorCallback) {
+	this.sendRequest("POST",
+		"profile",
+		content,
+		"application/json",
+		{},
+		successCallback,
+		errorCallback
+	);
+};
+/**
+* UPDATE Profile
+*/
+TemplateServiceClient.prototype.putProfile = function(content, successCallback, errorCallback) {
+	this.sendRequest("PUT",
+		"profile",
+		content,
+		"application/json",
+		{},
+		successCallback,
+		errorCallback
+	);
+};
+/**
+* GET Profile
+*/
+TemplateServiceClient.prototype.getProfile = function(content, successCallback, errorCallback) {
+	this.sendRequest("GET",
+		"profile",
+		content,
+		"application/json",
+		{},
+		successCallback,
+		errorCallback
+	);
+};
+/**
+* DELETE Profile
+*/
+TemplateServiceClient.prototype.deleteProfile = function(successCallback, errorCallback) {
+	this.sendRequest("DELETE",
+		"profile",
+		"",
+		"application/json",
+		{},
+		successCallback,
+		errorCallback
+	);
+};
+/**
+* CREATE Request
+*/
+TemplateServiceClient.prototype.postRequest = function(content, successCallback, errorCallback) {
+	this.sendRequest("POST",
+		"profile/contact/request",
+		content,
+		"application/json",
+		{},
+		successCallback,
+		errorCallback
+	);
+};
+/**
+* GET Request
+*/
+TemplateServiceClient.prototype.getRequest = function(successCallback, errorCallback) {
+	this.sendRequest("GET",
+		"profile/contact/request",
+		"",
+		"application/json",
+		{},
+		successCallback,
+		errorCallback
+	);
+};
+/**
+* DELETE Request
+*/
+TemplateServiceClient.prototype.deleteRequest = function(content, successCallback, errorCallback) {
+	this.sendRequest("DELETE",
+		"profile/contact/request",
+		content,
+		"application/json",
+		{},
+		successCallback,
+		errorCallback
+	);
+};
+/**
+* CREATE Contact
+*/
+TemplateServiceClient.prototype.postContact = function(content, successCallback, errorCallback) {
+	this.sendRequest("POST",
+		"profile/contact",
+		content,
+		"application/json",
+		{},
+		successCallback,
+		errorCallback
+	);
+};
+/**
+* GET Contact
+*/
+TemplateServiceClient.prototype.getContact = function(successCallback, errorCallback) {
+	this.sendRequest("GET",
+		"profile/contact",
+		"",
+		"application/json",
+		{},
+		successCallback,
+		errorCallback
+	);
+};
+/**
+* DELETE Contact
+*/
+TemplateServiceClient.prototype.deleteContact = function(content, successCallback, errorCallback) {
+	this.sendRequest("DELETE",
+		"profile/contact",
+		content,
+		"application/json",
+		{},
+		successCallback,
+		errorCallback
+	);
+};
+/**
+* Send Single Message
+*/
+TemplateServiceClient.prototype.sendSingleMessage = function(input, content, successCallback, errorCallback) {
+	this.sendRequest("POST",
+		"message/single/" + input,
+		content,
+		"application/json",
+		{},
+		successCallback,
+		errorCallback
+	);
+};
+/**
+* Get Single Message
+*/
+TemplateServiceClient.prototype.getSingleMessage = function(input, successCallback, errorCallback) {
+	this.sendRequest("GET",
+		"message/single/" + input,
+		"",
+		"application/json",
+		{},
+		successCallback,
+		errorCallback
+	);
+};
+/**
+* Delete Single Message
+*/
+TemplateServiceClient.prototype.deleteSingleMessage = function(input, successCallback, errorCallback) {
+	this.sendRequest("DELETE",
+		"message/single/" + input,
+		"",
+		"application/json",
+		{},
+		successCallback,
+		errorCallback
+	);
+};
+
+
 /**
 * sends an AJAX request to a resource.
 * Parameters:

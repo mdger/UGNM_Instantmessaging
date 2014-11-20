@@ -1047,7 +1047,7 @@ public class IMServiceClass extends Service {
  	 *@param userName of the Message sender.
  	*/ 
 	@DELETE
-	@Path("message/{username}")
+	@Path("message/single/{username}")
 	public HttpResponse deleteMessage(@PathParam("username") String userName) {
 		String agentName = ((UserAgent) getActiveAgent()).getLoginName();
 		String result = "";
@@ -1461,6 +1461,7 @@ public class IMServiceClass extends Service {
 		*/
 	@GET
 	@Path("profile/contact/request")
+	@Produces("application/json")
 	public HttpResponse getRequests() {
 		String agentName = ((UserAgent) getActiveAgent()).getLoginName();
 		String result ="";
@@ -1567,6 +1568,7 @@ public class IMServiceClass extends Service {
  * @return Code if the sending was successfully
  */
 @PUT
+@Path("profile/contact/request")
 @Consumes("application/json")
 public HttpResponse createRequest(@ContentParam String content)
 {
