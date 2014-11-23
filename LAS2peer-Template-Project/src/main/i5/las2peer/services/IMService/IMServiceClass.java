@@ -923,6 +923,7 @@ public class IMServiceClass extends Service {
 	 * @return The messages for the user as HTTP Response type 
 	*/ 
 	@GET
+	@Produces("application/json")
 	@Path("message/single/{username}")
 	public HttpResponse getSingleMessages(@PathParam("username") String userName)
 	{
@@ -1002,9 +1003,10 @@ public class IMServiceClass extends Service {
 	/**
    	 * Deletes a message 
  	 * 
- 	 *@param userName of the Message sender.
+ 	 * @param content The id of the message in a JSON string
  	*/ 
 	@DELETE
+	@Consumes("application/json")
 	@Path("message/single")
 	public HttpResponse deleteMessage(@ContentParam String content) 
 	{
@@ -1018,7 +1020,6 @@ public class IMServiceClass extends Service {
 			Connection conn = null;
 			PreparedStatement stmnt = null;
 			PreparedStatement stmnt1 = null;
-			ResultSet rs = null;
 			try 
 			{
 					conn = dbm.getConnection();
@@ -1065,7 +1066,7 @@ public class IMServiceClass extends Service {
 						return er;
 					}
 				}				
-				HttpResponse response = freeRessources(conn, stmnt, rs);
+				HttpResponse response = freeRessources(conn, stmnt);
 				if(response.getStatus() != 200)
 					return response;
 			}
@@ -1177,11 +1178,11 @@ public class IMServiceClass extends Service {
 	}
 	
 	/**
-	 * This method returns messages which were send to an account. 
-	 * @param username The name of the user who got the messages
-	 * @return The messages for the user as HTTP Response type 
+	 * This method returns messages which are unread for an account. 
+	 * @return The unread messages for the user as HTTP Response type 
 	*/ 
 	@GET
+	@Produces("application/json")
 	@Path("message/single/unread")
 	public HttpResponse getUnreadMessages()
 	{
@@ -1253,6 +1254,68 @@ public class IMServiceClass extends Service {
 			HttpResponse response = freeRessources(conn, stmnt, rs);
 			if(response.getStatus() != 200)
 				return response;
+		}
+	}
+	
+	/**
+	 * This method updates the status of a message from unread to read
+	 * @param content The content of the message encoded as JSON string
+	 * @return Code if the sending was successfully
+	 **/
+	 
+	@PUT
+	@Consumes("application/json")
+	@Path("message/single/unread")
+	public HttpResponse updateReadSingleMessage(@ContentParam String content)
+	{
+		try 
+		{
+			// convert string content to JSON object to get the message content
+			JSONObject messageObject = (JSONObject) JSONValue.parse(content);
+			int messageID = (int) messageObject.get("messageID");
+			
+			String result = "";
+			Connection conn = null;
+			PreparedStatement stmnt = null;
+			PreparedStatement stmnt1 = null;
+			
+			try 
+			{
+				conn = dbm.getConnection();
+				
+				// insert the message in the message table
+				stmnt = conn.prepareStatement("UPDATE Message SET WasRead = 1 WHERE MessageID = ?");
+				stmnt.setInt(1, messageID);
+				stmnt.executeUpdate();
+				result = "Message was set to read!";
+				
+				// return 
+				HttpResponse r = new HttpResponse(result);
+				r.setStatus(200);
+				return r;
+				
+			} catch (Exception e) 
+			{
+				// return HTTP Response on error
+				HttpResponse er = new HttpResponse("Internal error: " + e.getMessage());
+				er.setStatus(500);
+				return er;
+			} finally 
+			{
+				// free resources
+				HttpResponse response = freeRessources(conn, stmnt);
+				if(response.getStatus() != 200)
+					return response;
+			}
+		}
+		catch (Exception e)
+		{
+			Context.logError(this, e.getMessage());
+			
+			// return HTTP Response on error
+			HttpResponse er = new HttpResponse("Content data in invalid format: " + e.getMessage());
+			er.setStatus(400);
+			return er;
 		}
 	}
 	
@@ -2215,6 +2278,41 @@ public HttpResponse deleteRequest(@ContentParam String content) {
 				return er;
 			}
 		}
+		if (stmnt != null) {
+			try {
+				stmnt.close();
+			} catch (Exception e) {
+				Context.logError(this, e.getMessage());
+				
+				// return HTTP Response on error
+				HttpResponse er = new HttpResponse("Internal error: " + e.getMessage());
+				er.setStatus(500);
+				return er;
+			}
+		}
+		if (conn != null) {
+			try {
+				conn.close();
+			} catch (Exception e) {
+				Context.logError(this, e.getMessage());
+				
+				// return HTTP Response on error
+				HttpResponse er = new HttpResponse("Internal error: " + e.getMessage());
+				er.setStatus(500);
+				return er;
+			}
+		}
+		return new HttpResponse("", 200);
+	}
+	
+	/**
+	 * This method frees the database requesting resources
+	 * @param conn The connection which will be closed
+	 * @param stmnt The statement which will be closed
+	 * @return Successfully closed? Else failure code in the HTTP response data type
+	 */
+	private HttpResponse freeRessources(Connection conn, PreparedStatement stmnt)
+	{
 		if (stmnt != null) {
 			try {
 				stmnt.close();
