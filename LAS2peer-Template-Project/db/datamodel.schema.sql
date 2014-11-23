@@ -1,15 +1,3 @@
-CREATE TABLE IF NOT EXISTS Account (
-	UserName VARCHAR(20) NOT NULL 
-		CHECK (length(UserName) > 5),
-    UserPassword VARCHAR(20) NOT NULL
-		CHECK (length(UserPassword) > 5 AND UserPassword = '%[0,9]%'),
-    OnlineState VARCHAR(15) NOT NULL
-		CHECK (OnlineState = 'Online' OR OnlineState = 'Offline' OR OnlineState = 'Busy'
-        OR OnlineState = 'Do Not Disturb'),
-    
-    PRIMARY KEY (UserName)
-);
-
 CREATE TABLE IF NOT EXISTS AccountProfile (
 	UserName VARCHAR(20) NOT NULL,
     EMail VARCHAR(50)
@@ -19,8 +7,7 @@ CREATE TABLE IF NOT EXISTS AccountProfile (
     NickName VARCHAR(20),
     Visible TINYINT(1),
     
-    PRIMARY KEY (UserName),
-    FOREIGN KEY (UserName) REFERENCES Account(UserName)
+    PRIMARY KEY (UserName)
 );
 
 CREATE TABLE IF NOT EXISTS Message (
@@ -39,7 +26,7 @@ CREATE TABLE IF NOT EXISTS Groups (
     ImageLink VARCHAR (500),
     
     PRIMARY KEY (GroupName),
-    FOREIGN KEY (FounderName) REFERENCES Account(UserName)
+    FOREIGN KEY (FounderName) REFERENCES AccountProfile(UserName)
 );
 
 CREATE TABLE IF NOT EXISTS Contact (
@@ -48,17 +35,18 @@ CREATE TABLE IF NOT EXISTS Contact (
     SecondUser VARCHAR(20) NOT NULL,
     
     PRIMARY KEY (ContactID),
-    FOREIGN KEY (FirstUser) REFERENCES Account(UserName),
-    FOREIGN KEY (SecondUser) REFERENCES Account(UserName)
+    FOREIGN KEY (FirstUser) REFERENCES AccountProfile(UserName),
+    FOREIGN KEY (SecondUser) REFERENCES AccountProfile(UserName)
 );
+
 CREATE TABLE IF NOT EXISTS ContactRequest (
 	RequestID INT NOT NULL AUTO_INCREMENT,
     Sender VARCHAR(20) NOT NULL,
     Receiver VARCHAR(20) NOT NULL,
     
     PRIMARY KEY (RequestID),
-    FOREIGN KEY (Sender) REFERENCES Account(UserName),
-    FOREIGN KEY (Receiver) REFERENCES Account(UserName)
+    FOREIGN KEY (Sender) REFERENCES AccountProfile(UserName),
+    FOREIGN KEY (Receiver) REFERENCES AccountProfile(UserName)
 );
 
 CREATE TABLE IF NOT EXISTS SendingSingle (
@@ -68,8 +56,8 @@ CREATE TABLE IF NOT EXISTS SendingSingle (
     MessageID INT NOT NULL,
     
     PRIMARY KEY (SingleID),
-    FOREIGN KEY (Sender) REFERENCES Account(UserName),
-    FOREIGN KEY (Receiver) REFERENCES Account(UserName),
+    FOREIGN KEY (Sender) REFERENCES AccountProfile(UserName),
+    FOREIGN KEY (Receiver) REFERENCES AccountProfile(UserName),
     FOREIGN KEY (MessageID) REFERENCES Message(MessageID)
 );
 
@@ -80,7 +68,7 @@ CREATE TABLE IF NOT EXISTS SendingGroup (
     MessageID INT NOT NULL,
     
     PRIMARY KEY (GroupID),
-    FOREIGN KEY (Sender) REFERENCES Account(UserName),
+    FOREIGN KEY (Sender) REFERENCES AccountProfile(UserName),
     FOREIGN KEY (Receiver) REFERENCES Groups(GroupName),
     FOREIGN KEY (MessageID) REFERENCES Message(MessageID)
 );
@@ -91,6 +79,6 @@ CREATE TABLE IF NOT EXISTS MemberOf (
     GroupName VARCHAR(20) NOT NULL,
     
     PRIMARY KEY (MemberID),
-    FOREIGN KEY (UserName) REFERENCES Account(UserName),
+    FOREIGN KEY (UserName) REFERENCES AccountProfile(UserName),
     FOREIGN KEY (GroupName) REFERENCES Groups(GroupName)
 );

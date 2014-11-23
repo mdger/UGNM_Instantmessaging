@@ -936,7 +936,7 @@ public class IMServiceClass extends Service {
 			conn = dbm.getConnection();
 			
 			// prepare statement
-			stmnt = conn.prepareStatement("SELECT Message, MessageTimeStamp, Sender FROM Message, SendingSingle WHERE ((Sender = ? AND Receiver = ?) OR (Sender = ? AND Receiver = ?)) AND SingleID = MessageID;");
+			stmnt = conn.prepareStatement("SELECT Message, MessageTimeStamp, Sender FROM Message, SendingSingle WHERE ((Sender = ? AND Receiver = ?) OR (Sender = ? AND Receiver = ?)) AND Message.MessageID = SendingSingle.MessageID;");
 			stmnt.setString(1, userName);
 			stmnt.setString(2, agentName);
 			stmnt.setString(3, agentName);
@@ -990,54 +990,9 @@ public class IMServiceClass extends Service {
 		finally 
 		{
 			// free resources
-			if (rs != null) 
-			{
-				try 
-				{
-					rs.close();
-				}
-				catch (Exception e) 
-				{
-					Context.logError(this, e.getMessage());
-					
-					// return HTTP Response on error
-					HttpResponse er = new HttpResponse("Internal error: " + e.getMessage());
-					er.setStatus(500);
-					return er;
-				}
-			}
-			if (stmnt != null) 
-			{
-				try 
-				{
-					stmnt.close();
-				}
-				catch (Exception e) 
-				{
-					Context.logError(this, e.getMessage());
-					
-					// return HTTP Response on error
-					HttpResponse er = new HttpResponse("Internal error: " + e.getMessage());
-					er.setStatus(500);
-					return er;
-				}
-			}
-			if (conn != null) 
-			{
-				try 
-				{
-					conn.close();
-				}
-				catch (Exception e) 
-				{
-					Context.logError(this, e.getMessage());
-					
-					// return HTTP Response on error
-					HttpResponse er = new HttpResponse("Internal error: " + e.getMessage());
-					er.setStatus(500);
-					return er;
-				}
-			}
+			HttpResponse response = freeRessources(conn, stmnt, rs);
+			if(response.getStatus() != 200)
+				return response;
 		}
 	}
 	
@@ -1076,12 +1031,14 @@ public class IMServiceClass extends Service {
 				r.setStatus(200);
 				return r;
 
-		} catch (Exception e) {
+		} catch (Exception e) 
+		{
 			// return HTTP Response on error
 			HttpResponse er = new HttpResponse("Internal error: " + e.getMessage());
 			er.setStatus(500);
 			return er;
-		} finally {
+		} finally 
+		{
 			// free resources
 			HttpResponse response = freeRessources(conn, stmnt, rs);
 			if(response.getStatus() != 200)
