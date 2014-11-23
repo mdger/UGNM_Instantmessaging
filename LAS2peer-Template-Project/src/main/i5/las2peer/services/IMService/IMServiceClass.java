@@ -1003,49 +1003,78 @@ public class IMServiceClass extends Service {
  	 *@param userName of the Message sender.
  	*/ 
 	@DELETE
-	@Path("message/single/{username}")
-	public HttpResponse deleteMessage(@PathParam("username") String userName) 
+	@Path("message/single")
+	public HttpResponse deleteMessage(@ContentParam String content) 
 	{
-		String agentName = ((UserAgent) getActiveAgent()).getLoginName();
-		String result = "";
-		Connection conn = null;
-		PreparedStatement stmnt = null;
-		ResultSet rs = null;
-		try 
+		try
 		{
-				conn = dbm.getConnection();
-				stmnt = conn.prepareStatement("delete Message from Message as m inner join SendingSingle as s on s.Receiver=? and s.Sender=? and m.MessageID=s.MessageID;");
-				stmnt.setString(1, agentName);
-				stmnt.setString(2, userName);
-				int rows = stmnt.executeUpdate(); 
-				if(rows != 0)
-					result = "Messages deleted successfully!";
-				else
-				{
-					result = "No Message was found";
-					// return HTTP Response on error
-					HttpResponse er = new HttpResponse(result);
-					er.setStatus(404);
-					return er;
-				}
-				
-				// return 
-				HttpResponse r = new HttpResponse(result);
-				r.setStatus(200);
-				return r;
-
-		} catch (Exception e) 
+			// convert string content to JSON object to get the message content
+			JSONObject messageObject = (JSONObject) JSONValue.parse(content);
+			int messageID = (int) messageObject.get("messageID");		
+			
+			String result = "";
+			Connection conn = null;
+			PreparedStatement stmnt = null;
+			PreparedStatement stmnt1 = null;
+			ResultSet rs = null;
+			try 
+			{
+					conn = dbm.getConnection();
+					stmnt = conn.prepareStatement("DELETE FROM SendingSingle WHERE MessageID = ?;");
+					stmnt.setInt(1, messageID);
+					stmnt1 = conn.prepareStatement("DELETE FROM Message WHERE MessageID = ?;");
+					stmnt1.setInt(1, messageID);
+					int rows = stmnt.executeUpdate();
+					rows += stmnt1.executeUpdate();
+					if(rows > 1)
+						result = "Messages deleted successfully!";
+					else
+					{
+						result = "No Message was found";
+						// return HTTP Response on error
+						HttpResponse er = new HttpResponse(result);
+						er.setStatus(404);
+						return er;
+					}
+					
+					// return 
+					HttpResponse r = new HttpResponse(result);
+					r.setStatus(200);
+					return r;
+	
+			} catch (Exception e) 
+			{
+				// return HTTP Response on error
+				HttpResponse er = new HttpResponse("Internal error: " + e.getMessage());
+				er.setStatus(500);
+				return er;
+			} finally 
+			{
+				// free resources
+				if (stmnt1 != null) {
+					try {
+						stmnt1.close();
+					} catch (Exception e) {
+						Context.logError(this, e.getMessage());
+						
+						// return HTTP Response on error
+						HttpResponse er = new HttpResponse("Internal error: " + e.getMessage());
+						er.setStatus(500);
+						return er;
+					}
+				}				
+				HttpResponse response = freeRessources(conn, stmnt, rs);
+				if(response.getStatus() != 200)
+					return response;
+			}
+		} catch (Exception e)
 		{
+			Context.logError(this, e.getMessage());
+			
 			// return HTTP Response on error
-			HttpResponse er = new HttpResponse("Internal error: " + e.getMessage());
-			er.setStatus(500);
+			HttpResponse er = new HttpResponse("Content data in invalid format: " + e.getMessage());
+			er.setStatus(400);
 			return er;
-		} finally 
-		{
-			// free resources
-			HttpResponse response = freeRessources(conn, stmnt, rs);
-			if(response.getStatus() != 200)
-				return response;
 		}
 	}
 

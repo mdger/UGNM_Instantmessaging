@@ -161,7 +161,7 @@ __Operations:__
 * __Get Single Message:__ Retrieves the single messages for an conversation with a contact given its username as path parameter
 	* __HTTP Method:__ GET
 	 * __Consumes:__ -
-	 * __Produces:__ application/json; a JSON string in the following form `{'message':['text':'text_val', 'timestamp':'timestamp_val', 'sender':'sender_val' ]}` ('message'=The messages of a conversation, 'text'=The message text, 'timestamp'=The time the message was sent, 'sender'=The sender of the message)
+	 * __Produces:__ application/json; a JSON string in the following form `{'message':['messageID':'messageID_val', 'text':'text_val', 'timestamp':'timestamp_val', 'sender':'sender_val' ]}` ('messageID': The id of the message in the database, 'message'=The messages of a conversation, 'text'=The message text, 'timestamp'=The time the message was sent, 'sender'=The sender of the message)
 	 * __Parameter:__ authorization header, path parameter 'username' (username of conversation partner)
 	 * __HTTP Status Codes:__
 		* Success: 200
@@ -183,14 +183,15 @@ __Operations:__
 			* 404: Resource does not exist
 			
 			
-* __Delete Message:__ Deletes all messages you got from a single-message-conversation given the name of its sender as path parameter
+* __Delete Message:__ Deletes a distinct message you got from a single-message-conversation given the name of its sender as path parameter and the id of the message
  	* __HTTP Method:__ DELETE
-	* __Consumes:__ -
+	* __Consumes:__ application/json; a JSON string in the following form `{'messageID':'messageID_val}`
 	* __Produces:__ -
-	* __Parameter:__ path parameter 'username' (username of conversation partner)
+	* __Parameter:__ content parameter 'messageID'
 	* __HTTP Status Codes:__
 		* Success: 200
 		* Errors:
+			* 400: Content data in invalid format
 			* 404: Resource does not exist
 			
 
