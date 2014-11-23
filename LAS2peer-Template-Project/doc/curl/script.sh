@@ -11,8 +11,11 @@ echo "curl test script for las2peer service"
 #echo "Test DELETE Message Method"
 #curl -v -X DELETE $URL/message/single -H "Content-Type:application/json" -d "{\"messageID\":25}"
 
-echo "Test GET Unread Message Method"
-curl -v -X GET $URL/message/single/unread --user alice:pwalice
+#echo "Test GET Unread Message Method"
+#curl -v -X GET $URL/message/single/unread --user alice:pwalice
+
+#echo "Test GET Unread Message Method"
+#curl -v -X PUT $URL/message/single/unread -H "Content-Type:application/json" -d "{\"messageID\":26}"
 
 echo 
 echo "PRESS RETURN TO CONTINUE..."
