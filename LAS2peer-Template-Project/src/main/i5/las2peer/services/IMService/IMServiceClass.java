@@ -25,6 +25,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
 import java.sql.SQLException;
+import java.sql.Timestamp;
 
 import net.minidev.json.JSONArray;
 import net.minidev.json.JSONObject;
@@ -1003,13 +1004,15 @@ public class IMServiceClass extends Service {
  	*/ 
 	@DELETE
 	@Path("message/single/{username}")
-	public HttpResponse deleteMessage(@PathParam("username") String userName) {
+	public HttpResponse deleteMessage(@PathParam("username") String userName) 
+	{
 		String agentName = ((UserAgent) getActiveAgent()).getLoginName();
 		String result = "";
 		Connection conn = null;
 		PreparedStatement stmnt = null;
 		ResultSet rs = null;
-		try {
+		try 
+		{
 				conn = dbm.getConnection();
 				stmnt = conn.prepareStatement("delete Message from Message as m inner join SendingSingle as s on s.Receiver=? and s.Sender=? and m.MessageID=s.MessageID;");
 				stmnt.setString(1, agentName);
@@ -1053,7 +1056,7 @@ public class IMServiceClass extends Service {
 	 * @return Code if the sending was successfully
 	 **/
 	 
-	@PUT
+	@POST
 	@Path("message/single/{username}")
 	@Consumes("application/json")
 	public HttpResponse sendSingleMessage(@PathParam("username") String userName, @ContentParam String content)
@@ -1063,72 +1066,57 @@ public class IMServiceClass extends Service {
 			// convert string content to JSON object to get the message content
 			JSONObject messageObject = (JSONObject) JSONValue.parse(content);
 			String message = (String) messageObject.get("message");
-			String timeStamp = (String) messageObject.get("timestamp");
+			Timestamp timeStamp = Timestamp.valueOf((String) messageObject.get("timestamp"));
 			
 			String result = "";
 			Connection conn = null;
 			PreparedStatement stmnt = null;
 			PreparedStatement stmnt1 = null;
 			ResultSet rs = null;
-			try {
+			
+			int messageID = -1;
+			try 
+			{
 				conn = dbm.getConnection();
 				
 				// insert the message in the message table
 				stmnt = conn.prepareStatement("INSERT INTO Message (Message, MessageTimeStamp, WasRead) VALUES (?, ?, ?);", Statement.RETURN_GENERATED_KEYS);
 				stmnt.setString(1, message);
-				stmnt.setString(2, timeStamp);
+				stmnt.setTimestamp(2, timeStamp);
 				stmnt.setInt(3, 0);
-				int rows = stmnt.executeUpdate();
-				result = "Database updated. " + rows + " rows in table \"Message\" affected";
-				stmnt.getGeneratedKeys().next();
-				
+				stmnt.executeUpdate();
 				// retrieve the message ID for saving it in the sending single table
-				int messageID = stmnt.getGeneratedKeys().getInt(1);
-				
+				rs = stmnt.getGeneratedKeys();
+				if(rs.next())
+					messageID = rs.getInt(1);
+				else
+				{
+					HttpResponse er = new HttpResponse("Internal error. Database could not be updated!");
+					er.setStatus(500);
+					return er;
+				}
 				// insert the message ID, sender and receiver in the sending single table
 				stmnt1 = conn.prepareStatement("INSERT INTO SendingSingle (Sender, Receiver, MessageID) VALUES (?, ?, ?);");
 				stmnt1.setString(1, ((UserAgent) getActiveAgent()).getLoginName());
 				stmnt1.setString(2, userName);
 				stmnt1.setInt(3, messageID);
-				rows = stmnt1.executeUpdate();
-				result += "\n\rDatabase updated. " + rows + " rows in table \"SendingSingle\" affected";
+				stmnt1.executeUpdate();
+				result = "Message to " + userName + " was sent!";
 				
 				// return 
 				HttpResponse r = new HttpResponse(result);
 				r.setStatus(200);
 				return r;
 				
-			} catch (Exception e) {
+			} catch (Exception e) 
+			{
 				// return HTTP Response on error
 				HttpResponse er = new HttpResponse("Internal error: " + e.getMessage());
 				er.setStatus(500);
 				return er;
-			} finally {
-				// free resources if exception or not
-				if (rs != null) {
-					try {
-						rs.close();
-					} catch (Exception e) {
-						Context.logError(this, e.getMessage());
-						
-						// return HTTP Response on error
-						HttpResponse er = new HttpResponse("Internal error: " + e.getMessage());
-						er.setStatus(500);
-						return er;
-					}
-				}
-				if (stmnt != null) {
-					try {
-						stmnt.close();
-					} catch (Exception e) {
-						Context.logError(this, e.getMessage());
-						
-						// return HTTP Response on error
-						HttpResponse er = new HttpResponse("Internal error: " + e.getMessage());
-						er.setStatus(500);
-						return er;
-					}
-				}
+			} finally 
+			{
+				// free resources
 				if (stmnt1 != null) {
 					try {
 						stmnt1.close();
@@ -1141,18 +1129,9 @@ public class IMServiceClass extends Service {
 						return er;
 					}
 				}
-				if (conn != null) {
-					try {
-						conn.close();
-					} catch (Exception e) {
-						Context.logError(this, e.getMessage());
-						
-						// return HTTP Response on error
-						HttpResponse er = new HttpResponse("Internal error: " + e.getMessage());
-						er.setStatus(500);
-						return er;
-					}
-				}
+				HttpResponse response = freeRessources(conn, stmnt, rs);
+				if(response.getStatus() != 200)
+					return response;
 			}
 		}
 		catch (Exception e)
