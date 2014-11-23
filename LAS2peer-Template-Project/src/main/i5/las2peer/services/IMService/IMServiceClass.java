@@ -937,7 +937,7 @@ public class IMServiceClass extends Service {
 			conn = dbm.getConnection();
 			
 			// prepare statement
-			stmnt = conn.prepareStatement("SELECT Message, MessageTimeStamp, Sender FROM Message, SendingSingle WHERE ((Sender = ? AND Receiver = ?) OR (Sender = ? AND Receiver = ?)) AND Message.MessageID = SendingSingle.MessageID;");
+			stmnt = conn.prepareStatement("SELECT Message.MessageID, Message, MessageTimeStamp, Sender FROM Message, SendingSingle WHERE ((Sender = ? AND Receiver = ?) OR (Sender = ? AND Receiver = ?)) AND Message.MessageID = SendingSingle.MessageID;");
 			stmnt.setString(1, userName);
 			stmnt.setString(2, agentName);
 			stmnt.setString(3, agentName);
@@ -954,9 +954,11 @@ public class IMServiceClass extends Service {
 			{
 				if(!dataFound) dataFound = true;
 				JSONObject messageObject = new JSONObject();
-				messageObject.put("text", rs.getString(1));
-				messageObject.put("timestamp", rs.getString(2));
-				messageObject.put("sender", rs.getString(3));
+				messageObject.put("sender", rs.getString(4));
+				messageObject.put("timestamp", rs.getString(3));
+				messageObject.put("text", rs.getString(2));
+				messageObject.put("messageID", rs.getString(1));
+
 				messageArray.add(messageObject);
 			}
 			
@@ -1171,6 +1173,86 @@ public class IMServiceClass extends Service {
 			HttpResponse er = new HttpResponse("Content data in invalid format: " + e.getMessage());
 			er.setStatus(400);
 			return er;
+		}
+	}
+	
+	/**
+	 * This method returns messages which were send to an account. 
+	 * @param username The name of the user who got the messages
+	 * @return The messages for the user as HTTP Response type 
+	*/ 
+	@GET
+	@Path("message/single/unread")
+	public HttpResponse getUnreadMessages()
+	{
+		String agentName = ((UserAgent) getActiveAgent()).getLoginName();
+		Connection conn = null;
+		PreparedStatement stmnt = null;
+		ResultSet rs = null;
+		
+		try 
+		{
+			// get connection from connection pool
+			conn = dbm.getConnection();
+			
+			// prepare statement
+			stmnt = conn.prepareStatement("SELECT Message.MessageID, Message, MessageTimeStamp, Sender FROM Message, SendingSingle "
+					+ "WHERE (Sender = ? OR Receiver = ?) AND Message.MessageID = SendingSingle.MessageID AND WasRead = 0;");
+			stmnt.setString(1, agentName);
+			stmnt.setString(2, agentName);
+			
+			// prepare JSONArray
+			JSONArray messageArray = new JSONArray();
+			
+			// retrieve result set
+			rs = stmnt.executeQuery();
+			boolean dataFound = false;
+			// extract all the messages and put them first in a JSON object and after that in a list
+			while (rs.next())
+			{
+				if(!dataFound) dataFound = true;
+				JSONObject messageObject = new JSONObject();
+				messageObject.put("sender", rs.getString(4));
+				messageObject.put("timestamp", rs.getString(3));
+				messageObject.put("text", rs.getString(2));
+				messageObject.put("messageID", rs.getString(1));
+				messageArray.add(messageObject);
+			}
+			
+			if (dataFound)
+			{
+				// setup resulting JSON Object
+				JSONObject jsonResult = new JSONObject();
+				jsonResult.put("message", messageArray);
+				
+				// return HTTP response
+				HttpResponse r = new HttpResponse(jsonResult.toJSONString());
+				r.setStatus(200);
+				return r;
+			}
+			else 
+			{
+				String error = "No unread messages found for contact " + agentName + "!";
+				
+				// return HTTP Response on error
+				HttpResponse er = new HttpResponse(error);
+				er.setStatus(404);
+				return er;
+			}
+		} 
+		catch (Exception e) 
+		{
+			// return HTTP Response on error
+			HttpResponse er = new HttpResponse("Internal error: " + e.getMessage());
+			er.setStatus(500);
+			return er;
+		} 
+		finally 
+		{
+			// free resources
+			HttpResponse response = freeRessources(conn, stmnt, rs);
+			if(response.getStatus() != 200)
+				return response;
 		}
 	}
 	

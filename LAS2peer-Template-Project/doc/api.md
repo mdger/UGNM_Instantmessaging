@@ -199,32 +199,31 @@ Unread Message Resource
 --
 __Description:__ This resource is used to manage single messages that are unread
 
-__URL Template:__ /message/single/unread/{contact_username}
+__URL Template:__ /message/single/unread/
 
 __Operations:__
 
-* __Get Unread Messages:__ Retrieves all the unread messages from a conversation
+* __Get Unread Messages:__ Retrieves all the unread messages for a user
 	* __HTTP Method:__ GET
 	* __Consumes:__ -
 	* __Produces:__ application/json; a JSON string in the following form `{'message':['messageID':'messageID_val','text':'text_val', 'timestamp':'timestamp_val', 'sender':'sender_val']}` ('message'=The messages of a conversation, 'text'=The message text, 'timestamp'=The time the message was sent, 'sender'=The sender of the message)
-	* __Parameter__: authorization header, path parameter 'contact_username'
+	* __Parameter__: authorization header
 	* __HTTP Status Codes:__
 		* Success: 200
 		* Errors:
 			* 403: Access denied
 			* 404: Resource does not exist
 			
-			
+		
 * __Set unread to read:__ Sets a message that was unread to the status read
  	* __HTTP Method:__ PUT
-	* __Consumes:__ application/json; a JSON string in the following form `{'messageID':'messageID_val'}` ('messageID'=The ID of the message)
+	* __Consumes:__ application/json; a JSON string in the following form `{'messageID':'messageID_val'}` ('messageID': The ID of the message)
 	* __Produces:__ -
-	* __Parameter:__ authorization header, path parameter 'contact_username'
+	* __Parameter:__ content parameter with the message ID of the distinct message
 	* __HTTP Status Codes:__
 		* Success: 200
 		* Errors:
 			* 400: Content data in invalid format
-			* 403: Access denied
 			* 404: Resource does not exist
 
 
