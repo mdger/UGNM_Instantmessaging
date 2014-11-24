@@ -26,6 +26,15 @@ echo "curl test script for las2peer service"
 #echo "Test DELETE Request Method"
 #curl -v -X DELETE $URL/profile/contact/request --user joey:pwjoey -H "Content-Type:application/json" -d "{\"username\":\"alice\"}"
 
+#echo "Test GET Contact Method"
+#curl -v -X GET $URL/profile/contact --user alice:pwalice
+
+#echo Test POST Contact Method
+#curl -v -X POST $URL/profile/contact --user joey:pwjoey -H "Content-Type:application/json" -d "{\"username\":\"alice\"}"
+
+#echo Test DELETE Contact Method
+#curl -v -X DELETE $URL/profile/contact --user joey:pwjoey -H "Content-Type:application/json" -d "{\"username\":\"alice\"}"
+
 echo 
 echo "PRESS RETURN TO CONTINUE..."
 read

@@ -733,8 +733,7 @@ public class IMServiceClass extends Service {
 				conn = dbm.getConnection();
 				
 				// prepare statement
-				stmnt = conn.prepareStatement("SELECT UserName, NickName from Contact, AccountProfile WHERE (FirstUser = ? AND SecondUser = UserName) & _"
-						+ "OR (SecondUser = ? AND FirstUser = UserName);");
+				stmnt = conn.prepareStatement("SELECT UserName, NickName from Contact, AccountProfile WHERE (FirstUser = ? AND SecondUser = UserName) OR (SecondUser = ? AND FirstUser = UserName);");
 				stmnt.setString(1, agentName);
 				stmnt.setString(2, agentName);
 				
@@ -798,7 +797,7 @@ public class IMServiceClass extends Service {
 	 * @param content the username of the user requested
 	 * @return Code if the sending was successfully
 	*/ 
-	@PUT
+	@POST
 	@Consumes("application/json")
 	@Path("profile/contact")
 	public HttpResponse createContact(@ContentParam String content)
@@ -814,36 +813,53 @@ public class IMServiceClass extends Service {
 			String userName = (String) contentObject.get("username");
 			String agentName = (String) ((UserAgent) getActiveAgent()).getLoginName();
 			
-			try {
-				conn = dbm.getConnection();
-				
-				// Insert Contact into Contact Table
-				stmnt = conn.prepareStatement("INSERT INTO Contact (FirstUser, SecondUser) VALUES (?, ?);");				
-				stmnt.setString(1, userName);
-				stmnt.setString(2, agentName);
-				
-				int rows = stmnt.executeUpdate();
-				result = "Contacts updated. " + userName + " and " + agentName + " are Contacts now";
-				
-					//Delete Request from Request Table
-					HttpResponse zr = deleteRequest("{\"username\":\"" + userName + "\"}");
-				
-				// return 
-				HttpResponse r = new HttpResponse(result);
-				r.setStatus(200);
-				return r;
-				
-			} catch (Exception e) {
-				// return HTTP Response on error
-				HttpResponse er = new HttpResponse("Internal error: " + e.getMessage());
-				er.setStatus(500);
+			//Exists a Open Request?
+			if(!(existsOpenRequest(userName, agentName))) {
+				HttpResponse er = new HttpResponse(agentName + " was not requested from " + userName);
+				er.setStatus(400);
 				return er;
-			} finally {
 				
-				// free resources
-				HttpResponse response = freeRessources(conn, stmnt, rs);
-				if(response.getStatus() != 200)
-					return response;
+			} else {
+			
+				try {
+					conn = dbm.getConnection();
+					
+					// Insert Contact into Contact Table
+					stmnt = conn.prepareStatement("INSERT INTO Contact (FirstUser, SecondUser) VALUES (?, ?);");				
+					stmnt.setString(1, userName);
+					stmnt.setString(2, agentName);
+					
+					int rows = stmnt.executeUpdate();
+					if (rows > 0) {
+						result = "Contacts updated. " + userName + " and " + agentName + " are Contacts now";
+						
+							//Delete Request from Request Table
+							HttpResponse zr = deleteRequest("{\"username\":\"" + userName + "\"}");
+						
+						// return 
+						HttpResponse r = new HttpResponse(result);
+						r.setStatus(200);
+						return r;
+					
+					} else {
+						HttpResponse r = new HttpResponse("The database could not be updated");
+						r.setStatus(500);
+						return r;
+						
+					}
+					
+				} catch (Exception e) {
+					// return HTTP Response on error
+					HttpResponse er = new HttpResponse("Internal error: " + e.getMessage());
+					er.setStatus(500);
+					return er;
+				} finally {
+					
+					// free resources
+					HttpResponse response = freeRessources(conn, stmnt, rs);
+					if(response.getStatus() != 200)
+						return response;
+				}
 			}
 		}
 		catch (Exception e)
@@ -864,6 +880,7 @@ public class IMServiceClass extends Service {
 	*/
 	@DELETE 
 	@Path("profile/contact")
+	@Consumes("application/json")
 	public HttpResponse deleteContact(@ContentParam String content) {
 		String result ="";
 		String agentName = ((UserAgent)getActiveAgent()).getLoginName();
@@ -871,47 +888,56 @@ public class IMServiceClass extends Service {
 		PreparedStatement stmnt = null;
 		ResultSet rs = null;
 		
-		// convert string content to JSON object 
-					JSONObject contactObject = (JSONObject) JSONValue.parse(content);
-					String userName = (String) contactObject.get("username");
-		
 		try {
-			// get connection from connection pool
-			conn = dbm.getConnection();
-			
-			// prepare statement
-			stmnt = conn.prepareStatement("DELETE FROM Contact WHERE (FirstUser = ? AND SecondUser = ?) OR (FirstUser = ? AND SecondUser = ?);");
-			stmnt.setString(1, userName);
-			stmnt.setString(2, agentName);
-			stmnt.setString(3, agentName);
-			stmnt.setString(4, userName);
-			int rows = stmnt.executeUpdate();
-			if(rows ==1)
-			{
-				result = "Contact deleted succesfully!";
-				//return
-				HttpResponse r = new HttpResponse(result);
-				r.setStatus(200);
-				return r;
+			// convert string content to JSON object 
+			JSONObject contactObject = (JSONObject) JSONValue.parse(content);
+			String userName = (String) contactObject.get("username");
+		
+			try {
+				// get connection from connection pool
+				conn = dbm.getConnection();
+				
+				// prepare statement
+				stmnt = conn.prepareStatement("DELETE FROM Contact WHERE (FirstUser = ? AND SecondUser = ?) OR (FirstUser = ? AND SecondUser = ?);");
+				stmnt.setString(1, userName);
+				stmnt.setString(2, agentName);
+				stmnt.setString(3, agentName);
+				stmnt.setString(4, userName);
+				int rows = stmnt.executeUpdate();
+				if(rows ==1)
+				{
+					result = "Contact deleted succesfully!";
+					//return
+					HttpResponse r = new HttpResponse(result);
+					r.setStatus(200);
+					return r;
+				}
+				else
+				{
+					result = "Contact could not be deleted!";
+					//return
+					HttpResponse r = new HttpResponse(result);
+					r.setStatus(404);
+					return r;
+				}
+			} catch (Exception e) {
+				// return HTTP Response on error
+				HttpResponse er = new HttpResponse("Internal error: " + e.getMessage());
+				er.setStatus(500);
+				return er;
+			} finally {
+				// free resources
+				HttpResponse response = freeRessources(conn, stmnt, rs);
+				if(response.getStatus() != 200)
+					return response;
 			}
-			else
-			{
-				result = "Contact could not be deleted!";
-				//return
-				HttpResponse r = new HttpResponse(result);
-				r.setStatus(404);
-				return r;
-			}
-		} catch (Exception e) {
-			// return HTTP Response on error
-			HttpResponse er = new HttpResponse("Internal error: " + e.getMessage());
-			er.setStatus(500);
+		}
+		catch (Exception e)
+		{
+			Context.logError(this, e.getMessage());			
+			HttpResponse er = new HttpResponse("Content data in invalid format: " + e.getMessage());
+			er.setStatus(400);
 			return er;
-		} finally {
-			// free resources
-			HttpResponse response = freeRessources(conn, stmnt, rs);
-			if(response.getStatus() != 200)
-				return response;
 		}
 	}
 	
@@ -1666,38 +1692,48 @@ public HttpResponse createRequest(@ContentParam String content)
 			er.setStatus(400);			
 			return er;
 			
-		} else {	
-		
-			try {
-				conn = dbm.getConnection();
-				
-				// insert the request into the request table
-				stmnt = conn.prepareStatement("INSERT INTO ContactRequest (Sender, Receiver) VALUES (?, ?);");			
-				stmnt.setString(1, activeUserName);
-				stmnt.setString(2, requestUserName);
-				int rows = stmnt.executeUpdate();
-				
-				//return
-				HttpResponse r = new HttpResponse(result);
-				if (rows > 0) {
-					result = "Contact Request was sended succesfully";				
-					r.setStatus(200);
-				} else {
-					result = "Contact Request could not be sended";				
-					r.setStatus(409);		
-				}			
-				return r;
-				
-			} catch (Exception e) {
-				// return HTTP Response on error
-				HttpResponse er = new HttpResponse("Internal error: " + e.getMessage());
-				er.setStatus(500);
+		} else {
+			
+			//Already A Request was send?
+			if (existsOpenRequest(activeUserName, requestUserName)) {			
+				HttpResponse er = new HttpResponse("A Request already have been send");
+				er.setStatus(400);			
 				return er;
-			} finally {
-				// free resources
-				HttpResponse response = freeRessources(conn, stmnt, rs);
-				if(response.getStatus() != 200)
-					return response;
+				
+			} else {
+			
+		
+				try {
+					conn = dbm.getConnection();
+					
+					// insert the request into the request table
+					stmnt = conn.prepareStatement("INSERT INTO ContactRequest (Sender, Receiver) VALUES (?, ?);");			
+					stmnt.setString(1, activeUserName);
+					stmnt.setString(2, requestUserName);
+					int rows = stmnt.executeUpdate();
+					
+					//return
+					HttpResponse r = new HttpResponse(result);
+					if (rows > 0) {
+						result = "Contact Request was sended succesfully";				
+						r.setStatus(200);
+					} else {
+						result = "Contact Request could not be sended";				
+						r.setStatus(409);		
+					}			
+					return r;
+					
+				} catch (Exception e) {
+					// return HTTP Response on error
+					HttpResponse er = new HttpResponse("Internal error: " + e.getMessage());
+					er.setStatus(500);
+					return er;
+				} finally {
+					// free resources
+					HttpResponse response = freeRessources(conn, stmnt, rs);
+					if(response.getStatus() != 200)
+						return response;
+				}
 			}
 		}
 	}
@@ -2113,7 +2149,52 @@ public HttpResponse deleteRequest(@ContentParam String content) {
 
 	
 	
-	
+	/**
+	 * This method proves if two user have a open Contact Request 
+	 * @param sender 
+	 * @param receiver
+	 * @return Are they have a open contact request with sender as Sender and receiver as Receiver ?
+	 */
+	private boolean existsOpenRequest(String sender, String receiver)
+	{
+		Connection conn = null;
+		PreparedStatement stmnt = null;
+		ResultSet rs = null;
+		
+		try {
+			conn = dbm.getConnection();
+			stmnt = conn.prepareStatement("SELECT RequestID FROM ContactRequest WHERE (Sender = ? AND Receiver = ?);");
+			stmnt.setString(1, sender);
+			stmnt.setString(2, receiver);
+			rs = stmnt.executeQuery();
+			if (rs.next()) {
+				return true;			
+			} 
+			return false;
+			
+		} catch (Exception e) {
+			// return HTTP Response on error
+			HttpResponse er = new HttpResponse("Internal error: " + e.getMessage());
+			er.setStatus(500);
+		} finally {
+			// free resources if exception or not			
+			if (stmnt != null) {
+				try {
+					stmnt.close();
+				} catch (Exception e) {
+					Context.logError(this, e.getMessage());
+				}
+			}
+			if (conn != null) {
+				try {
+					conn.close();
+				} catch (Exception e) {
+					Context.logError(this, e.getMessage());
+				}
+			}
+		}
+		return false;
+	}
 	
 	
 	/**
