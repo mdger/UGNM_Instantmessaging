@@ -44,7 +44,8 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   <![endif]-->
 
   <link href="https://netdna.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
-
+  <!-- Custom CSS -->
+  <link href="css/app.css" rel="stylesheet">
 </head>
 <body>
   
@@ -58,13 +59,16 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 		  <span class="icon-bar"></span>
           <span class="icon-bar"></span>
         </button>
-        <a class="navbar-brand" href="#">My App</a>
+        <a class="navbar-brand" href="#">Instant Messaging</a>
       </div>
+	  
       <div class="navbar-collapse collapse">
-        <ul class="nav navbar-nav">
+      <!--
+		<ul class="nav navbar-nav">
           <li><a href="#url1">Navigation Button 1</a></li>
           <li><a href="#url2">Navigation Button 2</a></li>
         </ul>
+	  -->
         <!-- OpenID Connect Button: add HTML element representing button -->
         <span id="signinButton">
         <span class="oidc-signin navbar-btn navbar-right btn-default"
@@ -89,7 +93,13 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     <button onclick="postExample('Yeeehaaaa!');" class="btn btn-default"><span class="glyphicon glyphicon-hand-right"> Click me, too!</span></button>
     <p id="postExampleOutput"></p>
   </div>
-  
+  <div class="container">
+	<div class="row">
+	  <div class="col-md-2">.col-md-4</div>
+	  <div class="col-md-8">.col-md-4</div>
+	  <div class="col-md-2">.col-md-4</div>
+	</div>  
+  </div>
   <!-- import jQuery for AJAX calls (must) -->
 	<script type="text/javascript" src="https://code.jquery.com/jquery-1.11.1.min.js"></script>
 	
