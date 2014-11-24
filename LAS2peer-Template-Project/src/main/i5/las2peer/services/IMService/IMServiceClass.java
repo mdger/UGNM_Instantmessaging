@@ -66,11 +66,11 @@ public class IMServiceClass extends Service {
 	 * @result Profile Data
 	*/ 
 	@GET
-	@Path("profile")
+	@Path("profile/{username}")
 	@Consumes("application/json")
 	@Produces("application/json")
-	public HttpResponse getProfile(@ContentParam String content) {
-		
+	public HttpResponse getProfile(@PathParam("username") String userName) {
+		String agentName = ((UserAgent)getActiveAgent()).getLoginName();
 		Connection conn = null;
 		PreparedStatement stmnt = null;
 		ResultSet rs = null;
@@ -79,9 +79,6 @@ public class IMServiceClass extends Service {
 			// get connection from connection pool
 			conn = dbm.getConnection();			
 						 
-			JSONObject profileObject = (JSONObject) JSONValue.parse(content);
-			String userName = (String) profileObject.get("username");
-			
 			// prepare statement
 			stmnt = conn.prepareStatement("SELECT EMail, Telephone, ImageLink, NickName, Visible FROM AccountProfile WHERE UserName = ?;");
 			stmnt.setString(1, userName);
@@ -89,62 +86,52 @@ public class IMServiceClass extends Service {
 			// retrieve result set
 			rs = stmnt.executeQuery();
 			
-			// check if users are contacts
-			if(areContacts(userName, ((UserAgent)getActiveAgent()).getLoginName()))
-			{		
-				// process result set
-				if(rs.next()) 
+			// process result set
+			if(rs.next()) 
+			{
+				// is profile visible
+				if(rs.getInt(5) == 1 || areContacts(userName, agentName)) 
 				{
-					// is profile visible
-					if(rs.getInt(5) == 1)
-					{
-						// setup resulting JSON Object
-						JSONObject ro = new JSONObject();
-						ro.put("email", rs.getString(1));
-						ro.put("telephone", rs.getString(2));
-						ro.put("imageLink", rs.getString(3));
-						ro.put("nickname", rs.getString(4));
-						ro.put("visible", rs.getInt(5));
-						
-						// return HTTP Response on success
-						HttpResponse r = new HttpResponse(ro.toJSONString());
-						r.setStatus(200);
-						return r;
-					}
-					else
-					{
-						String error = "The profile of the user " + userName + " is not visible!";
-						
-						// return HTTP Response on error
-						HttpResponse er = new HttpResponse(error);
-						er.setStatus(401);
-						return er;
-					}
+					// setup resulting JSON Object
+					JSONObject ro = new JSONObject();
+					ro.put("email", rs.getString(1));
+					ro.put("telephone", rs.getString(2));
+					ro.put("imageLink", rs.getString(3));
+					ro.put("nickname", rs.getString(4));
+					ro.put("visible", rs.getInt(5));
 					
-				} else {
-					String error = "No result for username " + userName;
+					// return HTTP Response on success
+					HttpResponse r = new HttpResponse(ro.toJSONString());
+					r.setStatus(200);
+					return r;
+				}
+				else
+				{
+					String error = "The profile of the user " + userName + " is not visible!";
 					
 					// return HTTP Response on error
 					HttpResponse er = new HttpResponse(error);
-					er.setStatus(404);
+					er.setStatus(401);
 					return er;
-				}
-			}
-			else
+				}	
+			} 
+			else 
 			{
-				String error = "The user " + userName + " is no contact!";
+				String error = "No result for username " + userName;
 				
 				// return HTTP Response on error
 				HttpResponse er = new HttpResponse(error);
-				er.setStatus(403);
+				er.setStatus(404);
 				return er;
-			}
-		} catch (Exception e) {
+			}	
+		} catch (Exception e) 
+		{
 			// return HTTP Response on error
 			HttpResponse er = new HttpResponse("Internal error: " + e.getMessage());
 			er.setStatus(500);
 			return er;
-		} finally {
+		} finally 
+		{
 			// free resources
 			HttpResponse response = freeRessources(conn, stmnt, rs);
 			if(response.getStatus() != 200)
@@ -168,7 +155,7 @@ public class IMServiceClass extends Service {
 			// convert string content to JSON object 
 			JSONObject profileObject = (JSONObject) JSONValue.parse(content);
 			String mail = (String) profileObject.get("email");
-			String tele = (String) profileObject.get("telephone");
+			int tele = (int) profileObject.get("telephone");
 			String image = (String) profileObject.get("imageLink");
 			String nickName = (String) profileObject.get("nickname");
 			int visible = (int) profileObject.get("visible");				
@@ -176,19 +163,17 @@ public class IMServiceClass extends Service {
 			String result = "";
 			Connection conn = null;
 			PreparedStatement stmnt = null;
-			ResultSet rs = null;
-				
 			
-			try {
+			try 
+			{
 				conn = dbm.getConnection();
-				
-				try {	
-			
+				try 
+				{	
 					//Create Profile				
 					stmnt = conn.prepareStatement("INSERT INTO AccountProfile (UserName, EMail, Telephone, ImageLink, NickName, Visible) VALUES (?, ?, ?, ?, ?, ?)");
 					stmnt.setString(1, agentName);
 					stmnt.setString(2, mail);
-					stmnt.setString(3, tele);
+					stmnt.setInt(3, tele);
 					stmnt.setString(4, image);
 					stmnt.setString(5, nickName);
 					stmnt.setInt(6, visible);
@@ -205,13 +190,16 @@ public class IMServiceClass extends Service {
 						return er;
 					}					
 					
-				} catch (SQLException e) {
+				} catch (SQLException e) 
+				{
 					if (e.getErrorCode() == 1062) {
-						HttpResponse er = new HttpResponse("Das Profil ist bereits vorhanden");					
+						HttpResponse er = new HttpResponse("The profile already exists!");					
 						er.setStatus(409);
 						return er;
-					} else {
-						HttpResponse er = new HttpResponse("Datenbank Fehler");					
+					}
+					else 
+					{
+						HttpResponse er = new HttpResponse("Internal Error");					
 						er.setStatus(500);
 					}
 				}
@@ -222,14 +210,16 @@ public class IMServiceClass extends Service {
 				return r;
 
 					
-			} catch (Exception e) {
+			} catch (Exception e) 
+			{
 				// return HTTP Response on error
 				HttpResponse er = new HttpResponse("Internal error: " + e.getMessage());
 				er.setStatus(500);
 				return er;
-			} finally {
+			} finally 
+			{
 				// free resources
-				HttpResponse response = freeRessources(conn, stmnt, rs);
+				HttpResponse response = freeRessources(conn, stmnt);
 				if(response.getStatus() != 200)
 					return response;
 			}
@@ -262,7 +252,7 @@ public class IMServiceClass extends Service {
 			// convert string content to JSON object 
 			JSONObject profileObject = (JSONObject) JSONValue.parse(content);
 			String mail = (String) profileObject.get("email");
-			String tele = (String) profileObject.get("telephone");
+			int tele = (int) profileObject.get("telephone");
 			String image = (String) profileObject.get("imageLink");
 			String nickName = (String) profileObject.get("nickname");
 			int visible = (int) profileObject.get("visible");				
@@ -277,7 +267,7 @@ public class IMServiceClass extends Service {
 					conn = dbm.getConnection();
 					stmnt = conn.prepareStatement("UPDATE AccountProfile SET EMail = ?, Telephone = ?, ImageLink = ?, NickName = ?, Visible = ? WHERE UserName = ?;");
 					stmnt.setString(1, mail);
-					stmnt.setString(2, tele);
+					stmnt.setInt(2, tele);
 					stmnt.setString(3, image);
 					stmnt.setString(4, nickName);
 					stmnt.setInt(5, visible);
@@ -1303,7 +1293,6 @@ public class IMServiceClass extends Service {
 			String result = "";
 			Connection conn = null;
 			PreparedStatement stmnt = null;
-			PreparedStatement stmnt1 = null;
 			
 			try 
 			{
@@ -2146,8 +2135,6 @@ public HttpResponse deleteRequest(@ContentParam String content) {
 		}
 		return result;
 	}
-
-	
 	
 	/**
 	 * This method proves if two user have a open Contact Request 
@@ -2196,7 +2183,6 @@ public HttpResponse deleteRequest(@ContentParam String content) {
 		return false;
 	}
 	
-	
 	/**
 	 * This method proves if two user are contacts to each other 
 	 * @param firstUser The first user
@@ -2215,8 +2201,8 @@ public HttpResponse deleteRequest(@ContentParam String content) {
 			stmnt.setString(2, secondUser);
 			stmnt.setString(3, secondUser);
 			stmnt.setString(4, firstUser);
-			int rows = stmnt.executeUpdate(); 
-			if (rows == 0) 
+			rs = stmnt.executeQuery(); 
+			if (!rs.next()) 
 				return false;
 			else 
 				return true;
@@ -2359,55 +2345,29 @@ public HttpResponse deleteRequest(@ContentParam String content) {
 			stmnt = conn.prepareStatement("SELECT UserName, Visible FROM AccountProfile;");
 			
 			// retrieve result set
-			rs = stmnt.executeQuery();
+			rs = stmnt.executeQuery();	
 			
-			// check if users are contacts
-			if(true)
-			{		
-				// process result set
-				if(rs.next()) 
-				{
-					// is profile visible
-					if(rs.getInt(2) == 1)
-					{
-						// setup resulting JSON Object
-						JSONObject ro = new JSONObject();
-						ro.put("username", rs.getString(1));
-						ro.put("visible", rs.getInt(2));
-						
-						// return HTTP Response on success
-						HttpResponse r = new HttpResponse(ro.toJSONString());
-						r.setStatus(200);
-						return r;
-					}
-					else
-					{
-						String error = "The profile of the user is not visible!";
-						
-						// return HTTP Response on error
-						HttpResponse er = new HttpResponse(error);
-						er.setStatus(401);
-						return er;
-					}
-					
-				} else {
-					String error = "No result for username ";
-					
-					// return HTTP Response on error
-					HttpResponse er = new HttpResponse(error);
-					er.setStatus(404);
-					return er;
-				}
-			}
-			else
+			JSONArray userArray = new JSONArray();
+			// process result set
+			while(rs.next()) 
 			{
-				String error = "The user is no contact!";
+				// setup resulting JSON Object
+				JSONObject ro = new JSONObject();
+				ro.put("username", rs.getString(1));
+				userArray.add(ro);
 				
-				// return HTTP Response on error
-				HttpResponse er = new HttpResponse(error);
-				er.setStatus(403);
-				return er;
+				// return HTTP Response on success
+				HttpResponse r = new HttpResponse(ro.toJSONString());
+				r.setStatus(200);
+				return r;
 			}
+			
+			// return HTTP Response on success
+			HttpResponse r = new HttpResponse(userArray.toJSONString());
+			r.setStatus(200);
+			return r;
+			
+			
 		} catch (Exception e) {
 			// return HTTP Response on error
 			HttpResponse er = new HttpResponse("Internal error: " + e.getMessage());

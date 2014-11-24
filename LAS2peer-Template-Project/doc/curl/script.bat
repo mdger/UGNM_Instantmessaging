@@ -35,4 +35,17 @@ Set URL=http://localhost:8080/im
 REM Test DELETE Contact Method
 curl -v -X DELETE %URL%/profile/contact --user joey:pwjoey -H "Content-Type:application/json" -d "{\"username\":\"alice\"}"
 
+::REM Test GET Profile Method
+::curl -v -X GET %URL%/profile/bobby --user alice:pwalice
+
+::REM Test DELETE Profile Method
+::curl -v -X DELETE %URL%/profile/ --user alice:pwalice
+
+::REM Test POST Profile Method
+::curl -v -X POST %URL%/profile/ --user alice:pwalice -H "Content-Type:application/json" -d "{\"email\":\"TestUser@somewhere.de\",\"telephone\":12345678,\"imageLink\":\"www.somewhere.com/image1.jpg\",\"nickname\":\"Nick1\",\"visible\":1}"
+
+::REM Test PUT Profile Method
+::curl -v -X PUT %URL%/profile/ --user alice:pwalice -H "Content-Type:application/json" -d "{\"email\":\"Alice@somewhere.com\",\"telephone\":87654321,\"imageLink\":\"www.somewhere.com/Alice.jpg\",\"nickname\":\"Alli\",\"visible\":1}"
+
+
 PAUSE
