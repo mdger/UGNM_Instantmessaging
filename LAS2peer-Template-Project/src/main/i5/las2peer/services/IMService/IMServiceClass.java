@@ -2339,4 +2339,91 @@ public HttpResponse deleteRequest(@ContentParam String content) {
 		}
 		return new HttpResponse("", 200);
 	}
+
+	/**
+	 * Retrieves a profile 
+	 * 
+	 * @param userName of all Users retrieved 
+	 * @result Profile Datas
+	*/ 
+	@GET
+	@Path("profile")
+	@Consumes("application/json")
+	@Produces("application/json")
+	public HttpResponse getUsers() {
+		
+		Connection conn = null;
+		PreparedStatement stmnt = null;
+		ResultSet rs = null;
+		
+		try {
+			// get connection from connection pool
+			conn = dbm.getConnection();			
+						 
+			// prepare statement
+			stmnt = conn.prepareStatement("SELECT UserName, Visible FROM AccountProfile;");
+			
+			// retrieve result set
+			rs = stmnt.executeQuery();
+			
+			// check if users are contacts
+			if(true)
+			{		
+				// process result set
+				if(rs.next()) 
+				{
+					// is profile visible
+					if(rs.getInt(2) == 1)
+					{
+						// setup resulting JSON Object
+						JSONObject ro = new JSONObject();
+						ro.put("username", rs.getString(1));
+						ro.put("visible", rs.getInt(2));
+						
+						// return HTTP Response on success
+						HttpResponse r = new HttpResponse(ro.toJSONString());
+						r.setStatus(200);
+						return r;
+					}
+					else
+					{
+						String error = "The profile of the user is not visible!";
+						
+						// return HTTP Response on error
+						HttpResponse er = new HttpResponse(error);
+						er.setStatus(401);
+						return er;
+					}
+					
+				} else {
+					String error = "No result for username ";
+					
+					// return HTTP Response on error
+					HttpResponse er = new HttpResponse(error);
+					er.setStatus(404);
+					return er;
+				}
+			}
+			else
+			{
+				String error = "The user is no contact!";
+				
+				// return HTTP Response on error
+				HttpResponse er = new HttpResponse(error);
+				er.setStatus(403);
+				return er;
+			}
+		} catch (Exception e) {
+			// return HTTP Response on error
+			HttpResponse er = new HttpResponse("Internal error: " + e.getMessage());
+			er.setStatus(500);
+			return er;
+		} finally {
+			// free resources
+			HttpResponse response = freeRessources(conn, stmnt, rs);
+			if(response.getStatus() != 200)
+				return response;
+		}
+	}
+
 }
