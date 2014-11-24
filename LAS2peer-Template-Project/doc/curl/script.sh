@@ -17,6 +17,15 @@ echo "curl test script for las2peer service"
 #echo "Test GET Unread Message Method"
 #curl -v -X PUT $URL/message/single/unread -H "Content-Type:application/json" -d "{\"messageID\":26}"
 
+#echo "Test GET Request Method"
+#curl -v -X GET $URL/profile/contact/request --user joey:pwjoey
+
+#echo "Test POST Request Method"
+#curl -v -X POST $URL/profile/contact/request --user alice:pwalice -H "Content-Type:application/json" -d "{\"username\":\"joey\"}"
+
+#echo "Test DELETE Request Method"
+#curl -v -X DELETE $URL/profile/contact/request --user joey:pwjoey -H "Content-Type:application/json" -d "{\"username\":\"alice\"}"
+
 echo 
 echo "PRESS RETURN TO CONTINUE..."
 read
