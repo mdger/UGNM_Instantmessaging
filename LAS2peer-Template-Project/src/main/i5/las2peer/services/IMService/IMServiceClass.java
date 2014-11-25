@@ -67,7 +67,6 @@ public class IMServiceClass extends Service {
 	*/ 
 	@GET
 	@Path("profile/{username}")
-	@Consumes("application/json")
 	@Produces("application/json")
 	public HttpResponse getProfile(@PathParam("username") String userName) {
 		String agentName = ((UserAgent)getActiveAgent()).getLoginName();
@@ -90,7 +89,7 @@ public class IMServiceClass extends Service {
 			if(rs.next()) 
 			{
 				// is profile visible
-				if(rs.getInt(5) == 1 || areContacts(userName, agentName)) 
+				if(rs.getInt(5) == 1 || areContacts(userName, agentName) || userName.equals(agentName)) 
 				{
 					// setup resulting JSON Object
 					JSONObject ro = new JSONObject();

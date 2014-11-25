@@ -147,6 +147,7 @@ public class ServiceTest {
 	
 		testCreateProfile();
 		testUpdateProfile();
+		testGetProfile();
 		testDeleteProfile();		
 		
 	}
@@ -178,11 +179,11 @@ public class ServiceTest {
             assertEquals(400, result3.getHttpCode());            
 			System.out.println("'CreateProfile'-Falsches Format erkannt: " + result3.getResponse().trim());		
 						
-            ClientResponse result=c.sendRequest("POST", mainPath +"profile", "{\"email\":\"test@mail.de\", \"telephone\":\"123456\", \"imageLink\":\"imageUrl\", \"nickname\":\"TestNickName\", \"visible\":1}", "application/json", "*/*", new Pair[]{}); 
+            ClientResponse result=c.sendRequest("POST", mainPath +"profile", "{\"email\":\"test@mail.de\", \"telephone\":123456, \"imageLink\":\"imageUrl\", \"nickname\":\"TestNickName\", \"visible\":1}", "application/json", "*/*", new Pair[]{}); 
             assertEquals(200, result.getHttpCode());            
 			System.out.println("'CreateProfile'-Profil für testAgent erstellt: " + result.getResponse().trim());
 						
-			ClientResponse result2=c.sendRequest("POST", mainPath +"profile", "{\"email\":\"ntest@mail.de\", \"telephone\":\"111111\", \"imageLink\":\"imageUrl\", \"nickname\":\"TestNickName\", \"visible\":1}", "application/json", "*/*", new Pair[]{});
+			ClientResponse result2=c.sendRequest("POST", mainPath +"profile", "{\"email\":\"ntest@mail.de\", \"telephone\":111111, \"imageLink\":\"imageUrl\", \"nickname\":\"TestNickName\", \"visible\":1}", "application/json", "*/*", new Pair[]{});
 			assertEquals(409, result2.getHttpCode());            
 			System.out.println("'CreateProfile'-Kein Zweites konnte angelegt werden" + result2.getResponse().trim());
 			
@@ -218,7 +219,7 @@ public class ServiceTest {
 	        assertEquals(400, result3.getHttpCode());            
 			System.out.println("'UpdateProfile'-wrong entry detected: " + result3.getResponse().trim());				
 			
-            ClientResponse result=c.sendRequest("PUT", mainPath +"profile", "{\"email\":\"test@mail.de\", \"telephone\":\"1111111\", \"imageLink\":\"imageUrl\", \"nickname\":\"NewNickName\", \"visible\":1}", "application/json", "*/*", new Pair[]{}); 
+            ClientResponse result=c.sendRequest("PUT", mainPath +"profile", "{\"email\":\"test@mail.de\", \"telephone\":1111111, \"imageLink\":\"imageUrl\", \"nickname\":\"NewNickName\", \"visible\":1}", "application/json", "*/*", new Pair[]{}); 
             assertEquals(200, result.getHttpCode());
 			System.out.println("Result of 'testUpdateProfile': " + result.getResponse().trim());
 		}
@@ -249,7 +250,7 @@ public class ServiceTest {
 		{
 			c.setLogin(Long.toString(testAgent.getId()), testPass);
             
-			ClientResponse result=c.sendRequest("GET", mainPath +"profile", "{\"username\":\"adam\"}", "application/json", "application/json", new Pair[]{}); 
+			ClientResponse result=c.sendRequest("GET", mainPath +"profile/" + agentName1, "", "*/*", "application/json", new Pair[]{}); 
             assertEquals(200, result.getHttpCode());
             assertTrue(result.getResponse().trim().contains("NewNickName")); 
             assertTrue(result.getResponse().trim().contains("test@mail.de")); 
