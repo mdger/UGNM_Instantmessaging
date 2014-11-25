@@ -2328,7 +2328,6 @@ public HttpResponse deleteRequest(@ContentParam String content) {
 	*/ 
 	@GET
 	@Path("profile")
-	@Consumes("application/json")
 	@Produces("application/json")
 	public HttpResponse getUsers() {
 		
@@ -2379,5 +2378,4 @@ public HttpResponse deleteRequest(@ContentParam String content) {
 				return response;
 		}
 	}
-
 }
