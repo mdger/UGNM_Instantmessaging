@@ -47,6 +47,8 @@ echo "curl test script for las2peer service"
 #echo "Test PUT Profile Method"
 #curl -v -X PUT $URL/profile/ --user alice:pwalice -H "Content-Type:application/json" -d "{\"email\":\"Alice@somewhere.com\",\"telephone\":87654321,\"imageLink\":\"www.somewhere.com/Alice.jpg\",\"nickname\":\"Alli\",\"visible\":1}"
 
+#echo Test GET Group Method
+#curl -v -X GET $URL/group/TestGroup --user alice:pwalice
 
 echo 
 echo "PRESS RETURN TO CONTINUE..."

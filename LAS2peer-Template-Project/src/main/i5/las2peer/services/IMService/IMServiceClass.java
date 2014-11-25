@@ -370,62 +370,74 @@ public class IMServiceClass extends Service {
 	@Produces("application/json")
 	public HttpResponse getGroup(@PathParam("groupname") String groupName) {
 		Connection conn = null;
-		PreparedStatement stmnt = null;
-		PreparedStatement stmnt1 = null; 
-		ResultSet rs = null;
-		ResultSet rs1 = null;
-		try {
+		PreparedStatement stmntGroup = null;
+		PreparedStatement stmntMember = null; 
+		ResultSet rsGroup = null;
+		ResultSet rsMember = null;
+		String agentName = ((UserAgent) getActiveAgent()).getLoginName();
+		
+		try {			
+			
 			// get connection from connection pool
 			conn = dbm.getConnection();
 			
-			// prepare statement for the group
-			stmnt = conn.prepareStatement("SELECT GroupName, FounderName, Description, ImageLink FROM Groups WHERE GroupName = ?;");
-			stmnt.setString(1, groupName);
-			
-			// retrieve result set for the group
-			rs = stmnt.executeQuery();
-			
-			// process result set
-			if (rs.next()) 
-			{
-				// prepare statement for the members
-				stmnt1 = conn.prepareStatement("SELECT UserName FROM MemberOf WHERE GroupName = ?;");
-				stmnt1.setString(1, groupName);
-				
-				// retrieve result set for the members
-				rs1 = stmnt.executeQuery();
-				
-				// setup resulting JSON Object
-				JSONObject ro = new JSONObject();
-				ro.put("name", rs.getString(1));
-				ro.put("founder", rs.getString(2));
-				ro.put("description", rs.getString(3));
-				ro.put("imageLink", rs.getString(4));
-				
-				JSONArray memberArray = new JSONArray();
-				
-				// add the members in an array
-				while(rs1.next())
-				{
-					JSONObject member = new JSONObject();
-					member.put("username", rs1.getString(1));
-					memberArray.add(member);
-				}
-				// put the members in the JSON object 
-				ro.put("member", memberArray);
-				
-				// return HTTP Response on success
-				HttpResponse r = new HttpResponse(ro.toJSONString());
-				r.setStatus(200);
-				return r;
-				
+			//is active user a member of the group?
+			if(!isMemberOf(agentName, groupName))
+			{	
+				//No Access allowed
+				HttpResponse r = new HttpResponse(agentName + " is not a member of " + groupName);
+				r.setStatus(403);
+				return r;					
 			} else {
-				String result = "Group does not exist: " + groupName;
+			
+				// prepare statement for the group
+				stmntGroup = conn.prepareStatement("SELECT GroupName, FounderName, Description, ImageLink FROM Groups WHERE GroupName = ?;");
+				stmntGroup.setString(1, groupName);
 				
-				// return HTTP Response on error
-				HttpResponse er = new HttpResponse(result);
-				er.setStatus(404);
-				return er;
+				rsGroup = stmntGroup.executeQuery();
+				
+				// process result set
+				if (rsGroup.next()) 
+				{
+					// prepare statement for the members
+					stmntMember = conn.prepareStatement("SELECT UserName FROM MemberOf WHERE GroupName = ?;");
+					stmntMember.setString(1, groupName);
+					
+					// retrieve result set for the members
+					rsMember = stmntMember.executeQuery();
+					
+					// setup resulting JSON Object
+					JSONObject ro = new JSONObject();
+					ro.put("name", rsGroup.getString(1));
+					ro.put("founder", rsGroup.getString(2));
+					ro.put("description", rsGroup.getString(3));
+					ro.put("imageLink", rsGroup.getString(4));
+					
+					JSONArray memberArray = new JSONArray();
+					
+					// add the members in an array
+					while(rsMember.next())
+					{
+						JSONObject member = new JSONObject();
+						member.put("username", rsMember.getString(1));
+						memberArray.add(member);
+					}
+					// put the members in the JSON object 
+					ro.put("member", memberArray);
+					
+					// return HTTP Response on success
+					HttpResponse r = new HttpResponse(ro.toJSONString());
+					r.setStatus(200);
+					return r;
+					
+				} else {
+					String result = "Group does not exist: " + groupName;
+					
+					// return HTTP Response on error
+					HttpResponse er = new HttpResponse(result);
+					er.setStatus(404);
+					return er;
+				}
 			}
 		} catch (Exception e) {
 			// return HTTP Response on error
@@ -434,12 +446,12 @@ public class IMServiceClass extends Service {
 			return er;
 		} finally {
 			// free resources
-			HttpResponse response = freeRessources(conn, stmnt, rs);
+			HttpResponse response = freeRessources(conn, stmntGroup, rsGroup);
 			if(response.getStatus() != 200)
 				return response;
-			if (stmnt1 != null) {
+			if (stmntMember != null) {
 				try {
-					stmnt1.close();
+					stmntMember.close();
 				} catch (Exception e) {
 					Context.logError(this, e.getMessage());
 					
@@ -2236,6 +2248,55 @@ public HttpResponse deleteRequest(@ContentParam String content) {
 		}
 		return false;
 	}
+	
+	/**
+	 * This method proves if a user is Member of a group
+	 * @param the name of the user
+	 * @param the name of the group
+	 * @return is the user member of the group ?
+	 */
+	private boolean isMemberOf(String user, String group)
+	{
+		Connection conn = null;
+		PreparedStatement stmnt = null;
+		ResultSet rs = null;
+		
+		try {
+			conn = dbm.getConnection();
+			stmnt = conn.prepareStatement("SELECT MemberID FROM MemberOf WHERE (UserName = ? AND GroupName = ?);");
+			stmnt.setString(1, user);
+			stmnt.setString(2, group);
+			rs = stmnt.executeQuery();
+			if (rs.next()) {
+				return true;			
+			} 
+			return false;
+			
+		} catch (Exception e) {
+			// return HTTP Response on error
+			HttpResponse er = new HttpResponse("Internal error: " + e.getMessage());
+			er.setStatus(500);
+		} finally {
+			// free resources if exception or not			
+			if (stmnt != null) {
+				try {
+					stmnt.close();
+				} catch (Exception e) {
+					Context.logError(this, e.getMessage());
+				}
+			}
+			if (conn != null) {
+				try {
+					conn.close();
+				} catch (Exception e) {
+					Context.logError(this, e.getMessage());
+				}
+			}
+		}
+		return false;
+	}
+	
+	
 	
 	/**
 	 * This method frees the database requesting resources

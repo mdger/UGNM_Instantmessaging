@@ -47,5 +47,7 @@ curl -v -X DELETE %URL%/profile/contact --user joey:pwjoey -H "Content-Type:appl
 ::REM Test PUT Profile Method
 ::curl -v -X PUT %URL%/profile/ --user alice:pwalice -H "Content-Type:application/json" -d "{\"email\":\"Alice@somewhere.com\",\"telephone\":87654321,\"imageLink\":\"www.somewhere.com/Alice.jpg\",\"nickname\":\"Alli\",\"visible\":1}"
 
+REM Test GET Group Method
+curl -v -X GET %URL%/group/TestGroup --user alice:pwalice
 
 PAUSE
