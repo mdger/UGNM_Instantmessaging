@@ -56,9 +56,7 @@ public class IMServiceClass extends Service {
 		// instantiate a database manager to handle database connection pooling and credentials
 		dbm = new DatabaseManager(jdbcDriverClassName, jdbcLogin, jdbcPass, jdbcUrl, jdbcSchema);
 	}
-
 	
-		
 	/**
 	 * Retrieves a profile 
 	 * 
@@ -302,61 +300,14 @@ public class IMServiceClass extends Service {
 					return response;
 			}
 		}
-			catch (Exception e)
-			{
-				Context.logError(this, e.getMessage());
-				
-				// return HTTP Response on error
-				HttpResponse er = new HttpResponse("Content data in invalid format: " + e.getMessage());
-				er.setStatus(400);
-				return er;
-			}
-	}
-
-	/**
-   	 * Deletes a profile 
- 	 * 
- 	 *
- 	*/ 
-	@DELETE
-	@Path("profile")
-	public HttpResponse deleteProfile() {
-		String agentName = ((UserAgent) getActiveAgent()).getLoginName();
-		String result = "";
-		Connection conn = null;
-		PreparedStatement stmnt = null;
-		ResultSet rs = null;
-		try {
-				conn = dbm.getConnection();
-				stmnt = conn.prepareStatement("DELETE FROM AccountProfile WHERE UserName = ?;");
-				stmnt.setString(1, agentName);
-				int rows = stmnt.executeUpdate(); 
-				if(rows == 1)
-					result = "Profile deleted successfully!";
-				else
-				{
-					result = "Resource was not found";
-					// return HTTP Response on error
-					HttpResponse er = new HttpResponse(result);
-					er.setStatus(404);
-					return er;
-				}
-				
-				// return 
-				HttpResponse r = new HttpResponse(result);
-				r.setStatus(200);
-				return r;
-
-		} catch (Exception e) {
+		catch (Exception e)
+		{
+			Context.logError(this, e.getMessage());
+			
 			// return HTTP Response on error
-			HttpResponse er = new HttpResponse("Internal error: " + e.getMessage());
-			er.setStatus(500);
+			HttpResponse er = new HttpResponse("Content data in invalid format: " + e.getMessage());
+			er.setStatus(400);
 			return er;
-		} finally {
-			// free resources
-			HttpResponse response = freeRessources(conn, stmnt, rs);
-			if(response.getStatus() != 200)
-				return response;
 		}
 	}
 
@@ -370,7 +321,9 @@ public class IMServiceClass extends Service {
 	@Path("group/{groupname}")
 	@Produces("application/json")
 	public HttpResponse getGroup(@PathParam("groupname") String groupName) {
+		String test = "";
 		Connection conn = null;
+		Connection conn1 = null;
 		PreparedStatement stmnt = null;
 		PreparedStatement stmnt1 = null; 
 		ResultSet rs = null;
@@ -378,33 +331,35 @@ public class IMServiceClass extends Service {
 		try {
 			// get connection from connection pool
 			conn = dbm.getConnection();
-			
+			conn1 = dbm.getConnection();
+			test += "1";
 			// prepare statement for the group
 			stmnt = conn.prepareStatement("SELECT GroupName, FounderName, Description, ImageLink FROM Groups WHERE GroupName = ?;");
 			stmnt.setString(1, groupName);
-			
+			test += "2";
 			// retrieve result set for the group
 			rs = stmnt.executeQuery();
-			
+			test += "3";
 			// process result set
 			if (rs.next()) 
 			{
-				// prepare statement for the members
-				stmnt1 = conn.prepareStatement("SELECT UserName FROM MemberOf WHERE GroupName = ?;");
-				stmnt1.setString(1, groupName);
-				
-				// retrieve result set for the members
-				rs1 = stmnt.executeQuery();
-				
 				// setup resulting JSON Object
 				JSONObject ro = new JSONObject();
 				ro.put("name", rs.getString(1));
 				ro.put("founder", rs.getString(2));
 				ro.put("description", rs.getString(3));
 				ro.put("imageLink", rs.getString(4));
+				test += "4";
+				
+				// prepare statement for the members
+				stmnt1 = conn1.prepareStatement("SELECT UserName FROM MemberOf WHERE GroupName = ?;");
+				stmnt1.setString(1, groupName);
+				test += "5";
+				// retrieve result set for the members
+				rs1 = stmnt1.executeQuery();
+				test += "6";
 				
 				JSONArray memberArray = new JSONArray();
-				
 				// add the members in an array
 				while(rs1.next())
 				{
@@ -414,7 +369,7 @@ public class IMServiceClass extends Service {
 				}
 				// put the members in the JSON object 
 				ro.put("member", memberArray);
-				
+				test += "7";
 				// return HTTP Response on success
 				HttpResponse r = new HttpResponse(ro.toJSONString());
 				r.setStatus(200);
@@ -430,7 +385,7 @@ public class IMServiceClass extends Service {
 			}
 		} catch (Exception e) {
 			// return HTTP Response on error
-			HttpResponse er = new HttpResponse("Internal error: " + e.getMessage());
+			HttpResponse er = new HttpResponse("Internal error: " + test + e.getMessage());
 			er.setStatus(500);
 			return er;
 		} finally {
@@ -438,18 +393,9 @@ public class IMServiceClass extends Service {
 			HttpResponse response = freeRessources(conn, stmnt, rs);
 			if(response.getStatus() != 200)
 				return response;
-			if (stmnt1 != null) {
-				try {
-					stmnt1.close();
-				} catch (Exception e) {
-					Context.logError(this, e.getMessage());
-					
-					// return HTTP Response on error
-					HttpResponse er = new HttpResponse("Internal error: " + e.getMessage());
-					er.setStatus(500);
-					return er;
-				}
-			}
+			HttpResponse response1 = freeRessources(conn1, stmnt1, rs1);
+			if(response1.getStatus() != 200)
+				return response1;
 		}
 	}
 
@@ -462,21 +408,18 @@ public class IMServiceClass extends Service {
 	@POST
 	@Path("group/{groupname}")
 	@Consumes("application/json")
-	public HttpResponse createGroup(@PathParam("groupname") String groupName,@ContentParam String content) {		
+	public HttpResponse createGroup(@PathParam("groupname") String groupName, @ContentParam String content) {		
 		try 
 		{
 			// convert string content to JSON object 
 			JSONObject profileObject = (JSONObject) JSONValue.parse(content);
-			String gName = (String) profileObject.get("GroupName");
-			String founder = (String) profileObject.get("FounderName");
-			String desc = (String) profileObject.get("Description");
-			String img = (String) profileObject.get("ImageLink");
+			String founder = ((UserAgent) getActiveAgent()).getLoginName();
+			String desc = (String) profileObject.get("description");
+			String img = (String) profileObject.get("imagelink");
 		
 			String result = "";
 			Connection conn = null;
 			PreparedStatement stmnt = null;
-			ResultSet rs = null;
-				
 			
 			try {
 				conn = dbm.getConnection();
@@ -485,7 +428,7 @@ public class IMServiceClass extends Service {
 			
 					//Create Profile				
 					stmnt = conn.prepareStatement("INSERT INTO Groups (GroupName, FounderName, Description, ImageLink) VALUES (?, ?, ?, ?)");
-					stmnt.setString(1, gName);
+					stmnt.setString(1, groupName);
 					stmnt.setString(2, founder);
 					stmnt.setString(3, desc);
 					stmnt.setString(4, img);
@@ -504,7 +447,7 @@ public class IMServiceClass extends Service {
 					
 				} catch (SQLException e) {
 					if (e.getErrorCode() == 1022) {
-						HttpResponse er = new HttpResponse("The Group with the following name " + gName + " already exists!");					
+						HttpResponse er = new HttpResponse("The Group with the following name " + groupName + " already exists!");					
 						er.setStatus(409);
 						return er;
 					}
@@ -523,7 +466,7 @@ public class IMServiceClass extends Service {
 				return er;
 			} finally {
 				// free resources
-				HttpResponse response = freeRessources(conn, stmnt, rs);
+				HttpResponse response = freeRessources(conn, stmnt);
 				if(response.getStatus() != 200)
 					return response;
 			}
@@ -553,61 +496,85 @@ public class IMServiceClass extends Service {
 		{
 			// convert string content to JSON object 
 			JSONObject profileObject = (JSONObject) JSONValue.parse(content);
-			String name = (String) profileObject.get("name");
-			String founder = (String) profileObject.get("founder");
+			String founder = ((UserAgent) getActiveAgent()).getLoginName();
 			String desc = (String) profileObject.get("description");
-			String iLink = (String) profileObject.get("imageLink");		
+			String iLink = (String) profileObject.get("imagelink");		
 		
 			String result = "";
 			Connection conn = null;
 			PreparedStatement stmnt = null;
 			ResultSet rs = null;
-				
-			if(((UserAgent)getActiveAgent()).getLoginName().equals(founder))
+			
+			try
 			{
-				try {
-					conn = dbm.getConnection();
-					stmnt = conn.prepareStatement("UPDATE Groups SET GroupName = ?, FounderName = ?, Description = ?, ImageLink = ? WHERE GroupName = ?;");
-					stmnt.setString(1, name);
-					stmnt.setString(2, founder);
-					stmnt.setString(3, desc);
-					stmnt.setString(4, iLink);
-					stmnt.setString(5, groupName);
-					int rows = stmnt.executeUpdate(); 
-					if(rows == 1)
-						result = "Group updated successfully";
-					else
+				conn = dbm.getConnection();
+				stmnt = conn.prepareStatement("SELECT FounderName FROM Groups WHERE GroupName = ?;");
+				stmnt.setString(1, groupName);
+				rs = stmnt.executeQuery();
+				if(rs.next())
+				{
+					if(!founder.equals(rs.getString(1)))
 					{
-						// return HTTP Response on error
-						HttpResponse er = new HttpResponse("Resource does not exist!");
-						er.setStatus(404);
+						HttpResponse er = new HttpResponse("Groups can only be changed by the founder!");
+						er.setStatus(403);
 						return er;
 					}
-					
-					// return 
-					HttpResponse r = new HttpResponse(result);
-					r.setStatus(200);
-					return r;
-					
-				} catch (Exception e) {
-					// return HTTP Response on error
-					HttpResponse er = new HttpResponse("Internal error: " + e.getMessage());
-					er.setStatus(500);
+				}
+				else
+				{
+					HttpResponse er = new HttpResponse("Group does not exist!");
+					er.setStatus(404);
 					return er;
-				} finally {
-					// free resources
-					HttpResponse response = freeRessources(conn, stmnt, rs);
-					if(response.getStatus() != 200)
-						return response;
 				}
 			}
-			else
+			catch (Exception e)
 			{
-				result = "You are not authorized to update the group " + groupName + "!";
 				// return HTTP Response on error
-				HttpResponse er = new HttpResponse(result);
-				er.setStatus(403);
+				HttpResponse er = new HttpResponse("Internal error: " + e.getMessage());
+				er.setStatus(500);
 				return er;
+			}
+			finally
+			{
+				// free resources
+				HttpResponse response = freeRessources(conn, stmnt, rs);
+				if(response.getStatus() != 200)
+					return response;
+			}
+			
+			try {
+				conn = dbm.getConnection();
+				stmnt = conn.prepareStatement("UPDATE Groups SET GroupName = ?, Description = ?, ImageLink = ? WHERE GroupName = ?;");
+				stmnt.setString(1, groupName);
+				stmnt.setString(2, desc);
+				stmnt.setString(3, iLink);
+				stmnt.setString(4, groupName);
+				int rows = stmnt.executeUpdate(); 
+				if(rows == 1)
+					result = "Group updated successfully";
+				else
+				{
+					// return HTTP Response on error
+					HttpResponse er = new HttpResponse("Resource does not exist!");
+					er.setStatus(404);
+					return er;
+				}
+				
+				// return 
+				HttpResponse r = new HttpResponse(result);
+				r.setStatus(200);
+				return r;
+				
+			} catch (Exception e) {
+				// return HTTP Response on error
+				HttpResponse er = new HttpResponse("Internal error: " + e.getMessage());
+				er.setStatus(500);
+				return er;
+			} finally {
+				// free resources
+				HttpResponse response = freeRessources(conn, stmnt, rs);
+				if(response.getStatus() != 200)
+					return response;
 			}
 		}
 		catch (Exception e)
@@ -639,6 +606,7 @@ public class IMServiceClass extends Service {
 		try {
 			conn = dbm.getConnection();
 			stmnt = conn.prepareStatement("SELECT FounderName FROM Groups WHERE GroupName = ?");
+			stmnt.setString(1, groupName);
 			rs = stmnt.executeQuery();
 			String founder = "";
 			if(rs.next())
@@ -697,13 +665,6 @@ public class IMServiceClass extends Service {
 		}
 	}
 	
-	
-	
-	
-	
-	
-	
-	
 	/**
 	 * This method returns the contact list of a certain user. 
 	 * @param userName The name of the user whose contact list should be displayed
@@ -741,8 +702,8 @@ public class IMServiceClass extends Service {
 				{
 					if(!dataFound) dataFound = true;
 					JSONObject contactObject = new JSONObject();
-					contactObject.put("nickname", rs.getString(1));
-					contactObject.put("username", rs.getString(2));
+					contactObject.put("username", rs.getString(1));
+					contactObject.put("nickname", rs.getString(2));
 					contactArray.add(contactObject);
 				}
 				
@@ -823,8 +784,8 @@ public class IMServiceClass extends Service {
 					if (rows > 0) {
 						result = "Contacts updated. " + userName + " and " + agentName + " are Contacts now";
 						
-							//Delete Request from Request Table
-							HttpResponse zr = deleteRequest("{\"username\":\"" + userName + "\"}");
+						//Delete Request from Request Table
+						deleteRequest("{\"username\":\"" + userName + "\"}");
 						
 						// return 
 						HttpResponse r = new HttpResponse(result);

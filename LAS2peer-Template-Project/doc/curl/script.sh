@@ -38,9 +38,6 @@ echo "curl test script for las2peer service"
 #echo "Test GET Profile Method"
 #curl -v -X GET $URL/profile/bobby --user alice:pwalice
 
-#echo "Test DELETE Profile Method"
-#curl -v -X DELETE $URL/profile/ --user alice:pwalice
-
 #echo "Test POST Profile Method"
 #curl -v -X POST $URL/profile/ --user alice:pwalice -H "Content-Type:application/json" -d "{\"email\":\"TestUser@somewhere.de\",\"telephone\":12345678,\"imageLink\":\"www.somewhere.com/image1.jpg\",\"nickname\":\"Nick1\",\"visible\":1}"
 

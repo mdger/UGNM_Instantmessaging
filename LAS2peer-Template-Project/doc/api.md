@@ -283,9 +283,9 @@ __Operations:__
 	
 * __Create Group:__ Creates a group given its name
  	* __HTTP Method:__ POST
-	* __Consumes:__ application/json; a JSON string in the following form `{'name':'name_val', 'founder':'founder_val', 'description':'description_val', 'imageLink':'imageLink_val'}` ('name'=The name of the group, 'founder'=The name of the founder of the group, 'description'=The description of the group, 'imageLink'=The link to the profile image of the group)
+	* __Consumes:__ application/json; a JSON string in the following form `{'description':'description_val', 'imageLink':'imageLink_val'}` ('description'=The description of the group, 'imageLink'=The link to the profile image of the group)
 	* __Produces:__ -
-	* __Parameter:__ path parameter 'groupname'
+	* __Parameter:__ authorization header, path parameter 'groupname'
 	* __HTTP Status Codes:__
 		* Success: 200
 		* Errors:
@@ -295,7 +295,7 @@ __Operations:__
 			
 * __Update Group:__ Updates a group given its name
  	* __HTTP Method:__ PUT
-	* __Consumes:__ application/json; a JSON string in the following form `{'name':'name_val', 'founder':'founder_val', 'description':'description_val', 'imageLink':'imageLink_val'}` ('name'=The name of the group, 'founder'=The name of the founder of the group, 'description'=The description of the group, 'imageLink'=The link to the profile image of the group)
+	* __Consumes:__ application/json; a JSON string in the following form `{'description':'description_val', 'imageLink':'imageLink_val'}` ('description'=The description of the group, 'imageLink'=The link to the profile image of the group)
 	* __Produces:__ -
 	* __Parameter:__ 
 	* __HTTP Status Codes:__
