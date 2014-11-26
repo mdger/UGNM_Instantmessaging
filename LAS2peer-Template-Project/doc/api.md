@@ -327,12 +327,11 @@ __Operations:__
 * __Get memberships:__ Retrieves the list of groups for a contact given its username
 	* __HTTP Method:__ GET
 	* __Consumes:__ -
-	* __Produces:__ application/json; a JSON string in the following form `{'group':['groupname':'groupname_val', 'founder':'founder_val'}` ('group'=A group founded, 'groupname'=The name of the group, 'founder'=The founder of the group)
+	* __Produces:__ application/json; a JSON string in the following form `{'group':['groupname':'groupname_val']}` ('group'=A group founded, 'groupname'=The name of the group)
 	* __Parameter:__ authorization header, path parameter 'username'
 	* __HTTP Status Codes:__
 		* Success: 200
 		* Errors:
-			* 403: Access denied
 			* 404: Resource does not exist
 			
 			

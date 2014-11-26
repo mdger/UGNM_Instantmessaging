@@ -44,8 +44,26 @@ echo "curl test script for las2peer service"
 #echo "Test PUT Profile Method"
 #curl -v -X PUT $URL/profile/ --user alice:pwalice -H "Content-Type:application/json" -d "{\"email\":\"Alice@somewhere.com\",\"telephone\":87654321,\"imageLink\":\"www.somewhere.com/Alice.jpg\",\"nickname\":\"Alli\",\"visible\":1}"
 
-#echo Test GET Group Method
+#echo "Test GET Group Method"
 #curl -v -X GET $URL/group/TestGroup --user alice:pwalice
+
+#echo "Test POST Group Method"
+#curl -v -X POST $URL/group/NewGroup --user alice:pwalice -H "Content-Type:application/json" -d "{\"description\":\"This is a description!\",\"imagelink\":\"www.image/link/image.jpg\"}"
+
+#echo "Test PUT Group Method"
+#curl -v -X PUT $URL/group/NewGroup --user alice:pwalice -H "Content-Type:application/json" -d "{\"description\":\"This is a new description!\",\"imagelink\":\"www.image/link/image1.jpg\"}"
+
+#echo "Test DELETE Group Method"
+#curl -v -X DELETE $URL/group/NewGroup --user alice:pwalice
+
+#echo "Test GET Memberships Method"
+#curl -v -X GET $URL/group/member --user alice:pwalice 
+
+#echo "Test POST Member Method"
+#curl -v -X POST $URL/group/NewGroup/member/joey --user alice:pwalice
+
+#echo "Test DELETE Member Method"
+#curl -v -X DELETE $URL/group/NewGroup/member/joey --user alice:pwalice
 
 echo 
 echo "PRESS RETURN TO CONTINUE..."

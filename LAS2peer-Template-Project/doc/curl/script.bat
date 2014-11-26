@@ -44,8 +44,8 @@ Set URL=http://localhost:8080/im
 ::REM Test PUT Profile Method
 ::curl -v -X PUT %URL%/profile/ --user alice:pwalice -H "Content-Type:application/json" -d "{\"email\":\"Alice@somewhere.com\",\"telephone\":87654321,\"imageLink\":\"www.somewhere.com/Alice.jpg\",\"nickname\":\"Alli\",\"visible\":1}"
 
-REM Test GET Group Method
-curl -v -X GET %URL%/group/TestGroup --user alice:pwalice
+::REM Test GET Group Method
+::curl -v -X GET %URL%/group/TestGroup --user alice:pwalice
 
 ::REM Test POST Group Method
 ::curl -v -X POST %URL%/group/NewGroup --user alice:pwalice -H "Content-Type:application/json" -d "{\"description\":\"This is a description!\",\"imagelink\":\"www.image/link/image.jpg\"}"
@@ -55,5 +55,14 @@ curl -v -X GET %URL%/group/TestGroup --user alice:pwalice
 
 ::REM Test DELETE Group Method
 ::curl -v -X DELETE %URL%/group/NewGroup --user alice:pwalice
+
+::REM Test GET Memberships Method
+::curl -v -X GET %URL%/group/member --user alice:pwalice 
+
+::REM Test POST Member Method
+::curl -v -X POST %URL%/group/NewGroup/member/joey --user alice:pwalice
+
+::REM Test DELETE Member Method
+::curl -v -X DELETE %URL%/group/NewGroup/member/joey --user alice:pwalice
 
 PAUSE

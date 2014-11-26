@@ -327,7 +327,6 @@ public class IMServiceClass extends Service {
 		ResultSet rs = null;
 		ResultSet rs1 = null;
 		
-		String test = "";
 		try {
 			// get connection from connection pool
 			conn = dbm.getConnection();
@@ -444,9 +443,8 @@ public class IMServiceClass extends Service {
 						result = "The Group was created successfully";
 					else
 					{
-						result = "The Group could not be created!";
 						// return HTTP Response on error
-						HttpResponse er = new HttpResponse(result);
+						HttpResponse er = new HttpResponse("The Group could not be created!");
 						er.setStatus(409);
 						return er;
 					}					
@@ -459,6 +457,7 @@ public class IMServiceClass extends Service {
 					}
 				}
 				
+				addMember(groupName, founder);
 				// Return Result
 				HttpResponse r = new HttpResponse(result);
 				r.setStatus(200);
@@ -602,12 +601,13 @@ public class IMServiceClass extends Service {
 	@DELETE
 	@Path("group/{groupname}")
 	public HttpResponse deleteGroup(@PathParam("groupname") String groupName) {
-	
-		String result = "";
 		Connection conn = null;
 		PreparedStatement stmnt = null;
 		PreparedStatement stmnt1 = null;
+		PreparedStatement stmnt2 = null;
+		PreparedStatement stmnt3 = null;
 		ResultSet rs = null;
+		ResultSet rs1 = null;
 			
 		try {
 			conn = dbm.getConnection();
@@ -619,29 +619,35 @@ public class IMServiceClass extends Service {
 				founder = rs.getString(1);
 			else
 			{
-				result = "Resource does not exist!";
-				HttpResponse r = new HttpResponse(result);
+				HttpResponse r = new HttpResponse("Resource does not exist!");
 				r.setStatus(404);
 				return r;
 			}
 			
 			if(((UserAgent)getActiveAgent()).getLoginName().equals(founder))
 			{
+				stmnt2 = conn.prepareStatement("SELECT UserName FROM MemberOf WHERE GroupName = ?;");
+				stmnt2.setString(1, groupName);
+				rs1 = stmnt.executeQuery();
+				while(rs1.next())
+				{
+					stmnt3 = conn.prepareStatement("DELETE FROM MemberOf WHERE GroupName = ? AND UserName = ?;");
+					stmnt3.setString(1, groupName);
+					stmnt3.setString(2, rs1.getString(1));
+					stmnt3.executeUpdate();
+				}
 				stmnt1 = conn.prepareStatement("DELETE FROM Groups WHERE GroupName = ?;");
 				stmnt1.setString(1, groupName);
 				stmnt1.executeUpdate(); 
-				result = "Group deleted successfully";
-				
 				// return 
-				HttpResponse r = new HttpResponse(result);
+				HttpResponse r = new HttpResponse("Group deleted successfully");
 				r.setStatus(200);
 				return r;
 			}
 			else
 			{
-				result = "You are not authorized to delete the group " + groupName + "!";
 				// return HTTP Response on error
-				HttpResponse er = new HttpResponse(result);
+				HttpResponse er = new HttpResponse("You are not authorized to delete the group " + groupName + "!");
 				er.setStatus(403);
 				return er;
 			}
@@ -1774,19 +1780,21 @@ public HttpResponse deleteRequest(@ContentParam String content) {
 	 * @result Profile Data
 	 */
 	@GET
-	@Path("member/{name}")
-	public HttpResponse getMemberships(@PathParam("name") String userName) {
+	@Produces("application/json")
+	@Path("group/member")
+	public HttpResponse getMemberships() {
 		
 		Connection conn = null;
 		PreparedStatement stmnt = null;
 		ResultSet rs = null;
+		String userName = ((UserAgent) getActiveAgent()).getLoginName();
 		
 		try {
 			// get connection from connection pool
 			conn = dbm.getConnection();
 			
 			// prepare statement
-			stmnt = conn.prepareStatement("SELECT g.GroupName, g.FounderName FROM Groups As g, MemberOf As m WHERE m.UserName = ? AND m.GroupName = g.GroupName;");
+			stmnt = conn.prepareStatement("SELECT GroupName FROM MemberOf WHERE UserName = ?;");
 			stmnt.setString(1, userName);
 			
 			// prepare JSONArray
@@ -1802,7 +1810,6 @@ public HttpResponse deleteRequest(@ContentParam String content) {
 				// extract all the messages and put them first in a JSON object and after that in a list
 				JSONObject resultObject = new JSONObject();
 				resultObject.put("groupname", rs.getString(1));
-				resultObject.put("founder", rs.getString(2));
 				groupArray.add(resultObject);				
 								
 				//Result found
@@ -1836,42 +1843,9 @@ public HttpResponse deleteRequest(@ContentParam String content) {
 			return er;
 		} finally {
 			// free resources
-			if (rs != null) {
-				try {
-					rs.close();
-				} catch (Exception e) {
-					Context.logError(this, e.getMessage());
-					
-					// return HTTP Response on error
-					HttpResponse er = new HttpResponse("Internal error: " + e.getMessage());
-					er.setStatus(500);
-					return er;
-				}
-			}
-			if (stmnt != null) {
-				try {
-					stmnt.close();
-				} catch (Exception e) {
-					Context.logError(this, e.getMessage());
-					
-					// return HTTP Response on error
-					HttpResponse er = new HttpResponse("Internal error: " + e.getMessage());
-					er.setStatus(500);
-					return er;
-				}
-			}
-			if (conn != null) {
-				try {
-					conn.close();
-				} catch (Exception e) {
-					Context.logError(this, e.getMessage());
-					
-					// return HTTP Response on error
-					HttpResponse er = new HttpResponse("Internal error: " + e.getMessage());
-					er.setStatus(500);
-					return er;
-				}
-			}
+			HttpResponse response = freeRessources(conn, stmnt, rs);
+			if(response.getStatus() != 200)
+				return response;
 		}
 	}
 	
@@ -1881,35 +1855,48 @@ public HttpResponse deleteRequest(@ContentParam String content) {
 	 * @param name The username of the new member to be added
 	 * @param content The groupname of the group where the user have to be added encoded as JSON-String
 	 */
-	@PUT
-	@Consumes("application/json")
-	@Path("member/{name}")
-	public HttpResponse addMember(@PathParam("name") String userName, @ContentParam String content) {
-		
-		try 
-		{
-			// convert string content to JSON object 
-			JSONObject contentObject = (JSONObject) JSONValue.parse(content);
-			String groupName = (String) contentObject.get("groupname");
-		
-			String result = "";
+	@POST
+	@Path("group/{grouname}/member/{username}")
+	public HttpResponse addMember(@PathParam("groupname") String groupName, @PathParam("username") String userName) {	
 			Connection conn = null;
 			PreparedStatement stmnt = null;
-			ResultSet rs = null;				
-		
+			ResultSet rs = null;
+			PreparedStatement stmnt1 = null;	
+			String agentName = ((UserAgent) getActiveAgent()).getLoginName();
+			
 			try {
 				conn = dbm.getConnection();
-				stmnt = conn.prepareStatement("INSERT INTO MemberOf (UserName, GroupName) VALUES (?, ?);");
-				stmnt.setString(1, userName);
-				stmnt.setString(2, groupName);
-
-				int rows = stmnt.executeUpdate(); 
-				result = "Database updated. " + rows + " rows affected";
+				stmnt = conn.prepareStatement("SELECT FounderName FROM Groups WHERE GroupName = ?");
+				stmnt.setString(1, groupName);
+				rs = stmnt.executeQuery();
+				if(rs.next())
+				{
+					if(!agentName.equals(rs.getString(1)))
+					{
+						HttpResponse r = new HttpResponse("User is not authorized to add members to this group!");
+						r.setStatus(403);
+						return r;
+					}
+				}
 				
-				// return 
-				HttpResponse r = new HttpResponse(result);
-				r.setStatus(200);
-				return r;
+				stmnt1 = conn.prepareStatement("INSERT INTO MemberOf (UserName, GroupName) VALUES (?, ?);");
+				stmnt1.setString(1, userName);
+				stmnt1.setString(2, groupName);
+
+				int rows = stmnt1.executeUpdate(); 
+				// return
+				if (rows != 0)
+				{
+					HttpResponse r = new HttpResponse("Member " + userName + " was added to the group " + groupName + "!");
+					r.setStatus(200);
+					return r;
+				}
+				else
+				{
+					HttpResponse r = new HttpResponse("Member could not be added!");
+					r.setStatus(409);
+					return r;
+				}
 				
 			} catch (Exception e) {
 				// return HTTP Response on error
@@ -1917,53 +1904,10 @@ public HttpResponse deleteRequest(@ContentParam String content) {
 				er.setStatus(500);
 				return er;
 			} finally {
-				// free resources if exception or not
-				if (rs != null) {
-					try {
-						rs.close();
-					} catch (Exception e) {
-						Context.logError(this, e.getMessage());
-						
-						// return HTTP Response on error
-						HttpResponse er = new HttpResponse("Internal error: " + e.getMessage());
-						er.setStatus(500);
-						return er;
-					}
-				}
-				if (stmnt != null) {
-					try {
-						stmnt.close();
-					} catch (Exception e) {
-						Context.logError(this, e.getMessage());
-						
-						// return HTTP Response on error
-						HttpResponse er = new HttpResponse("Internal error: " + e.getMessage());
-						er.setStatus(500);
-						return er;
-					}
-				}
-				if (conn != null) {
-					try {
-						conn.close();
-					} catch (Exception e) {
-						Context.logError(this, e.getMessage());
-						
-						// return HTTP Response on error
-						HttpResponse er = new HttpResponse("Internal error: " + e.getMessage());
-						er.setStatus(500);
-						return er;
-					}
-				}
-			}
-		}
-			catch (Exception e)
-			{
-				Context.logError(this, e.getMessage());
-				
-				// return HTTP Response on error
-				HttpResponse er = new HttpResponse("Content data in invalid format: " + e.getMessage());
-				er.setStatus(400);
-				return er;
+				// free resources
+				HttpResponse response = freeRessources(conn, stmnt, rs);
+				if(response.getStatus() != 200)
+				return response;
 			}
 	}
 	
@@ -1976,30 +1920,39 @@ public HttpResponse deleteRequest(@ContentParam String content) {
 	 */
 	@DELETE
 	@Consumes("application/json")
-	@Path("member/{name}")
-	public HttpResponse deleteMember(@PathParam("name") String userName, @ContentParam String content) {
+	@Path("group/{groupname}/member/{username}")
+	public HttpResponse deleteMember(@PathParam("groupname") String groupName, @PathParam("username") String userName) {
 
 	try 
 	{
-		// convert string content to JSON object 
-		JSONObject contentObject = (JSONObject) JSONValue.parse(content);
-		String groupName = (String) contentObject.get("groupname");	
-		
-		String result = "";
+		String agentName = ((UserAgent) getActiveAgent()).getLoginName();
 		Connection conn = null;
 		PreparedStatement stmnt = null;
 		ResultSet rs = null;
+		PreparedStatement stmnt1 = null;
 		
 		try {
 			conn = dbm.getConnection();
-			stmnt = conn.prepareStatement("DELETE FROM MemberOf WHERE UserName = ? AND GroupName = ?;");
-			stmnt.setString(1, userName);
-			stmnt.setString(2, groupName);
-			int rows = stmnt.executeUpdate(); 
-			result = "Database updated. " + rows + " rows affected";
+			stmnt = conn.prepareStatement("SELECT FounderName FROM Groups WHERE GroupName = ?");
+			stmnt.setString(1, groupName);
+			rs = stmnt.executeQuery();
+			if(rs.next())
+			{
+				if(!agentName.equals(rs.getString(1)))
+				{
+					HttpResponse r = new HttpResponse("User is not authorized to add members to this group!");
+					r.setStatus(403);
+					return r;
+				}
+			}
+			
+			stmnt1 = conn.prepareStatement("DELETE FROM MemberOf WHERE UserName = ? AND GroupName = ?;");
+			stmnt1.setString(1, userName);
+			stmnt1.setString(2, groupName);
+			stmnt1.executeUpdate(); 
 			
 			// return 
-			HttpResponse r = new HttpResponse(result);
+			HttpResponse r = new HttpResponse("Member successfully deleted!");
 			r.setStatus(200);
 			return r;
 			
@@ -2009,41 +1962,15 @@ public HttpResponse deleteRequest(@ContentParam String content) {
 			er.setStatus(500);
 			return er;
 		} finally {
-			// free resources if exception or not
-			if (rs != null) {
+			// free resources
+			HttpResponse response = freeRessources(conn, stmnt, rs);
+			if(response.getStatus() != 200)
+				return response;
+			if (stmnt1 != null) {
 				try {
-					rs.close();
+					stmnt1.close();
 				} catch (Exception e) {
 					Context.logError(this, e.getMessage());
-					
-					// return HTTP Response on error
-					HttpResponse er = new HttpResponse("Internal error: " + e.getMessage());
-					er.setStatus(500);
-					return er;
-				}
-			}
-			if (stmnt != null) {
-				try {
-					stmnt.close();
-				} catch (Exception e) {
-					Context.logError(this, e.getMessage());
-					
-					// return HTTP Response on error
-					HttpResponse er = new HttpResponse("Internal error: " + e.getMessage());
-					er.setStatus(500);
-					return er;
-				}
-			}
-			if (conn != null) {
-				try {
-					conn.close();
-				} catch (Exception e) {
-					Context.logError(this, e.getMessage());
-					
-					// return HTTP Response on error
-					HttpResponse er = new HttpResponse("Internal error: " + e.getMessage());
-					er.setStatus(500);
-					return er;
 				}
 			}
 		}
