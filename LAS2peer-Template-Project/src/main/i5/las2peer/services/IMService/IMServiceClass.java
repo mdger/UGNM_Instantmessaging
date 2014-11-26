@@ -65,7 +65,6 @@ public class IMServiceClass extends Service {
 	*/ 
 	@GET
 	@Path("profile/{username}")
-	@Consumes("application/json")
 	@Produces("application/json")
 	public HttpResponse getProfile(@PathParam("username") String userName) {
 		String agentName = ((UserAgent)getActiveAgent()).getLoginName();
@@ -88,7 +87,7 @@ public class IMServiceClass extends Service {
 			if(rs.next()) 
 			{
 				// is profile visible
-				if(rs.getInt(5) == 1 || areContacts(userName, agentName)) 
+				if(rs.getInt(5) == 1 || areContacts(userName, agentName) || userName.equals(agentName)) 
 				{
 					// setup resulting JSON Object
 					JSONObject ro = new JSONObject();
@@ -343,29 +342,45 @@ public class IMServiceClass extends Service {
 			// process result set
 			if (rs.next()) 
 			{
-				// setup resulting JSON Object
-				JSONObject ro = new JSONObject();
-				ro.put("name", rs.getString(1));
-				ro.put("founder", rs.getString(2));
-				ro.put("description", rs.getString(3));
-				ro.put("imageLink", rs.getString(4));
-				test += "4";
-				
-				// prepare statement for the members
-				stmnt1 = conn1.prepareStatement("SELECT UserName FROM MemberOf WHERE GroupName = ?;");
-				stmnt1.setString(1, groupName);
-				test += "5";
-				// retrieve result set for the members
-				rs1 = stmnt1.executeQuery();
-				test += "6";
-				
-				JSONArray memberArray = new JSONArray();
-				// add the members in an array
-				while(rs1.next())
 				{
-					JSONObject member = new JSONObject();
-					member.put("username", rs1.getString(1));
-					memberArray.add(member);
+					// prepare statement for the members
+					stmntMember = conn.prepareStatement("SELECT UserName FROM MemberOf WHERE GroupName = ?;");
+					stmntMember.setString(1, groupName);
+					
+					// retrieve result set for the members
+					rsMember = stmntMember.executeQuery();
+					
+					// setup resulting JSON Object
+					JSONObject ro = new JSONObject();
+					ro.put("name", rsGroup.getString(1));
+					ro.put("founder", rsGroup.getString(2));
+					ro.put("description", rsGroup.getString(3));
+					ro.put("imageLink", rsGroup.getString(4));
+					
+					JSONArray memberArray = new JSONArray();
+					
+					// add the members in an array
+					while(rsMember.next())
+					{
+						JSONObject member = new JSONObject();
+						member.put("username", rsMember.getString(1));
+						memberArray.add(member);
+					}
+					// put the members in the JSON object 
+					ro.put("member", memberArray);
+					
+					// return HTTP Response on success
+					HttpResponse r = new HttpResponse(ro.toJSONString());
+					r.setStatus(200);
+					return r;
+					
+				} else {
+					String result = "Group does not exist: " + groupName;
+					
+					// return HTTP Response on error
+					HttpResponse er = new HttpResponse(result);
+					er.setStatus(404);
+					return er;
 				}
 				// put the members in the JSON object 
 				ro.put("member", memberArray);
@@ -390,7 +405,7 @@ public class IMServiceClass extends Service {
 			return er;
 		} finally {
 			// free resources
-			HttpResponse response = freeRessources(conn, stmnt, rs);
+			HttpResponse response = freeRessources(conn, stmntGroup, rsGroup);
 			if(response.getStatus() != 200)
 				return response;
 			HttpResponse response1 = freeRessources(conn1, stmnt1, rs1);
@@ -2200,6 +2215,55 @@ public HttpResponse deleteRequest(@ContentParam String content) {
 	}
 	
 	/**
+	 * This method proves if a user is Member of a group
+	 * @param the name of the user
+	 * @param the name of the group
+	 * @return is the user member of the group ?
+	 */
+	private boolean isMemberOf(String user, String group)
+	{
+		Connection conn = null;
+		PreparedStatement stmnt = null;
+		ResultSet rs = null;
+		
+		try {
+			conn = dbm.getConnection();
+			stmnt = conn.prepareStatement("SELECT MemberID FROM MemberOf WHERE (UserName = ? AND GroupName = ?);");
+			stmnt.setString(1, user);
+			stmnt.setString(2, group);
+			rs = stmnt.executeQuery();
+			if (rs.next()) {
+				return true;			
+			} 
+			return false;
+			
+		} catch (Exception e) {
+			// return HTTP Response on error
+			HttpResponse er = new HttpResponse("Internal error: " + e.getMessage());
+			er.setStatus(500);
+		} finally {
+			// free resources if exception or not			
+			if (stmnt != null) {
+				try {
+					stmnt.close();
+				} catch (Exception e) {
+					Context.logError(this, e.getMessage());
+				}
+			}
+			if (conn != null) {
+				try {
+					conn.close();
+				} catch (Exception e) {
+					Context.logError(this, e.getMessage());
+				}
+			}
+		}
+		return false;
+	}
+	
+	
+	
+	/**
 	 * This method frees the database requesting resources
 	 * @param conn The connection which will be closed
 	 * @param stmnt The statement which will be closed
@@ -2290,7 +2354,6 @@ public HttpResponse deleteRequest(@ContentParam String content) {
 	*/ 
 	@GET
 	@Path("profile")
-	@Consumes("application/json")
 	@Produces("application/json")
 	public HttpResponse getUsers() {
 		
@@ -2341,5 +2404,4 @@ public HttpResponse deleteRequest(@ContentParam String content) {
 				return response;
 		}
 	}
-
 }
