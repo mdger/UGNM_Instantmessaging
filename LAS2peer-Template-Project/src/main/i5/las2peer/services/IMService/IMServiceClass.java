@@ -320,50 +320,50 @@ public class IMServiceClass extends Service {
 	@Path("group/{groupname}")
 	@Produces("application/json")
 	public HttpResponse getGroup(@PathParam("groupname") String groupName) {
-		String test = "";
 		Connection conn = null;
 		Connection conn1 = null;
 		PreparedStatement stmnt = null;
 		PreparedStatement stmnt1 = null; 
 		ResultSet rs = null;
 		ResultSet rs1 = null;
+		
+		String test = "";
 		try {
 			// get connection from connection pool
 			conn = dbm.getConnection();
 			conn1 = dbm.getConnection();
-			test += "1";
 			// prepare statement for the group
 			stmnt = conn.prepareStatement("SELECT GroupName, FounderName, Description, ImageLink FROM Groups WHERE GroupName = ?;");
 			stmnt.setString(1, groupName);
-			test += "2";
 			// retrieve result set for the group
 			rs = stmnt.executeQuery();
-			test += "3";
 			// process result set
+			String agentName = ((UserAgent) getActiveAgent()).getLoginName();
 			if (rs.next()) 
 			{
+				if(rs.getString(2).equals(agentName) || isMemberOf(agentName, groupName))
 				{
-					// prepare statement for the members
-					stmntMember = conn.prepareStatement("SELECT UserName FROM MemberOf WHERE GroupName = ?;");
-					stmntMember.setString(1, groupName);
-					
-					// retrieve result set for the members
-					rsMember = stmntMember.executeQuery();
-					
 					// setup resulting JSON Object
 					JSONObject ro = new JSONObject();
-					ro.put("name", rsGroup.getString(1));
-					ro.put("founder", rsGroup.getString(2));
-					ro.put("description", rsGroup.getString(3));
-					ro.put("imageLink", rsGroup.getString(4));
+					ro.put("name", rs.getString(1));
+					ro.put("founder", rs.getString(2));
+					ro.put("description", rs.getString(3));
+					ro.put("imageLink", rs.getString(4));
+					// prepare statement for the members
+					
+					stmnt1 = conn1.prepareStatement("SELECT UserName FROM MemberOf WHERE GroupName = ?;");
+					stmnt1.setString(1, groupName);
+					
+					// retrieve result set for the members
+					rs1 = stmnt1.executeQuery();
 					
 					JSONArray memberArray = new JSONArray();
-					
+						
 					// add the members in an array
-					while(rsMember.next())
+					while(rs1.next())
 					{
 						JSONObject member = new JSONObject();
-						member.put("username", rsMember.getString(1));
+						member.put("username", rs1.getString(1));
 						memberArray.add(member);
 					}
 					// put the members in the JSON object 
@@ -372,40 +372,31 @@ public class IMServiceClass extends Service {
 					// return HTTP Response on success
 					HttpResponse r = new HttpResponse(ro.toJSONString());
 					r.setStatus(200);
-					return r;
-					
-				} else {
-					String result = "Group does not exist: " + groupName;
-					
+					return r;	
+				}
+				else
+				{
 					// return HTTP Response on error
-					HttpResponse er = new HttpResponse(result);
-					er.setStatus(404);
+					HttpResponse er = new HttpResponse("Access denied. User is no member of this group");
+					er.setStatus(403);
 					return er;
 				}
-				// put the members in the JSON object 
-				ro.put("member", memberArray);
-				test += "7";
-				// return HTTP Response on success
-				HttpResponse r = new HttpResponse(ro.toJSONString());
-				r.setStatus(200);
-				return r;
-				
-			} else {
-				String result = "Group does not exist: " + groupName;
-				
+			} 
+			else 
+			{
 				// return HTTP Response on error
-				HttpResponse er = new HttpResponse(result);
+				HttpResponse er = new HttpResponse("Group does not exist: " + groupName);
 				er.setStatus(404);
 				return er;
 			}
 		} catch (Exception e) {
 			// return HTTP Response on error
-			HttpResponse er = new HttpResponse("Internal error: " + test + e.getMessage());
+			HttpResponse er = new HttpResponse("Internal error: " + e.getMessage());
 			er.setStatus(500);
 			return er;
 		} finally {
 			// free resources
-			HttpResponse response = freeRessources(conn, stmntGroup, rsGroup);
+			HttpResponse response = freeRessources(conn, stmnt, rs);
 			if(response.getStatus() != 200)
 				return response;
 			HttpResponse response1 = freeRessources(conn1, stmnt1, rs1);
