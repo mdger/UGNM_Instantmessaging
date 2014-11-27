@@ -63,12 +63,9 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
       </div>
 	  
       <div class="navbar-collapse collapse">
-      <!--
 		<ul class="nav navbar-nav">
-          <li><a href="#url1">Navigation Button 1</a></li>
-          <li><a href="#url2">Navigation Button 2</a></li>
+          <li><a href="#url1" onclick="getProfileInfo();" data-toggle="modal" data-target="#profile">Profile</a></li>
         </ul>
-	  -->
         <!-- OpenID Connect Button: add HTML element representing button -->
         <span id="signinButton">
         <span class="oidc-signin navbar-btn navbar-right btn-default"
@@ -88,18 +85,15 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   <!-- Container for actual page content -->
   <div class="container" style="margin-top:60px">
 	<h2 class="authenticated hidden">Hello, <span id="uname"></span><br><span id="email"></span><br><span id="sub"></span></h2>
+  <!--
 	<button onclick="getExample();" class="btn btn-default"><span class="glyphicon glyphicon-hand-right"> Click me!</span></button>
     <p id="getExampleOutput"></p>
     <button onclick="postExample('Yeeehaaaa!');" class="btn btn-default"><span class="glyphicon glyphicon-hand-right"> Click me, too!</span></button>
     <p id="postExampleOutput"></p>
-
+  -->
 	<!-- Add Contact trigger modal -->
 	<button type="button" onclick="getUserList()" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#myModal">
 	  Add Contact
-	</button>
-	
-	<button type="button" onclick="TemplateServiceClient.prototype.getRequest;" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#myModal">
-	  Show chat requests
 	</button>
 
 	<!-- Modal -->
@@ -111,7 +105,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 			<h4 class="modal-title" id="myModalLabel">Modal title</h4>
 		  </div>
 		  <div class="modal-body">
-			<p id="getUsers"></p>
+			<p id="profile_info"></p>
 		  </div>
 		  <div class="modal-footer">
 			<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
@@ -121,16 +115,59 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 	  </div>
 	</div>
 	
+	<!-- Profile Modal -->
+	<div class="modal fade" id="profile" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+	  <div class="modal-dialog">
+		<div class="modal-content">
+		  <div class="modal-header">
+			<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+			<h4 class="modal-title" id="myModalLabel">Modal title</h4>
+		  </div>
+		  <div class="modal-body">
+			<h2><a onclick="getProfileInfo();">Profile Information</a></h2>
+			<p id="profile_info"></p>
+			<form role="form">
+			  <div class="form-group">
+				<label for="exampleInputEmail1">Email address</label>
+				<input type="email" class="form-control" id="exampleInputEmail1" placeholder="Enter email">
+			  </div>
+			  <div class="form-group">
+				<label for="exampleInputPassword1">Telephone</label>
+				<input type="password" class="form-control" id="exampleInputPassword1" placeholder="Telephone">
+			  </div>
+			  <div class="form-group">
+				<label for="exampleInputPassword1">ImageLink</label>
+				<input type="password" class="form-control" id="exampleInputPassword1" placeholder="ImageLink">
+			  </div>	
+			  <div class="form-group">
+				<label for="exampleInputPassword1">Nickname</label>
+				<input type="password" class="form-control" id="exampleInputPassword1" placeholder="Nickname">
+			  </div>			  
+			  <div class="checkbox">
+				<label>
+				  <input type="checkbox"> Visible
+				</label>
+			  </div>
+			  <button type="submit" onclick="updateProfile(input)" data-dismiss="modal" class="btn btn-default">Save Changes</button>
+			</form>			
+		  </div>
+		  <div class="modal-footer">
+			<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+		  </div>
+		</div>
+	  </div>
+	</div>	
   </div>
-  <!-- temporarily hidden 
+  <!--
   <div class="container">
 	<div class="row">
 	  <div class="col-md-2">.col-md-4</div>
 	  <div class="col-md-8">.col-md-4</div>
 	  <div class="col-md-2">.col-md-4</div>
 	</div>  
-  </div>-->
+  </div>
   <div>
+  -->
   <!-- import jQuery for AJAX calls (must) -->
   <script type="text/javascript" src="https://code.jquery.com/jquery-1.11.1.min.js"></script>
 	

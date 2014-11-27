@@ -72,8 +72,8 @@ TemplateServiceClient.prototype.putProfile = function(content, successCallback, 
 */
 TemplateServiceClient.prototype.getProfile = function(content, successCallback, errorCallback) {
 	this.sendRequest("GET",
-		"profile",
-		content,
+		"profile/" + content,
+		"",
 		"application/json",
 		{},
 		successCallback,
