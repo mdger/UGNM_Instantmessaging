@@ -91,10 +91,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     <button onclick="postExample('Yeeehaaaa!');" class="btn btn-default"><span class="glyphicon glyphicon-hand-right"> Click me, too!</span></button>
     <p id="postExampleOutput"></p>
   -->
-	<!-- Add Contact trigger modal -->
-	<button type="button" onclick="getUserList()" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#myModal">
-	  Add Contact
-	</button>
+
 
 	<!-- Modal -->
 	<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
@@ -158,16 +155,27 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 	  </div>
 	</div>	
   </div>
-  <!--
+
   <div class="container">
 	<div class="row">
-	  <div class="col-md-2">.col-md-4</div>
-	  <div class="col-md-8">.col-md-4</div>
-	  <div class="col-md-2">.col-md-4</div>
+	  <div class="col-md-3">
+	  	 <!-- Add getRequest trigger modal -->
+		<button type="button" onclick="getRequest()" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#myModal">
+		  View pending requests
+		</button>
+	  </div>
+	  <div class="col-md-6" style="background-color:yellow"> Live Chatting Window</div>
+	  <div class="col-md-3">
+	  	<!-- Add Contact trigger modal -->
+		<button type="button" onclick="getUserList()" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#myModal">
+		  Add Contact
+		</button>
+	  
+	  </div>
 	</div>  
   </div>
   <div>
-  -->
+
   <!-- import jQuery for AJAX calls (must) -->
   <script type="text/javascript" src="https://code.jquery.com/jquery-1.11.1.min.js"></script>
 	
