@@ -71,20 +71,27 @@ TemplateServiceClient.prototype.getUsers = function(successCallback, errorCallba
 		$("#email").html(oidc_userinfo.email);
 		$("#sub").html(oidc_userinfo.sub);
 		$(".authenticated").removeClass("hidden");
+		// Tries to get Profile with oidc_userinfo.preferred_username, if not, create Profile automatically.
+		var usrname = oidc_userinfo.preferred_username;
+		client.getProfile(
+		usrname,
+        function(data,type) {
+          console.log(data);
+        },
+        function(error) {
 			  var content = "{\"username\":" + oidc_userinfo.preferred_username + ",\"email\":" + oidc_userinfo.email + ",\"telephone\": 00000000,\"imageLink\":\"imagelink\",\"nickname\":\"Chatter\",\"visible\":1}";
 			  client.postProfile(
 				content,
 				function(data,type) {
-				  // this is the success callback
 				  console.log(data);
-				  $("#getExampleOutput").html("yae");
 				},
 				function(error) {
-				  // this is the error callback
 				  console.log(error);
-				  $("#getExampleOutput").html("nawo");
 				}
-			  );	
+			  );
+        }		
+		);
+	
       } else {
         // anonymous
       }
@@ -92,12 +99,13 @@ TemplateServiceClient.prototype.getUsers = function(successCallback, errorCallba
 	
     function getProfileInfo() {
 	var content = oidc_userinfo.preferred_username;
-      var profile_str = client.getProfile(
+      client.getProfile(
 		content,
         function(data,type) {
           // this is the success callback
           console.log(data);
-          $("#getExampleOutput").html(data);
+		  var yeah = JSON.stringify(data);
+          $("#profile_info").html(yeah);
         },
         function(error) {
           // this is the error callback
@@ -105,6 +113,5 @@ TemplateServiceClient.prototype.getUsers = function(successCallback, errorCallba
           $("#getExampleOutput").html(error);
         }
       );
-	  $("#profile_info").html("" + profile_str + "");
     }	
     
