@@ -151,6 +151,7 @@ public class IMServiceClass extends Service {
 			String agentName = ((UserAgent) getActiveAgent()).getLoginName();
 			// convert string content to JSON object 
 			JSONObject profileObject = (JSONObject) JSONValue.parse(content);
+			String usrname = (String) profileObject.get("username");			
 			String mail = (String) profileObject.get("email");
 			int tele = (int) profileObject.get("telephone");
 			String image = (String) profileObject.get("imageLink");
@@ -168,7 +169,7 @@ public class IMServiceClass extends Service {
 				{	
 					//Create Profile				
 					stmnt = conn.prepareStatement("INSERT INTO AccountProfile (UserName, EMail, Telephone, ImageLink, NickName, Visible) VALUES (?, ?, ?, ?, ?, ?)");
-					stmnt.setString(1, agentName);
+					stmnt.setString(1, usrname);
 					stmnt.setString(2, mail);
 					stmnt.setInt(3, tele);
 					stmnt.setString(4, image);
