@@ -1,6 +1,6 @@
     
     // create new instance of TemplateServiceClient, given its endpoint URL
-    var client = new TemplateServiceClient("http://localhost:8080/im");
+    var client = new TemplateServiceClient("http://localhost:8080/im");	
     
     // function defined as response to a click on the first button (see below)
     function getExample() {
@@ -71,7 +71,7 @@ TemplateServiceClient.prototype.getUsers = function(successCallback, errorCallba
 		$("#email").html(oidc_userinfo.email);
 		$("#sub").html(oidc_userinfo.sub);
 		$(".authenticated").removeClass("hidden");
-			  var content = "{\"email\":" + oidc_userinfo.email + ",\"telephone\": 00000000,\"imageLink\":\"imagelink\",\"nickname\":\"Chatter\",\"visible\":1}";
+			  var content = "{\"username\":" + oidc_userinfo.preferred_username + ",\"email\":" + oidc_userinfo.email + ",\"telephone\": 00000000,\"imageLink\":\"imagelink\",\"nickname\":\"Chatter\",\"visible\":1}";
 			  client.postProfile(
 				content,
 				function(data,type) {
@@ -91,7 +91,7 @@ TemplateServiceClient.prototype.getUsers = function(successCallback, errorCallba
     }
 	
     function getProfileInfo() {
-	var content = oidc_userinfo.preferred_username
+	var content = oidc_userinfo.preferred_username;
       var profile_str = client.getProfile(
 		content,
         function(data,type) {
