@@ -15,9 +15,11 @@ import i5.las2peer.webConnector.client.MiniClient;
 import i5.las2peer.services.IMService.database.DatabaseManager;
 
 import java.io.ByteArrayOutputStream;
+import java.io.FileInputStream;
 import java.io.PrintStream;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.util.Properties;
 
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
@@ -54,6 +56,13 @@ public class ServiceTest {
 	private static final String testServiceClass = "i5.las2peer.services.IMService.IMServiceClass";
 	
 	private static final String mainPath = "im/";
+	
+	private static String jdbcDriverClassName;
+	private static String jdbcLogin;
+	private static String jdbcPass;
+	private static String jdbcUrl;
+	private static String jdbcSchema;
+	private static DatabaseManager dbm;
 	
 
 	/**
@@ -92,6 +101,7 @@ public class ServiceTest {
 		agentName2 = testAgent2.getLoginName();
 		agentName3 = testAgent3.getLoginName();
 		
+	
         connector.updateServiceList();
         //avoid timing errors: wait for the repository manager to get all services before continuing
         try
@@ -105,10 +115,46 @@ public class ServiceTest {
         }
         
       
+      //write TestData
+        
+    	//read properties
+    	Properties props = new Properties();
+    	FileInputStream in = new FileInputStream("etc/i5.las2peer.services.IMService.IMServiceClass.properties");
+    	props.load(in);
+    	in.close();
+    	jdbcDriverClassName = props.getProperty("jdbcDriverClassName");
+    	jdbcSchema = props.getProperty("jdbcSchema");
+    	jdbcUrl = props.getProperty("jdbcUrl");
+    	jdbcLogin = props.getProperty("jdbcLogin");
+    	jdbcPass = props.getProperty("jdbcPass");    	
+    	
+    	
+    	//database connection
+    	dbm = new DatabaseManager(jdbcDriverClassName, jdbcLogin, jdbcPass, jdbcUrl, jdbcSchema);
+		Connection conn = null;
+		PreparedStatement stmnt = null;			
+		conn = dbm.getConnection();
+		
+		/**
+		 * Create Profiles
+		 * 	eve visibility = 0
+		 * 	adam, abel visibility = 1
+		 */
+		stmnt = conn.prepareStatement("INSERT INTO AccountProfile VALUES (\"adam\", \"test\", 2222, \"test\", \"test\", 1), (\"eve\", \"test\", 2222, \"test\", \"test\", 0), (\"abel\", \"test\", 2222, \"test\", \"test\", 1);");
+		int rows = stmnt.executeUpdate();
+		
+		
+		if (stmnt != null) {
+				stmnt.close();
+		}
+		if (conn != null) {
+				conn.close();
+		}
+
         
 	}
 	
-	//TODO Init Database
+
 		
 	
 	
@@ -137,18 +183,45 @@ public class ServiceTest {
 		
     }
 	
-	//TODO Reset Database
+
+	/**
+	 * Called after the tests have finished.
+	 * Deletes TestData from Database
+	 * 
+	 * @throws Exception
+	 */
+	@AfterClass
+	public static void deleteData() throws Exception {
+		
+	
+		Connection conn = null;
+		PreparedStatement stmnt = null;			
+		conn = dbm.getConnection();
+
+		stmnt = conn.prepareStatement("DELETE FROM AccountProfile WHERE UserName='adam' OR UserName='eve' OR UserName = 'abel'");
+		int rows = stmnt.executeUpdate();
+		
+		
+		if (stmnt != null) {
+				stmnt.close();
+		}
+		if (conn != null) {
+				conn.close();
+		}
+
+		
+    }
 	
 	
 	
 	@Test
 	public void testProfile()
 	{
-	
+		
+		testDeleteProfile();
 		testCreateProfile();
 		testUpdateProfile();
-		testGetProfile();
-		testDeleteProfile();		
+		testGetProfile();				
 		
 	}
 	
@@ -179,11 +252,11 @@ public class ServiceTest {
             assertEquals(400, result3.getHttpCode());            
 			System.out.println("'CreateProfile'-Falsches Format erkannt: " + result3.getResponse().trim());		
 						
-            ClientResponse result=c.sendRequest("POST", mainPath +"profile", "{\"email\":\"test@mail.de\", \"telephone\":123456, \"imageLink\":\"imageUrl\", \"nickname\":\"TestNickName\", \"visible\":1}", "application/json", "*/*", new Pair[]{}); 
-            assertEquals(200, result.getHttpCode());            
+            ClientResponse result=c.sendRequest("POST", mainPath +"profile", "{\"username\":\"adam\",\"email\":\"test@mail.de\", \"telephone\":123456, \"imageLink\":\"imageUrl\", \"nickname\":\"TestNickName\", \"visible\":1}", "application/json", "*/*", new Pair[]{}); 
+            assertEquals(200, result.getHttpCode());           
 			System.out.println("'CreateProfile'-Profil für testAgent erstellt: " + result.getResponse().trim());
 						
-			ClientResponse result2=c.sendRequest("POST", mainPath +"profile", "{\"email\":\"ntest@mail.de\", \"telephone\":111111, \"imageLink\":\"imageUrl\", \"nickname\":\"TestNickName\", \"visible\":1}", "application/json", "*/*", new Pair[]{});
+			ClientResponse result2=c.sendRequest("POST", mainPath +"profile", "{\"username\":\"adam\",\"email\":\"ntest@mail.de\", \"telephone\":111111, \"imageLink\":\"imageUrl\", \"nickname\":\"TestNickName\", \"visible\":1}", "application/json", "*/*", new Pair[]{});
 			assertEquals(409, result2.getHttpCode());            
 			System.out.println("'CreateProfile'-Kein Zweites konnte angelegt werden" + result2.getResponse().trim());
 			

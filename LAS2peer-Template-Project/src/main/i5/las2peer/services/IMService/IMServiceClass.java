@@ -312,6 +312,59 @@ public class IMServiceClass extends Service {
 	}
 
 	/**
+	* Deletes a profile 
+	* 
+	*
+	*/ 
+		@DELETE
+		@Path("profile")
+		public HttpResponse deleteProfile() {
+			String agentName = ((UserAgent) getActiveAgent()).getLoginName();
+			String result = "";
+			Connection conn = null;
+			PreparedStatement stmnt = null;
+			ResultSet rs = null;
+			try {
+					conn = dbm.getConnection();
+					stmnt = conn.prepareStatement("DELETE FROM AccountProfile WHERE UserName = ?;");
+					stmnt.setString(1, agentName);
+					int rows = stmnt.executeUpdate(); 
+					if(rows == 1)
+						result = "Profile deleted successfully!";
+					else
+					{
+						result = "Resource was not found";
+						// return HTTP Response on error
+						HttpResponse er = new HttpResponse(result);
+						er.setStatus(404);
+						return er;
+				}
+				
+					// return 
+					HttpResponse r = new HttpResponse(result);
+					r.setStatus(200);
+					return r;
+	
+			}
+			catch (Exception e)
+			{
+				Context.logError(this, e.getMessage());
+				
+				HttpResponse er = new HttpResponse("Content data in invalid format: " + e.getMessage());
+				er.setStatus(400);
+	 			return er;
+	 			
+			} finally {
+				// free resources
+				HttpResponse response = freeRessources(conn, stmnt, rs);
+				if(response.getStatus() != 200)
+					return response;
+	 		}
+	 	}
+		
+	
+	
+	/**
 	 * Retrieves a group given its name
 	 * 
 	 * @param groupName Information of a group to be retrieved 
@@ -1857,7 +1910,7 @@ public HttpResponse deleteRequest(@ContentParam String content) {
 	 * @param content The groupname of the group where the user have to be added encoded as JSON-String
 	 */
 	@POST
-	@Path("group/{grouname}/member/{username}")
+	@Path("group/{groupname}/member/{username}")
 	public HttpResponse addMember(@PathParam("groupname") String groupName, @PathParam("username") String userName) {	
 			Connection conn = null;
 			PreparedStatement stmnt = null;
