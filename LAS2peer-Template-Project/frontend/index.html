@@ -92,9 +92,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     <p id="postExampleOutput"></p>
   -->
 	
-	  
-  <p id="profile_info"></p>
-	
+	 
 	
 	
 	<!-- Profile Modal -->
@@ -103,34 +101,54 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 		<div class="modal-content">
 		  <div class="modal-header">
 			<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
-			<h4 class="modal-title" id="myModalLabel">Modal title</h4>
+			<h4 class="modal-title" id="myModalLabel">My Profile: <span id="profile_username"></span> (Username)</h4>
 		  </div>
 		  <div class="modal-body">
-			<h2><a onclick="getProfileInfo();">Profile Information</a></h2>
-			<form role="form">
-			  <div class="form-group">
-				<label for="exampleInputEmail1">Email address</label>
-				<input type="email" class="form-control" id="exampleInputEmail1" placeholder="Enter email">
-			  </div>
-			  <div class="form-group">
-				<label for="exampleInputPassword1">Telephone</label>
-				<input type="password" class="form-control" id="exampleInputPassword1" placeholder="Telephone">
-			  </div>
-			  <div class="form-group">
-				<label for="exampleInputPassword1">ImageLink</label>
-				<input type="password" class="form-control" id="exampleInputPassword1" placeholder="ImageLink">
-			  </div>	
-			  <div class="form-group">
-				<label for="exampleInputPassword1">Nickname</label>
-				<input type="password" class="form-control" id="exampleInputPassword1" placeholder="Nickname">
-			  </div>			  
-			  <div class="checkbox">
-				<label>
-				  <input type="checkbox"> Visible
-				</label>
-			  </div>
-			  <button type="submit" onclick="updateProfile(input)" data-dismiss="modal" class="btn btn-default">Save Changes</button>
-			</form>			
+			<h2><a onclick="getProfileInfo();">Profile Information</a></h2> 
+				<div class="row">
+				<!-- Profile Information -->
+				  <div class="col-md-4">
+					<h3>Your current Profile</h3>
+					<p>Email: <strong><span id="pr_mail"></span></strong>
+					</p>
+					<p>Telephone: <strong><span id="pr_tel"></span></strong>
+					</p>
+					<p>ImageLink:<strong> <span id="pr_img"></span></strong>
+					</p>
+					<p>Nickname: <strong><span id="pr_nick"></span></strong>
+					</p>
+					<p>Visible (1 for Yes and 0 for No):<strong> <span id="pr_vis"></span></strong>
+					</p>
+				  </div>
+				<!-- Change Profile Form -->
+				  <div class="col-md-8">
+					<form role="form">
+					  <div class="form-group">
+						<label for="exampleInputEmail1">Email address</label>
+						<input type="email" class="form-control" id="ch_mail" placeholder="Enter your Email">
+					  </div>
+					  <div class="form-group">
+						<label for="exampleInputPassword1">Telephone</label>
+						<input type="number" class="form-control" id="ch_tel" placeholder="Enter your Telephone">
+					  </div>
+					  <div class="form-group">
+						<label for="exampleInputPassword1">ImageLink</label>
+						<input type="url" class="form-control" id="ch_img" placeholder="Enter a Link: http://imageURL.com">
+					  </div>	
+					  <div class="form-group">
+						<label for="exampleInputPassword1">Nickname</label>
+						<input type="text" class="form-control" id="ch_nick" placeholder="Enter a Nickname">
+					  </div>			  
+					  <div class="form-group">
+						<label for="exampleInputPassword1">Visible</label>
+						<input type="number" class="form-control" id="ch_vis" placeholder="Enter 0 or 1">
+					  </div>	
+					  <button type="submit" onclick="updateProfile(input)" data-dismiss="modal" class="btn btn-default">Save Changes</button>
+					</form>					  
+				  </div>
+				</div>				
+
+			
 		  </div>
 		  <div class="modal-footer">
 			<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>

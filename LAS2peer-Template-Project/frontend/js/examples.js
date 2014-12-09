@@ -66,7 +66,6 @@ TemplateServiceClient.prototype.getUsers = function(successCallback, errorCallba
         // authenticated
 		
 		// OpenID Connect user info
-		console.log(oidc_userinfo);
 		$("#uname").html(oidc_userinfo.name);
 		$("#email").html(oidc_userinfo.email);
 		$("#sub").html(oidc_userinfo.sub);
@@ -104,13 +103,31 @@ TemplateServiceClient.prototype.getUsers = function(successCallback, errorCallba
         function(data,type) {
           // this is the success callback
           console.log(data);
-		  var yeah = JSON.stringify(data);
-          $("#profile_info").html(yeah);
+		  $("#profile_username").html(oidc_userinfo.preferred_username);
+          $("#pr_mail").html(data.email);
+          $("#pr_vis").html(data.visible);
+          $("#pr_tel").html(data.telephone);
+          $("#pr_img").html(data.imageLink);
+          $("#pr_nick").html(data.nickname);
         },
         function(error) {
           // this is the error callback
           console.log(error);
           $("#getExampleOutput").html(error);
+        }
+      );
+    }	
+    
+    function updateProfileInfo(input) {
+      client.putProfile(
+		input,
+        function(data,type) {
+          // this is the success callback
+          console.log(data);
+        },
+        function(error) {
+          // this is the error callback
+          console.log(error);
         }
       );
     }	
