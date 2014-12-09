@@ -246,10 +246,9 @@ public class IMServiceClass extends Service {
 	public HttpResponse updateProfile(@ContentParam String content) {		
 		try 
 		{
-			//String agentName = ((UserAgent) getActiveAgent()).getLoginName();
+			String agentName = ((UserAgent) getActiveAgent()).getLoginName();
 			// convert string content to JSON object 
 			JSONObject profileObject = (JSONObject) JSONValue.parse(content);
-			String agentName = (String) profileObject.get("username");
 			String mail = (String) profileObject.get("email");
 			int tele = (int) profileObject.get("telephone");
 			String image = (String) profileObject.get("imageLink");
