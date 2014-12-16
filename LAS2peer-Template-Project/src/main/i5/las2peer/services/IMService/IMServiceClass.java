@@ -178,7 +178,7 @@ public class IMServiceClass extends Service {
 					
 					int rows = stmnt.executeUpdate();
 					if(rows == 1)
-						result = "Profile created successfully";
+						result = "Profile created successfully!";
 					else
 					{
 						result = "Profile could not be created!";
@@ -246,9 +246,10 @@ public class IMServiceClass extends Service {
 	public HttpResponse updateProfile(@ContentParam String content) {		
 		try 
 		{
-			String agentName = ((UserAgent) getActiveAgent()).getLoginName();
+			// String agentName = ((UserAgent) getActiveAgent()).getLoginName();
 			// convert string content to JSON object 
 			JSONObject profileObject = (JSONObject) JSONValue.parse(content);
+			String agentName = (String) profileObject.get("userName");
 			String mail = (String) profileObject.get("email");
 			int tele = (int) profileObject.get("telephone");
 			String image = (String) profileObject.get("imageLink");
@@ -269,7 +270,7 @@ public class IMServiceClass extends Service {
 					stmnt.setString(3, image);
 					stmnt.setString(4, nickName);
 					stmnt.setInt(5, visible);
-					stmnt.setString(6, agentName);
+					stmnt.setString(6,agentName);
 					int rows = stmnt.executeUpdate();
 					if(rows == 1)
 						result = "Profile updated successfully";

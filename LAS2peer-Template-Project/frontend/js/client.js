@@ -57,7 +57,7 @@ TemplateServiceClient.prototype.postProfile = function(content, successCallback,
 /**
 * UPDATE Profile
 */
-TemplateServiceClient.prototype.putProfile = function(content, successCallback, errorCallback) {
+TemplateServiceClient.prototype.updateProfile = function(content, successCallback, errorCallback) {
 	this.sendRequest("PUT",
 		"profile",
 		content,

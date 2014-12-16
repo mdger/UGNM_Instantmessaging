@@ -46,6 +46,8 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   <link href="https://netdna.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
   <!-- Custom CSS -->
   <link href="css/app.css" rel="stylesheet">
+  <!-- import jQuery for AJAX calls (must) -->
+  <script type="text/javascript" src="https://code.jquery.com/jquery-1.11.1.min.js"></script>
 </head>
 <body>
   
@@ -104,7 +106,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 			<h4 class="modal-title" id="myModalLabel">My Profile: <span id="profile_username"></span> (Username)</h4>
 		  </div>
 		  <div class="modal-body">
-			<h2><a onclick="getProfileInfo();">Profile Information</a></h2> 
+			<h2>Profile Information</h2> 
 				<div class="row">
 				<!-- Profile Information -->
 				  <div class="col-md-4">
@@ -140,10 +142,13 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 						<input type="text" class="form-control" id="ch_nick" placeholder="Enter a Nickname">
 					  </div>			  
 					  <div class="form-group">
-						<label for="exampleInputPassword1">Visible</label>
-						<input type="number" class="form-control" id="ch_vis" placeholder="Enter 0 or 1">
+					  <label for="targetOption">Visible</label>
+					    <select class="form-control" name="cat" id="ch_vis">
+						    <option value="1">Visible</option>
+						    <option value="0">Not Visible</option>
+					    </select>						
 					  </div>	
-					  <button type="submit" onclick="updateProfile(input)" data-dismiss="modal" class="btn btn-default">Save Changes</button>
+					  <button type="submit" id="submitButton" data-dismiss="modal" class="btn btn-default">Save Changes</button>
 					</form>					  
 				  </div>
 				</div>				
@@ -157,11 +162,11 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 	  </div>
 	</div>	
   </div>
-
-  <div>
-  <!-- import jQuery for AJAX calls (must) -->
-  <script type="text/javascript" src="https://code.jquery.com/jquery-1.11.1.min.js"></script>
 	
+  <div id="log">Yuah</div>
+  
+  <!-- JS CODE !! -->
+  <div>
   <!-- import Bootstrap for responsive UI (must) -->
   <script type="text/javascript" src="https://netdna.bootstrapcdn.com/bootstrap/3.3.1/js/bootstrap.min.js"></script>
   
@@ -184,7 +189,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   <script type="text/javascript" src="js/client.js"></script>
   <!-- custom code -->
   <script type="text/javascript" src="js/jsonStringify.js"></script> 
-  <script type="text/javascript" src="js/examples.js"></script>
+  <script type="text/javascript" src="js/examples.js"></script>				    
   </div> 
 </body>
 </html>

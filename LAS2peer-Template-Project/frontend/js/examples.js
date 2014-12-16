@@ -116,10 +116,10 @@ TemplateServiceClient.prototype.getUsers = function(successCallback, errorCallba
           $("#getExampleOutput").html(error);
         }
       );
-    }	
-    
+    }
+	
     function updateProfileInfo(input) {
-      client.putProfile(
+      client.updateProfile(
 		input,
         function(data,type) {
           // this is the success callback
@@ -132,3 +132,14 @@ TemplateServiceClient.prototype.getUsers = function(successCallback, errorCallba
       );
     }	
     
+	// Sends Form Input into the Service methode updateProfile
+	$( "#submitButton" ).click(function() {
+		var email = $("#ch_mail").val();
+		var tele  = $("#ch_tel").val();
+		var img   = $("#ch_img").val();
+		var nick  = $("#ch_nick").val();
+		var visi  = $("#ch_vis").val();
+       	var input = "{\"userName\":\"" + oidc_userinfo.preferred_username + "\",\"email\":\"" + email + "\",\"telephone\":" + tele + ",\"imageLink\":\"" + img + "\",\"nickname\":\"" + nick + "\",\"visible\":" + visi + "}";
+		//var input = "{\"email\":\"malo@web.de\",\"telephone\":1233,\"imageLink\":\"google.de\",\"nickname\":\"saasd\",\"visible\":1}";							
+		updateProfileInfo(input);
+	});						
