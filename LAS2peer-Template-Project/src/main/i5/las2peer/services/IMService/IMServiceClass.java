@@ -2339,7 +2339,7 @@ public HttpResponse deleteRequest(@ContentParam String content) {
 			conn = dbm.getConnection();			
 						 
 			// prepare statement
-			stmnt = conn.prepareStatement("SELECT UserName, Visible FROM AccountProfile;");
+			stmnt = conn.prepareStatement("SELECT UserName, Visible FROM AccountProfile WHERE Visible = 1;");
 			
 			// retrieve result set
 			rs = stmnt.executeQuery();	
@@ -2354,16 +2354,16 @@ public HttpResponse deleteRequest(@ContentParam String content) {
 				userArray.add(ro);
 				
 				// return HTTP Response on success
-				HttpResponse r = new HttpResponse(ro.toJSONString());
-				r.setStatus(200);
-				return r;
+				// HttpResponse r = new HttpResponse(ro.toJSONString());
+				// r.setStatus(200);
+				// return r;
 			}
 			
+
 			// return HTTP Response on success
 			HttpResponse r = new HttpResponse(userArray.toJSONString());
 			r.setStatus(200);
 			return r;
-			
 			
 		} catch (Exception e) {
 			// return HTTP Response on error
