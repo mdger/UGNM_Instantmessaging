@@ -1,0 +1,21 @@
+#pr_img img {
+	width: 100%;
+}
+
+.inline {
+	float:left;
+	padding-right: 5px;
+}
+
+.title {
+	font-size: 18px;
+	font-weight: 900;
+	padding-bottom: 5px;
+	margin-bottom: 5px;
+	width: 100%;
+	border-bottom: 1px solid black;
+}
+
+#friendslist h3.inline {
+	margin: 0;
+}

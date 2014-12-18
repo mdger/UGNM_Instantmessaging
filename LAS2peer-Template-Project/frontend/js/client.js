@@ -109,10 +109,10 @@ TemplateServiceClient.prototype.postRequest = function(content, successCallback,
 /**
 * GET Request
 */
-TemplateServiceClient.prototype.getRequest = function(successCallback, errorCallback) {
+TemplateServiceClient.prototype.getRequest = function(content, successCallback, errorCallback) {
 	this.sendRequest("GET",
 		"profile/contact/request",
-		"",
+		content,
 		"application/json",
 		{},
 		successCallback,
@@ -212,6 +212,21 @@ TemplateServiceClient.prototype.deleteSingleMessage = function(input, successCal
 };
 
 /**
+* Get User List
+*/
+TemplateServiceClient.prototype.getUsers = function(successCallback, errorCallback) {
+	this.sendRequest("GET",
+		"profile",
+		"",
+		"application/json",
+		{},
+		successCallback,
+		errorCallback
+	);
+};
+
+
+/**
 * sends an AJAX request to a resource.
 * Parameters:
 *   - method: the HTTP method used
@@ -287,33 +302,4 @@ TemplateServiceClient.prototype.isAnonymous = function(){
 */
 String.prototype.endsWith = function(suffix) {
 	return this.indexOf(suffix, this.length - suffix.length) !== -1;
-};
-
-
-/**
-* An example function demonstrating a GET request on resource <endpointUrl>/example/validate
-*/
-TemplateServiceClient.prototype.getMethod = function(successCallback, errorCallback) {
-	this.sendRequest("GET",
-		"example/validate",
-		"",
-		"application/json",
-		{},
-		successCallback,
-		errorCallback
-	);
-};
-
-/**
-* An example function demonstrating a POST request on resource <endpointUrl>/example/myMethodPath/<input>
-*/
-TemplateServiceClient.prototype.postMethod = function(input, successCallback, errorCallback) {
-	this.sendRequest("POST",
-		"example/myMethodPath/" + input,
-		"",
-		"application/json",
-		{},
-		successCallback,
-		errorCallback
-	);
 };

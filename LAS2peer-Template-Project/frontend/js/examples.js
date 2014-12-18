@@ -105,10 +105,14 @@ TemplateServiceClient.prototype.getUsers = function(successCallback, errorCallba
           console.log(data);
 		  $("#profile_username").html(oidc_userinfo.preferred_username);
           $("#pr_mail").html(data.email);
-          $("#pr_vis").html(data.visible);
+		  if(data.visible == 1) {
+			$("#pr_vis").html("visible");
+		  } else {
+			$("#pr_vis").html("not visible");
+		  }
           $("#pr_tel").html(data.telephone);
-          $("#pr_img").html(data.imageLink);
-          $("#pr_nick").html(data.nickname);
+          $("#pr_img").html("<img src=" + data.imageLink + ">");
+		  $("#pr_nick").html(data.nickname);
         },
         function(error) {
           // this is the error callback
@@ -131,6 +135,23 @@ TemplateServiceClient.prototype.getUsers = function(successCallback, errorCallba
         }
       );
     }	
+	
+    function getUsersList() {
+      client.getUsers(
+        function(data,type) {
+          // this is the success callback
+			for (var i = 0; i < data.length; i++) {
+				// This block will be executed 100 times.
+				$("#userList").append("<li>" + data[i].nickname + " ("  + data[i].username + ")</li>");
+				// Note: The last log will be "Currently at 99".
+			}		  
+        },
+        function(error) {
+          // this is the error callback
+          console.log(error);
+        }
+      );
+    }	
     
 	// Sends Form Input into the Service methode updateProfile
 	$( "#submitButton" ).click(function() {
@@ -139,7 +160,44 @@ TemplateServiceClient.prototype.getUsers = function(successCallback, errorCallba
 		var img   = $("#ch_img").val();
 		var nick  = $("#ch_nick").val();
 		var visi  = $("#ch_vis").val();
-       	var input = "{\"userName\":\"" + oidc_userinfo.preferred_username + "\",\"email\":\"" + email + "\",\"telephone\":" + tele + ",\"imageLink\":\"" + img + "\",\"nickname\":\"" + nick + "\",\"visible\":" + visi + "}";
-		//var input = "{\"email\":\"malo@web.de\",\"telephone\":1233,\"imageLink\":\"google.de\",\"nickname\":\"saasd\",\"visible\":1}";							
+       	var input = "{\"userName\":\"" + oidc_userinfo.preferred_username + "\",\"email\":\"" + email + "\",\"telephone\":" + tele + ",\"imageLink\":\"" + img + "\",\"nickname\":\"" + nick + "\",\"visible\":" + visi + "}";							
 		updateProfileInfo(input);
-	});						
+	});				
+	
+	// Sends Contact Request
+	$( "#sendRequestButton" ).click(function() {
+		var nameOfContact = $("#cr_name").val();
+       	var input = "{\"myusername\":\"" + oidc_userinfo.preferred_username + "\",\"username\":\"" + nameOfContact + "\"}";							
+		client.postRequest(
+		input,
+        function(data,type) {
+          // this is the success callback
+          console.log(data);
+        },
+        function(error) {
+          // this is the error callback
+          console.log(error);
+        }
+      );
+	});								
+	
+	// Sends Contact Request
+	$( "#pendingRequestsButton" ).click(function() {
+       	var input = "{\"username\":\"" + oidc_userinfo.preferred_username + "\"}";							
+		client.getRequest(
+		input,
+        function(data,type) {
+          // this is the success callback
+			for (var i = 0; i < data.length; i++) {
+				// This block will be executed 100 times.
+				$("#requestList").append("<li>" + data[i].username + "</li>");
+				// Note: The last log will be "Currently at 99".
+			}		  		  
+          console.log(data);
+        },
+        function(error) {
+          // this is the error callback
+          console.log(error);
+        }
+      );
+	});								

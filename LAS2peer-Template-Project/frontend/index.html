@@ -95,7 +95,86 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   -->
 	
 	 
+	<!-- Main Body -->
+	<div class="row">
+	  <div class="col-md-2">.col-md-8</div>
+	  <div class="col-md-8">.col-md-4</div>
+	  <div id="friendslist" class="col-md-2">
+		<div class="title inline">Friendslist</div>
+		  <div class="inline">
+			<!-- Buttons beneath the Friendslist -->
+			<button type="button" class="btn btn-default" aria-label="Left Align">
+			  <span alt="Refresh Friendslist" class="glyphicon glyphicon-refresh" aria-hidden="true"></span>
+			</button>
+			<button type="button" class="btn btn-default" aria-label="Left Align" data-toggle="modal" data-target="#addContact" onclick="getUsersList();">
+			  <span alt="Refresh Add Contacts" class="glyphicon glyphicon-plus" aria-hidden="true"></span>
+			</button>
+			<button type="button" class="btn btn-default" aria-label="Left Align" data-toggle="modal" data-target="#pendingRequests" id="pendingRequestsButton">
+			  <span alt="Show Pending Requests" class="glyphicon glyphicon-user" aria-hidden="true"></span>
+			</button>
+		  </div>
+	  </div>
+	</div>	
 	
+	<!-- Show Pending Requests Modal -->
+	<div class="modal fade" id="pendingRequests" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+	  <div class="modal-dialog">
+		<div class="modal-content">
+		  <div class="modal-header">
+			<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+			<h4 class="modal-title" id="myModalLabel">Pending Requests</h4>
+		  </div>
+		  <div class="modal-body">
+				<div class="row">
+				<!-- Requests List -->
+				  <div class="col-md-12">
+					<p>
+						<ul id="requestList">
+						</ul>
+					</p>
+				  </div>	
+				</div>				
+		  </div>
+		</div>
+	  </div>
+	</div>
+	
+	<!-- Add Contact Modal -->
+	<div class="modal fade" id="addContact" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+	  <div class="modal-dialog">
+		<div class="modal-content">
+		  <div class="modal-header">
+			<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+			<h4 class="modal-title" id="myModalLabel">Add Contact</h4>
+		  </div>
+		  <div class="modal-body">
+			<h2>Add Contact</h2> 
+				<div class="row">
+				<!-- Send Contact Request Form -->
+				  <div class="col-md-12">
+				    <form role="form">	
+					  <div class="form-group">
+						<label for="exampleInputPassword1">Contact Name</label>
+						<input type="text" class="form-control" id="cr_name" placeholder="Enter a Username">
+					  </div>	
+					  <button type="submit" id="sendRequestButton" data-dismiss="modal" class="btn btn-default">Send Contact Request</button>
+					</form>
+				  </div>	
+				</div>				
+			<h2>User List</h2>	
+				<div class="row">
+				<!-- User List -->
+				  <div class="col-md-12">
+					<p>
+						<ul id="userList">
+						</ul>
+					</p>
+				  </div>	
+				</div>				
+		  </div>
+		</div>
+	  </div>
+	</div>
 	
 	<!-- Profile Modal -->
 	<div class="modal fade" id="profile" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
@@ -111,15 +190,15 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 				<!-- Profile Information -->
 				  <div class="col-md-4">
 					<h3>Your current Profile</h3>
-					<p>Email: <strong><span id="pr_mail"></span></strong>
+					<p>E-Mail: <strong><span id="pr_mail"></span></strong>
 					</p>
 					<p>Telephone: <strong><span id="pr_tel"></span></strong>
 					</p>
-					<p>ImageLink:<strong> <span id="pr_img"></span></strong>
+					<p>Image (Avatar):<strong> <span id="pr_img"></span></strong>
 					</p>
 					<p>Nickname: <strong><span id="pr_nick"></span></strong>
 					</p>
-					<p>Visible (1 for Yes and 0 for No):<strong> <span id="pr_vis"></span></strong>
+					<p>Visibility:<strong> <span id="pr_vis"></span></strong>
 					</p>
 				  </div>
 				<!-- Change Profile Form -->
@@ -151,9 +230,70 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 					  <button type="submit" id="submitButton" data-dismiss="modal" class="btn btn-default">Save Changes</button>
 					</form>					  
 				  </div>
-				</div>				
-
-			
+				</div>							
+		  </div>
+		  <div class="modal-footer">
+			<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+		  </div>
+		</div>
+	  </div>
+	</div>					
+				
+	<!-- Profile Modal -->
+	<div class="modal fade" id="profile" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+	  <div class="modal-dialog">
+		<div class="modal-content">
+		  <div class="modal-header">
+			<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+			<h4 class="modal-title" id="myModalLabel">My Profile: <span id="profile_username"></span> (Username)</h4>
+		  </div>
+		  <div class="modal-body">
+			<h2>Profile Information</h2> 
+				<div class="row">
+				<!-- Profile Information -->
+				  <div class="col-md-4">
+					<h3>Your current Profile</h3>
+					<p>E-Mail: <strong><span id="pr_mail"></span></strong>
+					</p>
+					<p>Telephone: <strong><span id="pr_tel"></span></strong>
+					</p>
+					<p>Image (Avatar):<strong> <span id="pr_img"></span></strong>
+					</p>
+					<p>Nickname: <strong><span id="pr_nick"></span></strong>
+					</p>
+					<p>Visibility:<strong> <span id="pr_vis"></span></strong>
+					</p>
+				  </div>
+				<!-- Change Profile Form -->
+				  <div class="col-md-8">
+					<form role="form">
+					  <div class="form-group">
+						<label for="exampleInputEmail1">Email address</label>
+						<input type="email" class="form-control" id="ch_mail" placeholder="Enter your Email">
+					  </div>
+					  <div class="form-group">
+						<label for="exampleInputPassword1">Telephone</label>
+						<input type="number" class="form-control" id="ch_tel" placeholder="Enter your Telephone">
+					  </div>
+					  <div class="form-group">
+						<label for="exampleInputPassword1">ImageLink</label>
+						<input type="url" class="form-control" id="ch_img" placeholder="Enter a Link: http://imageURL.com">
+					  </div>	
+					  <div class="form-group">
+						<label for="exampleInputPassword1">Nickname</label>
+						<input type="text" class="form-control" id="ch_nick" placeholder="Enter a Nickname">
+					  </div>			  
+					  <div class="form-group">
+					  <label for="targetOption">Visible</label>
+					    <select class="form-control" name="cat" id="ch_vis">
+						    <option value="1">Visible</option>
+						    <option value="0">Not Visible</option>
+					    </select>						
+					  </div>	
+					  <button type="submit" id="submitButton" data-dismiss="modal" class="btn btn-default">Save Changes</button>
+					</form>					  
+				  </div>
+				</div>							
 		  </div>
 		  <div class="modal-footer">
 			<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
@@ -162,9 +302,6 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 	  </div>
 	</div>	
   </div>
-	
-  <div id="log">Yuah</div>
-  
   <!-- JS CODE !! -->
   <div>
   <!-- import Bootstrap for responsive UI (must) -->
