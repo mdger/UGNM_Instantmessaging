@@ -1615,8 +1615,9 @@ public class IMServiceClass extends Service {
 	@GET
 	@Path("profile/contact/request")
 	@Produces("application/json")
-	public HttpResponse getRequests() {
-		String agentName = ((UserAgent) getActiveAgent()).getLoginName();
+	public HttpResponse getRequests(@ContentParam String content) {
+		JSONObject contentObject = (JSONObject) JSONValue.parse(content);
+		String agentName = (String) contentObject.get("username");
 		String result ="";
 		Connection conn = null;
 		PreparedStatement stmnt = null;
@@ -1701,7 +1702,7 @@ public HttpResponse createRequest(@ContentParam String content)
 		
 		JSONObject contentObject = (JSONObject) JSONValue.parse(content);
 		String requestUserName = (String) contentObject.get("username");
-		String activeUserName = ((UserAgent) getActiveAgent()).getLoginName();
+		String activeUserName = (String) contentObject.get("myusername");;
 		
 		//Already Contacts?
 		if (areContacts(activeUserName, requestUserName)) {			
@@ -2320,7 +2321,7 @@ public HttpResponse deleteRequest(@ContentParam String content) {
 	}
 
 	/**
-	 * Retrieves a profile 
+	 * Retrieves all Users 
 	 * 
 	 * @param userName of all Users retrieved 
 	 * @result Profile Datas
@@ -2339,7 +2340,7 @@ public HttpResponse deleteRequest(@ContentParam String content) {
 			conn = dbm.getConnection();			
 						 
 			// prepare statement
-			stmnt = conn.prepareStatement("SELECT UserName, Visible FROM AccountProfile WHERE Visible = 1;");
+			stmnt = conn.prepareStatement("SELECT UserName, NickName, Visible FROM AccountProfile WHERE Visible = 1;");
 			
 			// retrieve result set
 			rs = stmnt.executeQuery();	
@@ -2351,6 +2352,7 @@ public HttpResponse deleteRequest(@ContentParam String content) {
 				// setup resulting JSON Object
 				JSONObject ro = new JSONObject();
 				ro.put("username", rs.getString(1));
+				ro.put("nickname", rs.getString(2));
 				userArray.add(ro);
 				
 				// return HTTP Response on success
