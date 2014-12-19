@@ -42,11 +42,11 @@ public class MessageTest extends ServiceTest {
 			rows = stmnt.executeUpdate();
 
 			stmnt = conn
-					.prepareStatement("INSERT INTO Message (MessageID, Message, MessageTimeStamp, WasRead) VALUES (999999999, \"Hey Nachricht yo\",\"0000-00-00 00:00:00\", 1);");
+					.prepareStatement("INSERT INTO Message (MessageID, Message, MessageTimeStamp, WasRead) VALUES (42, \"Hey Nachricht yo\",\"2014-01-01 00:00:00\", 1);");
 			rows = stmnt.executeUpdate();
 
 			stmnt = conn
-					.prepareStatement("INSERT INTO SendingSingle (Sender, Receiver, MessageID) VALUES (\"adam\", \"eve1st\", 999999999);");
+					.prepareStatement("INSERT INTO SendingSingle (Sender, Receiver, MessageID) VALUES (\"adam\", \"eve1st\", 42);");
 			rows = stmnt.executeUpdate();
 
 		} catch (Exception e) {
@@ -75,7 +75,7 @@ public class MessageTest extends ServiceTest {
 					+ getEveName() + "' OR Sender = '" + getAbelName() + "'");
 			int rows = stmnt.executeUpdate();
 
-			stmnt = conn.prepareStatement("DELETE FROM Message WHERE MessageID=999999999");
+			stmnt = conn.prepareStatement("DELETE FROM Message WHERE MessageTimeStamp=\"2014-01-01 00:00:00\"");
 			rows = stmnt.executeUpdate();
 
 		} catch (Exception e) {

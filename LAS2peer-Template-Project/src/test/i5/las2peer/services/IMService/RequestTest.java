@@ -11,7 +11,6 @@ import java.sql.PreparedStatement;
 
 import org.junit.Before;
 import org.junit.Ignore;
-import org.junit.Test;
 
 public class RequestTest extends ServiceTest {
 
@@ -84,7 +83,7 @@ public class RequestTest extends ServiceTest {
 	 * 
 	 * @throws Exception
 	 */
-	@Test
+	@Ignore
 	public void testGetRequest() {
 		MiniClient c = new MiniClient();
 		c.setAddressPort(HTTP_ADDRESS, HTTP_PORT);

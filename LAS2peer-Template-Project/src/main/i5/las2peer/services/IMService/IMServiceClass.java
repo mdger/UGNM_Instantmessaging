@@ -23,8 +23,8 @@ import java.io.IOException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.sql.Statement;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.sql.Timestamp;
 
 import net.minidev.json.JSONArray;
@@ -1362,14 +1362,16 @@ public class IMServiceClass extends Service {
 		}
 	}
 	
-	/** vor��bergehend auslassen
+	/** 
 	 * This method returns the messages in a group. 
+	 * 
 	 * @param groupName The name of the group in which the messages are sent
 	 * @return The messages sent in a group as JSON String 
-	 
+	**/
 	@GET
-	@Path("message/group/{name}")
-	public HttpResponse getGroupMessages(@PathParam("name") String groupName)
+	@Path("message/group/{groupname}")
+	@Produces("application/json")
+	public HttpResponse getGroupMessages(@PathParam("groupname") String groupName)
 	{
 		Connection conn = null;
 		PreparedStatement stmnt = null;
@@ -1377,10 +1379,19 @@ public class IMServiceClass extends Service {
 		
 		try 
 		{
-			// get connection from connection pool
-			conn = dbm.getConnection();
 			
-			// prepare statement
+			String userName = ((UserAgent) getActiveAgent()).getLoginName();
+									
+			//Is Member of Group?
+			if(!isMemberOf(userName, groupName)) {				
+				HttpResponse er = new HttpResponse("Access denied. No Group Member");
+				er.setStatus(403);
+				return er;				
+			}
+			
+			//Get GroupMessages from Database
+			conn = dbm.getConnection();
+
 			stmnt = conn.prepareStatement("SELECT Message, MessageTimeStamp, Sender FROM Message, SendingGroup WHERE Receiver = ? AND Message.MessageID = SendingGroup.MessageID;");
 			stmnt.setString(1, groupName);
 		
@@ -1414,10 +1425,8 @@ public class IMServiceClass extends Service {
 			}
 			else 
 			{
-				String error = "No messages found for contact " + groupName + "!";
-				
-				// return HTTP Response on error
-				HttpResponse er = new HttpResponse(error);
+				// return HTTP Response No Messages was found
+				HttpResponse er = new HttpResponse("No messages found for contact " + groupName + "!");
 				er.setStatus(404);
 				return er;
 			}
@@ -1432,81 +1441,49 @@ public class IMServiceClass extends Service {
 		finally 
 		{
 			// free resources
-			if (rs != null) 
-			{
-				try 
-				{
-					rs.close();
-				}
-				catch (Exception e) 
-				{
-					Context.logError(this, e.getMessage());
-					
-					// return HTTP Response on error
-					HttpResponse er = new HttpResponse("Internal error: " + e.getMessage());
-					er.setStatus(500);
-					return er;
-				}
-			}
-			if (stmnt != null) 
-			{
-				try 
-				{
-					stmnt.close();
-				}
-				catch (Exception e) 
-				{
-					Context.logError(this, e.getMessage());
-					
-					// return HTTP Response on error
-					HttpResponse er = new HttpResponse("Internal error: " + e.getMessage());
-					er.setStatus(500);
-					return er;
-				}
-			}
-			if (conn != null) 
-			{
-				try 
-				{
-					conn.close();
-				}
-				catch (Exception e) 
-				{
-					Context.logError(this, e.getMessage());
-					
-					// return HTTP Response on error
-					HttpResponse er = new HttpResponse("Internal error: " + e.getMessage());
-					er.setStatus(500);
-					return er;
-				}
-			}
+			HttpResponse response = freeRessources(conn, stmnt, rs);
+			if(response.getStatus() != 200)
+				return response;
 		}
 	}
-	*/ 
 	
-	/* voruebergehend auskommentiert
+	
+	
 	/** This method sends a message to a group
 	 * @param userName The name of the group the message will be sent
 	 * @param content The content of the message encoded as JSON string
 	 * @return Code if the sending was successfully
-
+	**/
+	
 	@PUT
-	@Path("message/group/{name}")
+	@Path("message/group/{groupname}")
 	@Consumes("application/json")
-	public HttpResponse sendGroupMessage(@PathParam("name") String groupName, @ContentParam String content)
+	public HttpResponse sendGroupMessage(@PathParam("groupname") String groupName, @ContentParam String content)
 	{
 		try 
 		{
 			// convert string content to JSON object to get the message content
 			JSONObject messageObject = (JSONObject) JSONValue.parse(content);
 			String message = (String) messageObject.get("message");
-			String timeStamp = (String) messageObject.get("timestamp");
+			String timeStamp = (String) messageObject.get("timestamp");			
 			
 			String result = "";
 			Connection conn = null;
 			PreparedStatement stmnt = null;
 			PreparedStatement stmnt1 = null;
 			ResultSet rs = null;
+			
+			int messageID = -1;
+			String userName = ((UserAgent) getActiveAgent()).getLoginName();
+			
+			//Is Member of Group?
+			if(!isMemberOf(userName, groupName)) {				
+				HttpResponse er = new HttpResponse("Access denied. No Group Member");
+				er.setStatus(403);
+				return er;				
+			}
+			
+			
 			try {
 				conn = dbm.getConnection();
 				
@@ -1515,20 +1492,27 @@ public class IMServiceClass extends Service {
 				stmnt.setString(1, message);
 				stmnt.setString(2, timeStamp);
 				stmnt.setInt(3, 0);
-				int rows = stmnt.executeUpdate();
-				result = "Database updated. " + rows + " rows in table \"Message\" affected";
-				stmnt.getGeneratedKeys().next();
+				stmnt.executeUpdate();
+				result = "Message was created";
 				
-				// retrieve the message ID for saving it in the sending group table
-				int messageID = stmnt.getGeneratedKeys().getInt(1);
+				// retrieve the message ID for saving it in the sending single table
+				rs = stmnt.getGeneratedKeys();
+				if(rs.next())
+					messageID = rs.getInt(1);
+				else
+				{
+					HttpResponse er = new HttpResponse("Internal error. Database could not be updated!");
+					er.setStatus(500);
+					return er;
+				}
 				
 				// insert the message ID, sender and receiver in the sending group table
 				stmnt1 = conn.prepareStatement("INSERT INTO SendingGroup (Sender, Receiver, MessageID) VALUES (?, ?, ?);");
-				stmnt1.setString(1, ((UserAgent) getActiveAgent()).getLoginName());
+				stmnt1.setString(1, userName);
 				stmnt1.setString(2, groupName);
 				stmnt1.setInt(3, messageID);
-				rows = stmnt1.executeUpdate();
-				result += "\n\rDatabase updated. " + rows + " rows in table \"SendingGroup\" affected";
+				stmnt1.executeUpdate();
+				result += "\n\rMessage was sent";
 				
 				// return 
 				HttpResponse r = new HttpResponse(result);
@@ -1602,9 +1586,6 @@ public class IMServiceClass extends Service {
 			return er;
 		}
 	}
-	voruebergehend auskommentiert */
-	
-
 	
 	
 	 /**

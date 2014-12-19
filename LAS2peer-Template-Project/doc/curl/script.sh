@@ -65,6 +65,12 @@ echo "curl test script for las2peer service"
 #echo "Test DELETE Member Method"
 #curl -v -X DELETE $URL/group/NewGroup/member/joey --user alice:pwalice
 
+#echo "Test GET GetGroupMessage Method"
+::curl -v -X GET $URL/message/group/TestGroup --user alice:pwalice 
+
+#echo "Test PUT SendGroupMessage Method"
+::curl -v -X PUT $URL/message/group/TestGroup --user alice:pwalice -H "Content-Type:application/json" -d "{\"message\":\"message_val\", \"timestamp\":\"2015-01-01 00:00:00\"}"
+
 echo 
 echo "PRESS RETURN TO CONTINUE..."
 read
