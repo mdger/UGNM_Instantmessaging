@@ -1596,9 +1596,8 @@ public class IMServiceClass extends Service {
 	@GET
 	@Path("profile/contact/request")
 	@Produces("application/json")
-	public HttpResponse getRequests(@PathParam("username") String userName) {
-		String agentName = userName;		
-		
+	public HttpResponse getRequests() {
+		String agentName = ((UserAgent) getActiveAgent()).getLoginName();		
 		String result ="";
 		Connection conn = null;
 		PreparedStatement stmnt = null;
