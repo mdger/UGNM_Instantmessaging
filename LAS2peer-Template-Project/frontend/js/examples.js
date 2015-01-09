@@ -137,7 +137,6 @@ TemplateServiceClient.prototype.getUsers = function(successCallback, errorCallba
     }	
 	
     function getUsersList() {
-	  $("#userList").html("");
       client.getUsers(
         function(data,type) {
           // this is the success callback
@@ -182,22 +181,23 @@ TemplateServiceClient.prototype.getUsers = function(successCallback, errorCallba
       );
 	});								
 	
-	// Get Contact Requests
+	// Sends Contact Request
 	$( "#pendingRequestsButton" ).click(function() {
-       	//var input = "{\"username\":\"" + oidc_userinfo.preferred_username + "\"}";							
-		client.getRequests(
+       	var input = "{\"username\":\"" + oidc_userinfo.preferred_username + "\"}";							
+		client.getRequest(
+		input,
         function(data,type) {
-			console.log(data);
           // this is the success callback
-			/*for (var i = 0; i < data.length; i++) {
+			for (var i = 0; i < data.length; i++) {
 				// This block will be executed 100 times.
 				$("#requestList").append("<li>" + data[i].username + "</li>");
 				// Note: The last log will be "Currently at 99".
-			}*/		  		
+			}		  		  
+          console.log(data);
         },
         function(error) {
           // this is the error callback
           console.log(error);
         }
       );
-	});
+	});								
