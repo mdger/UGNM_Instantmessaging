@@ -109,10 +109,10 @@ TemplateServiceClient.prototype.postRequest = function(content, successCallback,
 /**
 * GET Request
 */
-TemplateServiceClient.prototype.getRequest = function(content, successCallback, errorCallback) {
+TemplateServiceClient.prototype.getRequests = function(successCallback, errorCallback) {
 	this.sendRequest("GET",
 		"profile/contact/request",
-		content,
+		"",
 		"application/json",
 		{},
 		successCallback,
