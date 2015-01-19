@@ -1594,7 +1594,7 @@ public class IMServiceClass extends Service {
 		 * @return The data (username and nickname) of the user who has sent a contact request in the HTTP Response type 
 		*/
 	@GET
-	@Path("profile/contact/request/{username}")
+	@Path("profile/contact/request")
 	@Produces("application/json")
 	public HttpResponse getRequests() {
 		String agentName = ((UserAgent) getActiveAgent()).getLoginName();		
