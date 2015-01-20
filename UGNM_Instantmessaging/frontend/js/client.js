@@ -112,7 +112,7 @@ TemplateServiceClient.prototype.postRequest = function(content, successCallback,
 TemplateServiceClient.prototype.getRequest = function(content, successCallback, errorCallback) {
 	this.sendRequest("GET",
 		"profile/contact/request",
-		content,
+		"",
 		"application/json",
 		{},
 		successCallback,

@@ -17,3 +17,23 @@ the user will be able to customize his profile and participate in different comm
 other users on the platform to communicate with them exclusively. 
 
 If you are interested in Las2Peer, please visit the official Las2Peer Rep (https://raw.githubusercontent.com/rwth-acis/LAS2peer)
+
+
+##Running Service
+
+###Requirements
+
+* [Java Development Kit 7](http://www.oracle.com/technetwork/java/javase/downloads/index.html)
+* [Apache Ant](http://ant.apache.org/)
+
+###Building
+
+Running *ant all* from command prompt will build the project.
+
+###Starting Service Server
+
+Running  ./bin/start_network.bat (Windows) or ./bin/start_network.sh (Linux) will start a local Server on Port 8080 
+
+After that you can send Requests to Service Server *http://localhost:8080/im/**
+
+You can find a description of every Resource at /doc/api.md or [on Github](https://github.com/AsiaTee/UGNM_Instantmessaging/blob/master/LAS2peer-Template-Project/doc/api.md)

@@ -1803,7 +1803,7 @@ public HttpResponse deleteRequest(@ContentParam String content) {
 	{
 		Context.logError(this, e.getMessage());
 		HttpResponse er = new HttpResponse("Content data in invalid format: " + e.getMessage());
-		er.setStatus(400);
+		er.setStatus(450);
 		return er;
 	}
 }
