@@ -1,0 +1,365 @@
+14.11.2014 15:08:53	Web-Connector in HTTP mode running on port 8080
+17.11.2014 13:12:17	Web-Connector in HTTP mode running on port 8080
+17.11.2014 13:12:31	Web-Connector in HTTP mode running on port 8080
+17.11.2014 15:33:54	Web-Connector in HTTP mode running on port 8080
+17.11.2014 15:34:31	 Error: Invocation request /example/validate for unknown service method
+17.11.2014 15:34:32	 Error: Invocation request /example/myMethodPath/Yeeehaaaa! for unknown service method
+17.11.2014 21:36:40	Web-Connector in HTTP mode running on port 8080
+17.11.2014 21:37:04	/127.0.0.1:50896: login denied for user -5021131362343084485
+17.11.2014 21:37:04	/127.0.0.1:50897: login denied for user -8626247308297765772
+17.11.2014 21:37:04	/127.0.0.1:50898: login denied for user -5021131362343084485
+17.11.2014 21:37:05	/127.0.0.1:50899: login denied for user -5021131362343084485
+17.11.2014 21:37:05	/127.0.0.1:50900: login denied for user -5021131362343084485
+17.11.2014 21:37:05	/127.0.0.1:50901: login denied for user -5021131362343084485
+17.11.2014 21:37:05	/127.0.0.1:50902: login denied for user -7678677630072537742
+17.11.2014 21:37:05	/127.0.0.1:50903: login denied for user -5021131362343084485
+17.11.2014 21:37:05	/127.0.0.1:50904: login denied for user -5021131362343084485
+17.11.2014 21:37:05	/127.0.0.1:50905: login denied for user -5021131362343084485
+17.11.2014 21:37:05	/127.0.0.1:50906: login denied for user -8626247308297765772
+17.11.2014 21:37:05	/127.0.0.1:50907: login denied for user -5021131362343084485
+22.11.2014 14:38:32	Web-Connector in HTTP mode running on port 8080
+22.11.2014 14:52:17	 Error: Invocation request /example/myMethodPath/Yeeehaaaa! for unknown service method
+22.11.2014 14:52:18	 Error: Invocation request /example/validate for unknown service method
+22.11.2014 14:57:03	 Error: Invocation request / for unknown service method
+22.11.2014 14:57:03	 Error: Invocation request /favicon.ico for unknown service method
+22.11.2014 14:57:26	 Error: Invocation request /__mg_mc for unknown service method
+22.11.2014 14:58:17	 Error: Invocation request / for unknown service method
+22.11.2014 14:58:51	 Error: Invocation request / for unknown service method
+22.11.2014 14:59:29	 Error: Invocation request /__mg_mc for unknown service method
+22.11.2014 15:00:10	 Error: Invocation request / for unknown service method
+22.11.2014 15:00:19	 Error: Invocation request /__mg_mc for unknown service method
+22.11.2014 15:01:34	 Error: Invocation request / for unknown service method
+22.11.2014 15:02:49	Web-Connector in HTTP mode running on port 8080
+22.11.2014 15:42:14	Web-Connector in HTTP mode running on port 8080
+22.11.2014 15:49:27	Web-Connector in HTTP mode running on port 8080
+22.11.2014 15:50:43	Web-Connector in HTTP mode running on port 8080
+22.11.2014 15:52:11	Web-Connector in HTTP mode running on port 8080
+22.11.2014 15:54:12	Web-Connector in HTTP mode running on port 8080
+22.11.2014 16:07:39	Web-Connector in HTTP mode running on port 8080
+22.11.2014 16:07:56	 Error: Invocation request /example/validate for unknown service method
+22.11.2014 16:08:14	 Error: Invocation request /example/myMethodPath/Yeeehaaaa! for unknown service method
+22.11.2014 16:08:30	 Error: Invocation request /example/validate for unknown service method
+22.11.2014 16:08:31	 Error: Invocation request /example/myMethodPath/Yeeehaaaa! for unknown service method
+22.11.2014 16:08:34	 Error: Invocation request /example/validate for unknown service method
+22.11.2014 16:08:35	 Error: Invocation request /example/myMethodPath/Yeeehaaaa! for unknown service method
+22.11.2014 16:08:35	 Error: Invocation request /example/myMethodPath/Yeeehaaaa! for unknown service method
+22.11.2014 16:08:48	 Error: Invocation request /example/validate for unknown service method
+22.11.2014 16:08:49	 Error: Invocation request /example/myMethodPath/Yeeehaaaa! for unknown service method
+22.11.2014 16:08:49	 Error: Invocation request /example/myMethodPath/Yeeehaaaa! for unknown service method
+22.11.2014 16:08:49	 Error: Invocation request /example/myMethodPath/Yeeehaaaa! for unknown service method
+22.11.2014 16:08:54	 Error: Invocation request /example/validate for unknown service method
+22.11.2014 16:08:55	 Error: Invocation request /example/validate for unknown service method
+22.11.2014 16:08:55	 Error: Invocation request /example/myMethodPath/Yeeehaaaa! for unknown service method
+22.11.2014 16:18:53	 Error: Invocation request /example/validate for unknown service method
+22.11.2014 16:18:55	 Error: Invocation request /example/validate for unknown service method
+22.11.2014 16:18:56	 Error: Invocation request /example/myMethodPath/Yeeehaaaa! for unknown service method
+22.11.2014 16:19:04	 Error: Invocation request /example/myMethodPath/Yeeehaaaa! for unknown service method
+22.11.2014 16:19:11	 Error: Invocation request /example/validate for unknown service method
+22.11.2014 16:59:48	 Error: Invocation request /example/myMethodPath/Yeeehaaaa! for unknown service method
+22.11.2014 16:59:49	 Error: Invocation request /example/validate for unknown service method
+22.11.2014 17:25:25	 Error: Invocation request /example/validate for unknown service method
+22.11.2014 17:25:25	 Error: Invocation request /example/myMethodPath/Yeeehaaaa! for unknown service method
+24.11.2014 00:32:39	Web-Connector in HTTP mode running on port 8080
+24.11.2014 00:37:14	 Error: Invocation request /example/myMethodPath/Yeeehaaaa! for unknown service method
+24.11.2014 00:37:15	 Error: Invocation request /example/validate for unknown service method
+24.11.2014 01:04:15	Web-Connector in HTTP mode running on port 8080
+24.11.2014 01:04:36	 Error: Invocation request /example/validate for unknown service method
+24.11.2014 01:04:36	 Error: Invocation request /example/myMethodPath/Yeeehaaaa! for unknown service method
+24.11.2014 15:24:17	Web-Connector in HTTP mode running on port 8080
+24.11.2014 15:27:44	Web-Connector in HTTP mode running on port 8080
+24.11.2014 15:28:05	 Error: Invocation request /example/myMethodPath/Yeeehaaaa! for unknown service method
+24.11.2014 15:28:06	 Error: Invocation request /example/validate for unknown service method
+24.11.2014 15:28:18	 Error: Invocation request /example/validate for unknown service method
+24.11.2014 15:28:19	 Error: Invocation request /example/myMethodPath/Yeeehaaaa! for unknown service method
+24.11.2014 15:34:51	 Error: Invocation request /example/validate for unknown service method
+24.11.2014 15:34:52	 Error: Invocation request /example/myMethodPath/Yeeehaaaa! for unknown service method
+24.11.2014 15:44:21	 Error: Invocation request /example/validate for unknown service method
+24.11.2014 15:44:22	 Error: Invocation request /example/myMethodPath/Yeeehaaaa! for unknown service method
+24.11.2014 15:49:37	 Error: Invocation request /example/validate for unknown service method
+24.11.2014 15:49:40	 Error: Invocation request /example/validate for unknown service method
+24.11.2014 15:49:40	 Error: Invocation request /example/validate for unknown service method
+24.11.2014 15:49:40	 Error: Invocation request /example/validate for unknown service method
+24.11.2014 16:59:08	Web-Connector in HTTP mode running on port 8080
+24.11.2014 16:59:24	Web-Connector in HTTP mode running on port 8080
+24.11.2014 16:59:36	 Error: Invocation request /example/myMethodPath/Yeeehaaaa! for unknown service method
+24.11.2014 16:59:37	 Error: Invocation request /example/validate for unknown service method
+24.11.2014 17:37:59	 Error: Invocation request /profile for unknown service method
+24.11.2014 17:38:22	 Error: Invocation request /profile for unknown service method
+25.11.2014 15:24:15	Web-Connector in HTTP mode running on port 8080
+25.11.2014 15:38:59	 Error: Invocation request /profile for unknown service method
+25.11.2014 15:42:48	 Error: Invocation request /example/validate for unknown service method
+25.11.2014 15:47:44	 Error: Invocation request /example/myMethodPath/Yeeehaaaa! for unknown service method
+25.11.2014 15:47:53	 Error: Invocation request /profile for unknown service method
+25.11.2014 15:49:15	 Error: Invocation request /profile for unknown service method
+25.11.2014 15:49:26	 Error: Invocation request /profile for unknown service method
+25.11.2014 15:51:10	 Error: Invocation request /profile for unknown service method
+25.11.2014 16:31:24	 Error: Invocation request /example/validate for unknown service method
+25.11.2014 16:31:26	 Error: Invocation request /example/myMethodPath/Yeeehaaaa! for unknown service method
+25.11.2014 16:32:46	 Error: Invocation request /example/validate for unknown service method
+25.11.2014 16:32:46	 Error: Invocation request /example/myMethodPath/Yeeehaaaa! for unknown service method
+25.11.2014 16:35:17	 Error: Invocation request /example/validate for unknown service method
+25.11.2014 16:35:18	 Error: Invocation request /example/myMethodPath/Yeeehaaaa! for unknown service method
+25.11.2014 17:00:21	 Error: Invocation request /profile for unknown service method
+25.11.2014 17:06:49	 Error: Invocation request /profile for unknown service method
+25.11.2014 17:16:33	 Error: Invocation request /profile for unknown service method
+25.11.2014 23:47:12	Web-Connector in HTTP mode running on port 8080
+25.11.2014 23:47:29	 Error: Invocation request /profile for unknown service method
+25.11.2014 23:53:50	 Error: Invocation request /profile for unknown service method
+25.11.2014 23:53:57	 Error: Invocation request /profile for unknown service method
+25.11.2014 23:56:39	 Error: Invocation request /profile for unknown service method
+25.11.2014 23:57:26	 Error: Invocation request /profile for unknown service method
+25.11.2014 23:59:27	 Error: Invocation request /profile/jambas for unknown service method
+25.11.2014 23:59:45	 Error: Invocation request /profile for unknown service method
+25.11.2014 23:59:54	 Error: Invocation request /profile for unknown service method
+26.11.2014 00:00:09	 Error: Invocation request /profile for unknown service method
+26.11.2014 00:00:55	 Error: Invocation request /profile for unknown service method
+26.11.2014 00:05:48	 Error: Error occured:/profile 1
+26.11.2014 00:08:48	 Error: Error occured:/profile 1
+26.11.2014 00:16:45	 Error: Error occured:/profile 1
+26.11.2014 00:17:29	 Error: Error occured:/profile 1
+26.11.2014 00:17:36	 Error: Error occured:/profile 1
+26.11.2014 00:18:59	 Error: Error occured:/profile 1
+26.11.2014 00:19:41	 Error: Error occured:/profile 1
+26.11.2014 00:20:46	 Error: Error occured:/profile 1
+26.11.2014 00:23:22	 Error: Error occured:/profile 1
+26.11.2014 00:28:26	 Error: Error occured:/profile 1
+26.11.2014 19:41:48	Web-Connector in HTTP mode running on port 8080
+26.11.2014 19:42:20	 Error: Invocation request /example/myMethodPath/Yeeehaaaa! for unknown service method
+26.11.2014 20:50:41	 Error: Invocation request /profile for unknown service method
+26.11.2014 22:49:41	 Error: Invocation request /profile for unknown service method
+26.11.2014 23:21:35	 Error: Error occured:/profile 1
+26.11.2014 23:22:22	 Error: Error occured:/im/profile 1
+27.11.2014 00:10:29	Web-Connector in HTTP mode running on port 8080
+27.11.2014 00:34:53	 Error: Error occured:/im/profile 1
+27.11.2014 00:34:53	 Error: Error occured:/im/profile null
+27.11.2014 00:35:21	 Error: Error occured:/im/profile 1
+27.11.2014 00:35:58	 Error: Error occured:/im/profile 1
+27.11.2014 00:36:05	 Error: Invocation request /im/example/myMethodPath/Yeeehaaaa! for unknown service method
+27.11.2014 00:36:06	 Error: Invocation request /im/example/validate for unknown service method
+27.11.2014 00:36:07	 Error: Invocation request /im/example/validate for unknown service method
+27.11.2014 00:36:08	 Error: Error occured:/im/profile 1
+27.11.2014 00:36:56	 Error: Error occured:/im/profile 1
+27.11.2014 00:39:04	 Error: Invocation request /im/example/validate for unknown service method
+27.11.2014 00:39:05	 Error: Invocation request /im/example/validate for unknown service method
+27.11.2014 00:43:44	 Error: Error occured:/im/profile 1
+27.11.2014 00:43:50	 Error: Error occured:/im/profile 1
+27.11.2014 00:43:51	 Error: Error occured:/im/profile 1
+27.11.2014 00:43:51	 Error: Error occured:/im/profile 1
+27.11.2014 00:43:51	 Error: Error occured:/im/profile 1
+27.11.2014 00:43:52	 Error: Error occured:/im/profile 1
+27.11.2014 00:43:52	 Error: Error occured:/im/profile 1
+27.11.2014 00:43:52	 Error: Error occured:/im/profile 1
+27.11.2014 00:45:43	 Error: Error occured:/im/profile 1
+27.11.2014 00:45:44	 Error: Error occured:/im/profile 1
+27.11.2014 00:46:17	 Error: Error occured:/im/profile 1
+27.11.2014 00:46:19	 Error: Error occured:/im/profile 1
+27.11.2014 00:46:20	 Error: Error occured:/im/profile 1
+27.11.2014 00:46:20	 Error: Error occured:/im/profile 1
+27.11.2014 00:47:20	 Error: Error occured:/im/profile 1
+27.11.2014 00:47:31	 Error: Invocation request /im/example/validate for unknown service method
+27.11.2014 00:47:34	 Error: Error occured:/im/profile 1
+27.11.2014 00:47:45	 Error: Error occured:/im/profile 1
+28.11.2014 14:17:15	Web-Connector in HTTP mode running on port 8080
+28.11.2014 14:37:29	Web-Connector in HTTP mode running on port 8080
+03.12.2014 16:08:45	 Error: Could not retrieve a valid config from the oidcProvider!
+03.12.2014 16:08:46	Web-Connector in HTTP mode running on port 8080
+03.12.2014 16:53:05	 Error: Could not retrieve a valid config from the oidcProvider!
+03.12.2014 16:53:06	Web-Connector in HTTP mode running on port 8080
+05.12.2014 14:07:27	 Error: Could not retrieve a valid config from the oidcProvider!
+05.12.2014 14:07:28	Web-Connector in HTTP mode running on port 8080
+08.12.2014 09:36:48	 Error: Could not retrieve a valid config from the oidcProvider!
+08.12.2014 09:36:48	Web-Connector in HTTP mode running on port 8080
+08.12.2014 09:43:32	 Error: Could not retrieve a valid config from the oidcProvider!
+08.12.2014 09:43:32	Web-Connector in HTTP mode running on port 8080
+08.12.2014 12:49:52	Web-Connector in HTTP mode running on port 8080
+08.12.2014 12:50:55	Web-Connector in HTTP mode running on port 8080
+08.12.2014 12:54:03	Web-Connector in HTTP mode running on port 8080
+09.12.2014 16:35:29	Web-Connector in HTTP mode running on port 8080
+09.12.2014 17:34:59	 Error: Could not retrieve a valid config from the oidcProvider!
+09.12.2014 17:35:00	Web-Connector in HTTP mode running on port 8080
+09.12.2014 17:43:08	 Error: Could not retrieve a valid config from the oidcProvider!
+09.12.2014 17:43:09	Web-Connector in HTTP mode running on port 8080
+09.12.2014 19:41:16	 Error: Could not retrieve a valid config from the oidcProvider!
+09.12.2014 19:41:17	Web-Connector in HTTP mode running on port 8080
+09.12.2014 20:14:17	 Error: Could not retrieve a valid config from the oidcProvider!
+09.12.2014 20:14:18	Web-Connector in HTTP mode running on port 8080
+10.12.2014 17:31:46	 Error: Could not retrieve a valid config from the oidcProvider!
+10.12.2014 17:31:47	Web-Connector in HTTP mode running on port 8080
+10.12.2014 17:39:19	 Error: Could not retrieve a valid config from the oidcProvider!
+10.12.2014 17:39:19	Web-Connector in HTTP mode running on port 8080
+10.12.2014 17:44:15	 Error: Error occured:/im/profile/AsiaTee 1
+10.12.2014 18:06:12	 Error: Could not retrieve a valid config from the oidcProvider!
+10.12.2014 18:06:13	Web-Connector in HTTP mode running on port 8080
+10.12.2014 18:06:28	 Error: Could not retrieve a valid config from the oidcProvider!
+10.12.2014 18:06:29	Web-Connector in HTTP mode running on port 8080
+10.12.2014 18:11:21	 Error: Could not retrieve a valid config from the oidcProvider!
+10.12.2014 18:11:21	Web-Connector in HTTP mode running on port 8080
+14.12.2014 21:18:37	 Error: Could not retrieve a valid config from the oidcProvider!
+14.12.2014 21:18:38	Web-Connector in HTTP mode running on port 8080
+14.12.2014 21:21:31	 Error: Could not retrieve a valid config from the oidcProvider!
+14.12.2014 21:21:31	Web-Connector in HTTP mode running on port 8080
+14.12.2014 21:49:25	 Error: Could not retrieve a valid config from the oidcProvider!
+14.12.2014 21:49:26	Web-Connector in HTTP mode running on port 8080
+14.12.2014 22:19:06	 Error: Could not retrieve a valid config from the oidcProvider!
+14.12.2014 22:19:07	Web-Connector in HTTP mode running on port 8080
+14.12.2014 22:28:03	 Error: Could not retrieve a valid config from the oidcProvider!
+14.12.2014 22:28:04	Web-Connector in HTTP mode running on port 8080
+14.12.2014 22:28:31	 Error: Could not retrieve a valid config from the oidcProvider!
+14.12.2014 22:28:31	Web-Connector in HTTP mode running on port 8080
+16.12.2014 12:54:12	 Error: Could not retrieve a valid config from the oidcProvider!
+16.12.2014 12:54:13	Web-Connector in HTTP mode running on port 8080
+16.12.2014 12:55:52	 Error: Could not retrieve a valid config from the oidcProvider!
+16.12.2014 12:55:53	Web-Connector in HTTP mode running on port 8080
+16.12.2014 15:14:17	 Error: Could not retrieve a valid config from the oidcProvider!
+16.12.2014 15:14:18	Web-Connector in HTTP mode running on port 8080
+16.12.2014 15:36:24	 Error: Could not retrieve a valid config from the oidcProvider!
+16.12.2014 15:36:24	Web-Connector in HTTP mode running on port 8080
+16.12.2014 15:48:14	 Error: Could not retrieve a valid config from the oidcProvider!
+16.12.2014 15:48:15	Web-Connector in HTTP mode running on port 8080
+18.12.2014 00:28:23	 Error: Could not retrieve a valid config from the oidcProvider!
+18.12.2014 00:28:23	Web-Connector in HTTP mode running on port 8080
+18.12.2014 00:28:33	 Error: Invocation request / for unknown service method
+18.12.2014 00:28:33	 Error: Invocation request /favicon.ico for unknown service method
+18.12.2014 00:55:52	 Error: Could not retrieve a valid config from the oidcProvider!
+18.12.2014 00:55:53	Web-Connector in HTTP mode running on port 8080
+18.12.2014 01:12:10	 Error: Could not retrieve a valid config from the oidcProvider!
+18.12.2014 01:12:10	Web-Connector in HTTP mode running on port 8080
+18.12.2014 01:36:57	 Error: Could not retrieve a valid config from the oidcProvider!
+18.12.2014 01:36:58	Web-Connector in HTTP mode running on port 8080
+18.12.2014 01:37:11	 Error: Error occured:/im/profile/contact/request 1
+18.12.2014 01:38:07	 Error: Could not retrieve a valid config from the oidcProvider!
+18.12.2014 01:38:08	Web-Connector in HTTP mode running on port 8080
+18.12.2014 01:40:00	 Error: Could not retrieve a valid config from the oidcProvider!
+18.12.2014 01:40:01	Web-Connector in HTTP mode running on port 8080
+18.12.2014 01:40:06	 Error: Error occured:/im/profile/contact/request 1
+18.12.2014 01:42:06	 Error: Error occured:/im/profile/contact/request 1
+18.12.2014 01:47:05	 Error: Could not retrieve a valid config from the oidcProvider!
+18.12.2014 01:47:05	Web-Connector in HTTP mode running on port 8080
+18.12.2014 01:47:18	 Error: Could not retrieve a valid config from the oidcProvider!
+18.12.2014 01:47:18	Web-Connector in HTTP mode running on port 8080
+18.12.2014 01:47:30	 Error: Could not retrieve a valid config from the oidcProvider!
+18.12.2014 01:47:30	Web-Connector in HTTP mode running on port 8080
+18.12.2014 01:54:41	 Error: Could not retrieve a valid config from the oidcProvider!
+18.12.2014 01:54:42	Web-Connector in HTTP mode running on port 8080
+18.12.2014 01:55:29	 Error: Could not retrieve a valid config from the oidcProvider!
+18.12.2014 01:55:29	Web-Connector in HTTP mode running on port 8080
+18.12.2014 01:56:04	 Error: Error occured:/im/profile/contact/request 1
+18.12.2014 01:56:14	 Error: Error occured:/im/profile/contact/request 1
+18.12.2014 02:03:30	 Error: Error occured:/im/profile/contact/request 1
+18.12.2014 02:04:21	 Error: Error occured:/im/profile/contact/request 1
+18.12.2014 02:06:56	 Error: Error occured:/im/profile/contact/request 1
+21.12.2014 16:39:42	 Error: Could not retrieve a valid config from the oidcProvider!
+21.12.2014 16:39:43	Web-Connector in HTTP mode running on port 8080
+21.12.2014 17:03:27	 Error: Error occured:/im/profile/contact/request 1
+21.12.2014 17:08:10	 Error: Error occured:/im/profile/contact/request 1
+21.12.2014 17:10:59	 Error: Error occured:/im/profile/contact/request 1
+21.12.2014 17:11:02	 Error: Error occured:/im/profile/contact/request 1
+21.12.2014 17:12:13	 Error: Error occured:/im/profile/contact/request 1
+21.12.2014 17:13:34	 Error: Error occured:/im/profile/contact/request 1
+21.12.2014 17:23:55	 Error: Error occured:/im/profile/contact/request 1
+28.12.2014 16:31:55	 Error: Could not retrieve a valid config from the oidcProvider!
+28.12.2014 16:31:55	Web-Connector in HTTP mode running on port 8080
+28.12.2014 16:33:17	 Error: Error occured:/im/profile/contact/request 1
+31.12.2014 12:02:21	 Error: Could not retrieve a valid config from the oidcProvider!
+31.12.2014 12:02:22	Web-Connector in HTTP mode running on port 8080
+31.12.2014 12:16:43	 Error: Could not retrieve a valid config from the oidcProvider!
+31.12.2014 12:16:44	Web-Connector in HTTP mode running on port 8080
+31.12.2014 12:17:26	 Error: Could not retrieve a valid config from the oidcProvider!
+31.12.2014 12:17:26	Web-Connector in HTTP mode running on port 8080
+31.12.2014 12:17:46	 Error: Could not retrieve a valid config from the oidcProvider!
+31.12.2014 12:17:46	Web-Connector in HTTP mode running on port 8080
+31.12.2014 12:21:25	 Error: Could not retrieve a valid config from the oidcProvider!
+31.12.2014 12:21:26	Web-Connector in HTTP mode running on port 8080
+31.12.2014 12:21:35	 Error: Error occured:/im/profile/contact/request 1
+31.12.2014 12:25:50	 Error: Error occured:/im/profile/contact/request 1
+31.12.2014 12:26:03	 Error: Error occured:/im/profile/contact/request 1
+31.12.2014 12:26:31	 Error: Error occured:/im/profile/contact/request 1
+31.12.2014 12:26:37	 Error: Error occured:/im/profile/contact/request 1
+31.12.2014 12:27:31	 Error: Error occured:/im/profile/contact/request 1
+31.12.2014 12:28:07	 Error: Error occured:/im/profile/contact/request 1
+31.12.2014 12:28:17	 Error: Error occured:/im/profile/contact/request 1
+09.01.2015 11:24:30	 Error: Could not retrieve a valid config from the oidcProvider!
+09.01.2015 11:24:31	Web-Connector in HTTP mode running on port 8080
+09.01.2015 11:29:02	 Error: Error occured:/im/profile/contact/request 1
+09.01.2015 11:29:08	 Error: Error occured:/im/profile/contact/request 1
+09.01.2015 11:37:01	 Error: Could not retrieve a valid config from the oidcProvider!
+09.01.2015 11:37:02	Web-Connector in HTTP mode running on port 8080
+09.01.2015 11:49:49	Web-Connector in HTTP mode running on port 8080
+09.01.2015 11:56:35	Web-Connector in HTTP mode running on port 8080
+09.01.2015 12:03:43	Web-Connector in HTTP mode running on port 8080
+09.01.2015 12:10:55	Web-Connector in HTTP mode running on port 8080
+09.01.2015 12:12:00	Web-Connector in HTTP mode running on port 8080
+09.01.2015 12:18:22	 Error: Could not retrieve a valid config from the oidcProvider!
+09.01.2015 12:18:23	Web-Connector in HTTP mode running on port 8080
+09.01.2015 12:19:08	 Error: Error occured:/im/profile/contact/request 1
+09.01.2015 12:20:05	Web-Connector in HTTP mode running on port 8080
+09.01.2015 12:20:27	Web-Connector in HTTP mode running on port 8080
+09.01.2015 12:23:03	Web-Connector in HTTP mode running on port 8080
+09.01.2015 12:25:43	 Error: Could not retrieve a valid config from the oidcProvider!
+09.01.2015 12:25:43	Web-Connector in HTTP mode running on port 8080
+09.01.2015 12:25:58	 Error: Error occured:/im/profile/contact/request 1
+09.01.2015 15:02:54	Web-Connector in HTTP mode running on port 8080
+09.01.2015 15:03:12	Web-Connector in HTTP mode running on port 8080
+09.01.2015 15:03:34	Web-Connector in HTTP mode running on port 8080
+09.01.2015 15:04:13	Web-Connector in HTTP mode running on port 8080
+09.01.2015 15:06:54	 Error: Could not retrieve a valid config from the oidcProvider!
+09.01.2015 15:06:55	Web-Connector in HTTP mode running on port 8080
+09.01.2015 15:07:13	 Error: Could not retrieve a valid config from the oidcProvider!
+09.01.2015 15:07:13	Web-Connector in HTTP mode running on port 8080
+09.01.2015 15:07:30	 Error: Error occured:/im/profile/contact/request 1
+09.01.2015 15:07:48	 Error: Error occured:/im/profile/contact/request 1
+09.01.2015 16:33:54	 Error: Could not retrieve a valid config from the oidcProvider!
+09.01.2015 16:33:54	Web-Connector in HTTP mode running on port 8080
+09.01.2015 16:38:47	 Error: Error occured:/im/profile/contact/request 1
+12.01.2015 11:28:51	Web-Connector in HTTP mode running on port 8080
+19.01.2015 14:53:31	Web-Connector in HTTP mode running on port 8080
+19.01.2015 14:54:03	 Error: Error occured:/im/profile/AsiaTee get
+19.01.2015 14:54:03	 Error: Error occured:/im/profile post
+19.01.2015 14:54:04	 Error: Error occured:/im/profile/AsiaTee get
+19.01.2015 14:56:34	Web-Connector in HTTP mode running on port 8080
+19.01.2015 14:56:58	 Error: Error occured:/im/profile/AsiaTee get
+19.01.2015 14:56:58	 Error: Error occured:/im/profile post
+19.01.2015 14:57:00	 Error: Error occured:/im/profile/AsiaTee get
+19.01.2015 14:58:34	Web-Connector in HTTP mode running on port 8080
+19.01.2015 14:58:39	 Error: Error occured:/im/profile/AsiaTee get
+19.01.2015 14:58:40	 Error: Error occured:/im/profile post
+19.01.2015 14:58:43	 Error: Error occured:/im/profile/AsiaTee get
+19.01.2015 15:00:43	 Error: Could not retrieve a valid config from the oidcProvider!
+19.01.2015 15:00:44	Web-Connector in HTTP mode running on port 8080
+19.01.2015 15:00:47	 Error: Error occured:/im/profile/AsiaTee get
+19.01.2015 15:00:47	 Error: Error occured:/im/profile post
+19.01.2015 15:00:50	 Error: Error occured:/im/profile/AsiaTee get
+19.01.2015 15:03:27	Web-Connector in HTTP mode running on port 8080
+19.01.2015 15:03:32	 Error: Error occured:/im/profile/AsiaTee get
+19.01.2015 15:03:33	 Error: Error occured:/im/profile post
+19.01.2015 15:03:35	 Error: Error occured:/im/profile/AsiaTee get
+19.01.2015 15:18:52	 Error: Error occured:/im/profile/AsiaTee get
+19.01.2015 15:18:53	 Error: Error occured:/im/profile post
+19.01.2015 15:18:55	 Error: Error occured:/im/profile/AsiaTee get
+19.01.2015 15:19:42	 Error: Error occured:/im/profile/AsiaTee get
+19.01.2015 15:19:42	 Error: Error occured:/im/profile post
+19.01.2015 15:19:49	 Error: Error occured:/im/profile/AsiaTee get
+19.01.2015 15:19:49	 Error: Error occured:/im/profile post
+19.01.2015 15:19:51	 Error: Error occured:/im/profile/AsiaTee get
+19.01.2015 15:19:51	 Error: Error occured:/im/profile post
+19.01.2015 15:19:57	 Error: Error occured:/im/profile/AsiaTee get
+19.01.2015 15:19:58	 Error: Error occured:/im/profile post
+19.01.2015 15:20:00	 Error: Error occured:/im/profile/AsiaTee get
+19.01.2015 17:51:57	Web-Connector in HTTP mode running on port 8080
+19.01.2015 17:52:15	 Error: Error occured:/im/profile/AsiaTee get
+19.01.2015 17:52:15	 Error: Error occured:/im/profile post
+19.01.2015 17:52:18	 Error: Error occured:/im/profile/AsiaTee get
+19.01.2015 20:50:09	Web-Connector in HTTP mode running on port 8080
+19.01.2015 20:50:50	 Error: Error occured:/im/profile/contact/request 1
+19.01.2015 20:54:11	 Error: Error occured:/im/profile/contact/request 1
+19.01.2015 20:54:18	 Error: Error occured:/im/profile/contact/request 1
+19.01.2015 20:56:03	 Error: Error occured:/im/profile/contact/request 1
+19.01.2015 20:56:44	 Error: Error occured:/im/profile/contact/request 1
+19.01.2015 21:06:39	Web-Connector in HTTP mode running on port 8080
+19.01.2015 21:07:04	 Error: Error occured:/im/profile/contact/request 1
+19.01.2015 21:09:03	Web-Connector in HTTP mode running on port 8080
+19.01.2015 21:09:10	 Error: Error occured:/im/profile/contact/request 1
+19.01.2015 21:19:44	Web-Connector in HTTP mode running on port 8080
+19.01.2015 21:20:15	Web-Connector in HTTP mode running on port 8080
+19.01.2015 21:30:08	 Error: Error occured:/im/profile/contact/request 1
+19.01.2015 21:35:12	 Error: Error occured:/im/profile/contact/request 1
