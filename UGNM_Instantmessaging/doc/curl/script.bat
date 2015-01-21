@@ -30,10 +30,10 @@ Set URL=http://localhost:8080/im
 ::curl -v -X GET %URL%/profile/contact --user alice:pwalice
 
 ::REM Test POST Contact Method
-::curl -v -X POST %URL%/profile/contact --user joey:pwjoey -H "Content-Type:application/json" -d "{\"username\":\"alice\"}"
+::curl -v -X POST %URL%/profile/contact/alice --user joey:pwjoey 
 
 ::REM Test DELETE Contact Method
-::curl -v -X DELETE %URL%/profile/contact --user joey:pwjoey -H "Content-Type:application/json" -d "{\"username\":\"alice\"}"
+::curl -v -X DELETE %URL%/profile/contact/alice --user joey:pwjoey 
 
 ::REM Test GET Profile Method
 ::curl -v -X GET %URL%/profile/bobby --user alice:pwalice

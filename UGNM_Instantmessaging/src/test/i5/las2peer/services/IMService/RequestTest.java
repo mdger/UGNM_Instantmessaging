@@ -18,8 +18,7 @@ public class RequestTest extends ServiceTest {
   @Before
   public void writeTestData() throws Exception {
 
-    // DataBase Connection
-
+    // DataBase Connection    
     Connection conn = null;
     PreparedStatement stmnt = null;
     conn = dbm.getConnection();
@@ -62,7 +61,7 @@ public class RequestTest extends ServiceTest {
    * 
    * @throws Exception
    */
-  @Ignore
+  @Test
   public void testCreateRequest() {
     MiniClient c = new MiniClient();
     c.setAddressPort(HTTP_ADDRESS, HTTP_PORT);
@@ -71,7 +70,7 @@ public class RequestTest extends ServiceTest {
       c.setLogin(getEveID(), evePass);
       ClientResponse result =
           c.sendRequest("POST", mainPath + "profile/contact/request", "{\"username\":\""
-              + getAbelName() + "\"}", "application/json", "*/*", new Pair[] {});
+              + getAbelName() + "\", \"myusername\":\""+getEveName()+"\"}", "application/json", "*/*", new Pair[] {});
       assertEquals(200, result.getHttpCode());
       System.out.println("Result of 'testCreateRequest': " + result.getResponse().trim());
     } catch (Exception e) {
@@ -111,7 +110,7 @@ public class RequestTest extends ServiceTest {
    * 
    * @throws Exception
    */
-  @Test
+  @Ignore
   public void testDeleteRequest() {
     MiniClient c = new MiniClient();
     c.setAddressPort(HTTP_ADDRESS, HTTP_PORT);

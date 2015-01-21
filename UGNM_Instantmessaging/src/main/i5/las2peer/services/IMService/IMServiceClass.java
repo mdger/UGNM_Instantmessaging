@@ -276,10 +276,10 @@ public class IMServiceClass extends Service {
 						result = "Profile updated successfully";
 					else
 					{
-						result = "Resource was not found";
+						result = "Profile was not found";
 						// return HTTP Response on error
 						HttpResponse er = new HttpResponse(result);
-						er.setStatus(404);
+						er.setStatus(409);
 						return er;
 					}
 					
@@ -816,20 +816,17 @@ public class IMServiceClass extends Service {
 	 * @return Code if the sending was successfully
 	*/ 
 	@POST
-	@Consumes("application/json")
-	@Path("profile/contact")
-	public HttpResponse createContact(@ContentParam String content)
-	{
-		try 
-		{
-			String result = "";
-			Connection conn = null;
-			PreparedStatement stmnt = null;
-			ResultSet rs = null;		
-			
-			JSONObject contentObject = (JSONObject) JSONValue.parse(content);
-			String userName = (String) contentObject.get("username");
-			String agentName = (String) ((UserAgent) getActiveAgent()).getLoginName();
+	@Path("profile/contact/{user}")
+	public HttpResponse createContact(@PathParam("user") String userName)
+	{	    
+	    String result = "";
+		Connection conn = null;
+		PreparedStatement stmnt = null;
+		ResultSet rs = null;					
+		
+		try {
+		  
+		    String agentName = (String) ((UserAgent) getActiveAgent()).getLoginName();
 			
 			//Exists a Open Request?
 			if(!(existsOpenRequest(userName, agentName))) {
@@ -837,59 +834,49 @@ public class IMServiceClass extends Service {
 				er.setStatus(400);
 				return er;
 				
-			} else {
-			
-				try {
-					conn = dbm.getConnection();
+			} else {			
+				
+				conn = dbm.getConnection();
 					
-					// Insert Contact into Contact Table
-					stmnt = conn.prepareStatement("INSERT INTO Contact (FirstUser, SecondUser) VALUES (?, ?);");				
-					stmnt.setString(1, userName);
-					stmnt.setString(2, agentName);
+				// Insert Contact into Contact Table
+				stmnt = conn.prepareStatement("INSERT INTO Contact (FirstUser, SecondUser) VALUES (?, ?);");				
+				stmnt.setString(1, userName);
+				stmnt.setString(2, agentName);
 					
-					int rows = stmnt.executeUpdate();
-					if (rows > 0) {
-						result = "Contacts updated. " + userName + " and " + agentName + " are Contacts now";
+				int rows = stmnt.executeUpdate();
+				if (rows > 0) {
+					result = "Contacts updated. " + userName + " and " + agentName + " are Contacts now";
 						
-						//Delete Request from Request Table
-						deleteRequest("{\"username\":\"" + userName + "\"}");
+					//Delete Request from Request Table
+					deleteRequest("{\"username\":\"" + userName + "\"}");
 						
-						// return 
-						HttpResponse r = new HttpResponse(result);
-						r.setStatus(200);
-						return r;
+					// return 
+					HttpResponse r = new HttpResponse(result);
+					r.setStatus(200);
+					return r;
 					
-					} else {
-						HttpResponse r = new HttpResponse("The database could not be updated");
-						r.setStatus(500);
-						return r;
+				} else {					
+				  HttpResponse r = new HttpResponse("The database could not be updated");
+				  r.setStatus(500);
+				  return r;
 						
-					}
-					
-				} catch (Exception e) {
-					// return HTTP Response on error
-					HttpResponse er = new HttpResponse("Internal error: " + e.getMessage());
-					er.setStatus(500);
-					return er;
-				} finally {
-					
-					// free resources
-					HttpResponse response = freeRessources(conn, stmnt, rs);
-					if(response.getStatus() != 200)
-						return response;
 				}
 			}
-		}
-		catch (Exception e)
-		{
-			Context.logError(this, e.getMessage());
-			
-			// return HTTP Response on error
-			HttpResponse er = new HttpResponse("Content data in invalid format: " + e.getMessage());
-			er.setStatus(400);
+				
+		} catch (Exception e) {			
+		  // return HTTP Response on error
+			HttpResponse er = new HttpResponse("Internal error: " + e.getMessage());
+			er.setStatus(500);
 			return er;
-		}
-	}
+			
+		} finally {		  
+			// free resources
+			HttpResponse response = freeRessources(conn, stmnt, rs);
+			if(response.getStatus() != 200)
+				return response;
+			}
+		}		
+
 	
 	/**
 	 * This method deletes a contact from the contact list
@@ -897,19 +884,15 @@ public class IMServiceClass extends Service {
 	 * @return Success or not
 	*/
 	@DELETE 
-	@Path("profile/contact")
-	@Consumes("application/json")
-	public HttpResponse deleteContact(@ContentParam String content) {
-		String result ="";
+	@Path("profile/contact/{user}")
+	public HttpResponse deleteContact(@PathParam("user") String userName) {
+		
+	    String result ="";
 		String agentName = ((UserAgent)getActiveAgent()).getLoginName();
 		Connection conn = null;
 		PreparedStatement stmnt = null;
 		ResultSet rs = null;
 		
-		try {
-			// convert string content to JSON object 
-			JSONObject contactObject = (JSONObject) JSONValue.parse(content);
-			String userName = (String) contactObject.get("username");
 		
 			try {
 				// get connection from connection pool
@@ -948,15 +931,7 @@ public class IMServiceClass extends Service {
 				HttpResponse response = freeRessources(conn, stmnt, rs);
 				if(response.getStatus() != 200)
 					return response;
-			}
-		}
-		catch (Exception e)
-		{
-			Context.logError(this, e.getMessage());			
-			HttpResponse er = new HttpResponse("Content data in invalid format: " + e.getMessage());
-			er.setStatus(400);
-			return er;
-		}
+			}		
 	}
 	
 	
@@ -1803,7 +1778,7 @@ public HttpResponse deleteRequest(@ContentParam String content) {
 	{
 		Context.logError(this, e.getMessage());
 		HttpResponse er = new HttpResponse("Content data in invalid format: " + e.getMessage());
-		er.setStatus(450);
+		er.setStatus(400);
 		return er;
 	}
 }

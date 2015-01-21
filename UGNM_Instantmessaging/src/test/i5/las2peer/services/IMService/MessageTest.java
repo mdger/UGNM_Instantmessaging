@@ -12,7 +12,6 @@ import java.sql.PreparedStatement;
 
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 
 public class MessageTest extends ServiceTest {
@@ -124,7 +123,7 @@ public class MessageTest extends ServiceTest {
 	 * 
 	 * @throws Exception
 	 */
-	@Ignore
+	@Test
 	public void testGetSingleMessage() {
 		MiniClient c = new MiniClient();
 		c.setAddressPort(HTTP_ADDRESS, HTTP_PORT);

@@ -7,7 +7,6 @@ import i5.las2peer.restMapper.data.Pair;
 import i5.las2peer.webConnector.client.ClientResponse;
 import i5.las2peer.webConnector.client.MiniClient;
 
-import org.junit.Ignore;
 import org.junit.Test;
 
 public class ProfileTest extends ServiceTest {
@@ -61,14 +60,15 @@ public class ProfileTest extends ServiceTest {
 	}
 
 	/**
-	 * Test UPDATE Profile Verändert das Profil von testAgent
+	 * Test UPDATE Profile 
 	 * 
-	 * test Wird Falsche Eingabe erkannt test Wird es erfolgreich verändert
+	 * test updateProfile of adam as active with invalid json content - response 400
+	 * test updateProfile of adam as active - response 200
 	 * 
 	 * @throws Exception
 	 */
 
-	@Ignore
+	@Test
 	public void testUpdateProfile() {
 		MiniClient c = new MiniClient();
 		c.setAddressPort(HTTP_ADDRESS, HTTP_PORT);
@@ -81,14 +81,11 @@ public class ProfileTest extends ServiceTest {
 			assertEquals(400, result3.getHttpCode());
 			System.out.println("'UpdateProfile'-wrong entry detected: " + result3.getResponse().trim());
 
-			ClientResponse result = c
-					.sendRequest(
-							"PUT",
-							mainPath + "profile",
-							"{\"email\":\"test@mail.de\", \"telephone\":1111111, \"imageLink\":\"imageUrl\", \"nickname\":\"NewNickName\", \"visible\":1}",
-							"application/json", "*/*", new Pair[] {});
-			assertEquals(200, result.getHttpCode());
-			System.out.println("Result of 'testUpdateProfile': " + result.getResponse().trim());
+	         ClientResponse result2 = c.sendRequest("PUT", mainPath + "profile", "{\"userName\":\"adam\", \"email\":\"test@mail.de\", \"telephone\":1111111, \"imageLink\":\"imageUrl\", \"nickname\":\"NewNickName\", \"visible\":1}",
+                 "application/json", "*/*", new Pair[] {});
+	         assertEquals(200, result2.getHttpCode());
+	         System.out.println("'UpdateProfile'-Succesfully updated: " + result2.getResponse().trim());
+
 		} catch (Exception e) {
 			e.printStackTrace();
 			fail("Exception: " + e);

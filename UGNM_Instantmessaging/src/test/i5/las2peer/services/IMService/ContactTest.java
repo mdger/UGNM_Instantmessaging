@@ -11,7 +11,6 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 
 public class ContactTest extends ServiceTest {
@@ -61,8 +60,8 @@ public class ContactTest extends ServiceTest {
 	/**
 	 * Test POST Contact
 	 * 
-	 * test Create Contact Active Eve to Adam - 200 test Create Contact Active
-	 * Eve to Abel - 400
+	 * test create contact Eve as active to Adam - result 200 
+	 * test create contact Eve as active to Abel - result 400
 	 * 
 	 * @throws Exception
 	 */
@@ -74,13 +73,11 @@ public class ContactTest extends ServiceTest {
 		try {
 			c.setLogin(getEveID(), evePass);
 
-			ClientResponse result = c.sendRequest("POST", mainPath + "profile/contact", "{\"username\":\""
-					+ getAdamName() + "\"}", "application/json", "*/*", new Pair[] {});
+			ClientResponse result = c.sendRequest("POST", mainPath + "profile/contact/"+getAdamName(), "");
 			assertEquals(200, result.getHttpCode());
-
-			ClientResponse result2 = c.sendRequest("POST", mainPath + "profile/contact", "{\"username\":\""
-					+ getAbelName() + "\"}", "application/json", "*/*", new Pair[] {});
-			assertEquals(200, result.getHttpCode());
+			
+			ClientResponse result2 = c.sendRequest("POST", mainPath + "profile/contact/"+getAbelName(), "");
+            assertEquals(400, result2.getHttpCode());
 
 			System.out.println("Result of 'testCreateContact': " + result.getResponse().trim());
 
@@ -120,15 +117,14 @@ public class ContactTest extends ServiceTest {
 	 * 
 	 * @throws Exception
 	 */
-	@Ignore
+	@Test
 	public void testDeleteContact() {
 		MiniClient c = new MiniClient();
 		c.setAddressPort(HTTP_ADDRESS, HTTP_PORT);
 
 		try {
 			c.setLogin(getAdamID(), adamPass);
-			ClientResponse result = c.sendRequest("DELETE", mainPath + "profile/contact", "{\"username\":\""
-					+ getAbelName() + "\"}");
+			ClientResponse result = c.sendRequest("DELETE", mainPath + "profile/contact/"+getAbelName(), "");
 			assertEquals(200, result.getHttpCode());
 			System.out.println("Result of 'testCreateContact': " + result.getResponse().trim());
 		} catch (Exception e) {
