@@ -106,6 +106,21 @@ TemplateServiceClient.prototype.postRequest = function(content, successCallback,
 		errorCallback
 	);
 };
+
+/**
+* GET all Requests
+*/
+TemplateServiceClient.prototype.getRequests = function(successCallback, errorCallback) {
+	this.sendRequest("GET",
+		"profile/contact/request",
+		"",
+		"application/json",
+		{},
+		successCallback,
+		errorCallback
+	);
+};
+
 /**
 * GET Request
 */
