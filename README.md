@@ -36,4 +36,8 @@ Running  ./bin/start_network.bat (Windows) or ./bin/start_network.sh (Linux) wil
 
 After that you can send Requests to Service Server *http://localhost:8080/im/**
 
-You can find a description of every Resource at /doc/api.md or [on Github](https://github.com/AsiaTee/UGNM_Instantmessaging/blob/master/LAS2peer-Template-Project/doc/api.md)
+You can find a description of every Resource at /doc/api.md or [on Github](https://github.com/AsiaTee/UGNM_Instantmessaging/blob/master/UGNM_Instantmessaging/doc/api.md)
+
+###Frontend
+
+Use a Web Server of your choice, set */UGNM_Instantmessaging* as root and start the server at port 8081.

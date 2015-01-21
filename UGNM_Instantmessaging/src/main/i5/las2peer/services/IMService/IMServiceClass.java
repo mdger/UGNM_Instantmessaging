@@ -60,8 +60,8 @@ public class IMServiceClass extends Service {
 	/**
 	 * Retrieves a profile 
 	 * 
-	 * @param userName of the Profile to be Retrieved 
-	 * @result Profile Data
+	 * @param userName - username of the profile to be retrieved 
+	 * @return           profile data of the retrieved profile
 	*/ 
 	@GET
 	@Path("profile/{username}")
@@ -139,8 +139,8 @@ public class IMServiceClass extends Service {
 	/**	
 	 * Creates a Profile
 	 * 
-	 * @param content Data for creating the Profile encoded as JSON-String
-	 * @return Code if the sending was successfully
+	 * @param  content - data for creating the profile encoded as JSON-String
+	 * @return           code if the sending was successfully
 	 */
 	@POST
 	@Path("profile")
@@ -236,9 +236,8 @@ public class IMServiceClass extends Service {
 	/**	
 	 * Updates a profile 
 	 * 
-	 * @param userName UserName of the Profile to be updated 
-	 * @param content Data for updating the Profile encoded as JSON-String
-	 * @return Code if the sending was successfully
+	 * @param content - data for updating the profile encoded as JSON-String
+	 * @return          Code if the sending was successfully
 	*/
 	@PUT
 	@Path("profile")
@@ -313,7 +312,7 @@ public class IMServiceClass extends Service {
 	}
 
 	/**
-	* Deletes a profile 
+	* Deletes a profile  
 	* 
 	*
 	*/ 
@@ -368,8 +367,8 @@ public class IMServiceClass extends Service {
 	/**
 	 * Retrieves a group given its name
 	 * 
-	 * @param groupName Information of a group to be retrieved 
-	 * @result Group Data
+	 * @param groupName - information of a group to be retrieved 
+	 * @return            group data
 	*/ 
 	@GET
 	@Path("group/{groupname}")
@@ -462,8 +461,10 @@ public class IMServiceClass extends Service {
 	/**	
 	 * Creates a Group
 	 * 
-	 * @param content Data for creating the Profile encoded as JSON-String
-	 * @return Code if the sending was successfully
+	 * @param groupName - name of group to be created
+	 * @param content   - data for creating the group encoded as JSON-String
+	 * @return            code if the sending was successfully
+	 * 
 	*/ 
 	@POST
 	@Path("group/{groupname}")
@@ -544,9 +545,10 @@ public class IMServiceClass extends Service {
 	/**
 	 * Updates a Group  
 	 * 
-	 * @param groupName of the Group to be updated 
-	 * @param content Data for updating the Profile encoded as JSON-String
-	 * @return Code if the sending was successfully
+	 * @param groupName - name of group to be updated 
+	 * @param content -   data for updating the profile encoded as JSON-String
+	 * @return            code if the sending was successfully
+	 * 
 	*/ 
 	@PUT
 	@Path("group/{groupname}")
@@ -651,7 +653,8 @@ public class IMServiceClass extends Service {
 	/**
 	 * Deletes a group 
 	 * 
-	 *@param groupName of the Profile to be deleted.
+	 *@param groupName - name of group to be deleted.
+	 *@return            code if sending was successfully
 	*/
 	@DELETE
 	@Path("group/{groupname}")
@@ -734,8 +737,9 @@ public class IMServiceClass extends Service {
 	
 	/**
 	 * This method returns the contact list of a certain user. 
-	 * @param userName The name of the user whose contact list should be displayed
+	 * 
 	 * @return The data (username and nickname) of the contacts in the HTTP Response type 
+	 * 
 	*/ 
 	@GET	 
 	@Path("profile/contact")
@@ -812,8 +816,9 @@ public class IMServiceClass extends Service {
 	/**
 	 * This method accept a contact-request the active user got from an different user
 	 * 
-	 * @param content the username of the user requested
-	 * @return Code if the sending was successfully
+	 * @param userName - username of the user requested
+	 * @return           code if the sending was successfully
+	 * 
 	*/ 
 	@POST
 	@Path("profile/contact/{user}")
@@ -880,8 +885,9 @@ public class IMServiceClass extends Service {
 	
 	/**
 	 * This method deletes a contact from the contact list
-	 * @param userName The name of the contact which should be deleted
-	 * @return Success or not
+	 * @param userName - name of the contact which should be deleted
+	 * @return           code if deleting was successfully
+	 * 
 	*/
 	@DELETE 
 	@Path("profile/contact/{user}")
@@ -938,8 +944,8 @@ public class IMServiceClass extends Service {
 	
 	/**
 	 * This method returns messages which were send to an account. 
-	 * @param username The name of the user who got the messages
-	 * @return The messages for the user as HTTP Response type 
+	 * @param userName - name of the user who got the messages
+	 * @return           the messages for the user as HTTP Response type 
 	*/ 
 	@GET
 	@Produces("application/json")
@@ -1022,7 +1028,9 @@ public class IMServiceClass extends Service {
 	/**
    	 * Deletes a message 
  	 * 
- 	 * @param content The id of the message in a JSON string
+ 	 * @param content - the id of the message in a JSON string
+ 	 * @return          code if deleting was successfully  
+ 	 * 
  	*/ 
 	@DELETE
 	@Consumes("application/json")
@@ -1102,9 +1110,9 @@ public class IMServiceClass extends Service {
 
 	/**
 	 * This method sends a message from a user to a different user
-	 * @param userName The name of the user who gets the message
-	 * @param content The content of the message encoded as JSON string
-	 * @return Code if the sending was successfully
+	 * @param userName - the name of the user who gets the message
+	 * @param content  - the content of the message encoded as JSON string
+	 * @return           code if the sending was successfully
 	 **/
 	 
 	@POST
@@ -1278,8 +1286,8 @@ public class IMServiceClass extends Service {
 	
 	/**
 	 * This method updates the status of a message from unread to read
-	 * @param content The content of the message encoded as JSON string
-	 * @return Code if the sending was successfully
+	 * @param content - the content of the message encoded as JSON string
+	 * @return          code if the sending was successfully
 	 **/
 	 
 	@PUT
@@ -1340,8 +1348,9 @@ public class IMServiceClass extends Service {
 	/** 
 	 * This method returns the messages in a group. 
 	 * 
-	 * @param groupName The name of the group in which the messages are sent
-	 * @return The messages sent in a group as JSON String 
+	 * @param groupName - name of the group in which the messages are sent
+	 * @return            the messages sent in a group as JSON String 
+	 * 
 	**/
 	@GET
 	@Path("message/group/{groupname}")
@@ -1425,11 +1434,12 @@ public class IMServiceClass extends Service {
 	
 	
 	/** This method sends a message to a group
-	 * @param userName The name of the group the message will be sent
-	 * @param content The content of the message encoded as JSON string
-	 * @return Code if the sending was successfully
-	**/
-	
+	 * 
+	 * @param groupName - name of the group the message will be sent
+	 * @param content   - content of the message encoded as JSON string
+	 * @return            code if the sending was successfully
+	 * 
+	**/	
 	@PUT
 	@Path("message/group/{groupname}")
 	@Consumes("application/json")
@@ -1564,10 +1574,11 @@ public class IMServiceClass extends Service {
 	
 	
 	 /**
-		 * This method returns all contact requests to a certain user. 
-		 * @param name The name of the user to whom contact request were sent
-		 * @return The data (username and nickname) of the user who has sent a contact request in the HTTP Response type 
-		*/
+		 * This method returns all contact requests to a certain user.
+		 *  
+		 * @return the data (username and nickname) of the user who has sent a contact request in the HTTP Response type 
+		 * 
+	*/
 	@GET
 	@Path("profile/contact/request")
 	@Produces("application/json")
@@ -1641,9 +1652,11 @@ public class IMServiceClass extends Service {
 
 /**
  * This method sends a contact-request from the active user to a different user
- * @param content The content of the message encoded as JSON string
- * @return Code if the sending was successfully
- */
+ * 
+ * @param content - the content of the message encoded as JSON string
+ * @return          code if the sending was successfully
+ * 
+ */	
 @POST
 @Path("profile/contact/request")
 @Consumes("application/json")
@@ -1723,10 +1736,10 @@ public HttpResponse createRequest(@ContentParam String content)
 }
 
 /**
- * Delete Request
  * Deletes a Request given its name. 
  * 
- *@param UserName of the Profile to be deleted.
+ * @param content - name of requesting user encoded as JSON-String
+ * @return          code if sending was successfully
  */
 @DELETE
 @Consumes("application/json")
@@ -1784,13 +1797,11 @@ public HttpResponse deleteRequest(@ContentParam String content) {
 }
 
 	
-	/**
-	 * getMembership
-	 * Retrieves all Groups where the user has a Membership 
-	 * 
-	 * @param UserName of the User to get his groups
-	 * @result Profile Data
+	/**	
+	 * Retrieves all Groups where the user has a Membership 	
+	 * @return all Groups where the user has a membership in the HTTP Response type 	
 	 */
+
 	@GET
 	@Produces("application/json")
 	@Path("group/member")
@@ -1864,8 +1875,9 @@ public HttpResponse deleteRequest(@ContentParam String content) {
 	/**
 	 * addMember	 
 	 * Adds a User to an existing Group
-	 * @param name The username of the new member to be added
-	 * @param content The groupname of the group where the user have to be added encoded as JSON-String
+	 * @param userName  - name of the new member to be added
+	 * @param groupName - name of the group where the user have to be added encoded as JSON-String
+	 * 
 	 */
 	@POST
 	@Path("group/{groupname}/member/{username}")
@@ -1927,8 +1939,8 @@ public HttpResponse deleteRequest(@ContentParam String content) {
 	 * Delete Member
 	 * Deletes a Group Member
 	 * 
-	 *@param UserName of the Profile to be deleted.
-	 *@param content groupname 
+	 *@param userName  - name of the member to be deleted.
+	 *@param groupName - name of the group  
 	 */
 	@DELETE
 	@Consumes("application/json")
@@ -2091,8 +2103,8 @@ public HttpResponse deleteRequest(@ContentParam String content) {
 	
 	/**
 	 * This method proves if two user are contacts to each other 
-	 * @param firstUser The first user
-	 * @param secondUser The second user
+	 * @param firstUser  - the first user
+	 * @param secondUser - the second user
 	 * @return Are they contacts?
 	 */
 	private boolean areContacts(String firstUser, String secondUser)
@@ -2146,8 +2158,8 @@ public HttpResponse deleteRequest(@ContentParam String content) {
 	
 	/**
 	 * This method proves if a user is Member of a group
-	 * @param the name of the user
-	 * @param the name of the group
+	 * @param user  - name of the user
+	 * @param group - name of the group
 	 * @return is the user member of the group ?
 	 */
 	private boolean isMemberOf(String user, String group)
@@ -2195,9 +2207,9 @@ public HttpResponse deleteRequest(@ContentParam String content) {
 	
 	/**
 	 * This method frees the database requesting resources
-	 * @param conn The connection which will be closed
-	 * @param stmnt The statement which will be closed
-	 * @param rs The result set which will be closed
+	 * @param conn  - The connection which will be closed
+	 * @param stmnt - The statement which will be closed
+	 * @param rs    - The result set which will be closed
 	 * @return Successfully closed? Else failure code in the HTTP response data type
 	 */
 	private HttpResponse freeRessources(Connection conn, PreparedStatement stmnt, ResultSet rs)
@@ -2243,8 +2255,8 @@ public HttpResponse deleteRequest(@ContentParam String content) {
 	
 	/**
 	 * This method frees the database requesting resources
-	 * @param conn The connection which will be closed
-	 * @param stmnt The statement which will be closed
+	 * @param conn  - The connection which will be closed
+	 * @param stmnt - The statement which will be closed
 	 * @return Successfully closed? Else failure code in the HTTP response data type
 	 */
 	private HttpResponse freeRessources(Connection conn, PreparedStatement stmnt)
@@ -2278,9 +2290,7 @@ public HttpResponse deleteRequest(@ContentParam String content) {
 
 	/**
 	 * Retrieves all Users 
-	 * 
-	 * @param userName of all Users retrieved 
-	 * @result Profile Datas
+	 * @return data (username, nickname, visible) of all users
 	*/ 
 	@GET
 	@Path("profile")

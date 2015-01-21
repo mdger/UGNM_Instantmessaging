@@ -25,8 +25,9 @@ public class ContactTest extends ServiceTest {
 		conn = dbm.getConnection();
 
 		/**
-		 * Create Profiles eve visibility = 0 adam visibility = 1 Create
-		 * ContactRequest adam to eve Contacts adam and abel
+		 * Profiles eve visibility = 0, adam visibility = 1 
+		 * ContactRequest adam to eve 
+		 * Contacts adam and abel
 		 */
 		try {
 			stmnt = conn.prepareStatement("INSERT INTO AccountProfile VALUES (\"" + getAdamName()
