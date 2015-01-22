@@ -1,0 +1,53 @@
+Testsuite: i5.las2peer.services.IMService.RequestTest
+Tests run: 3, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 43,219 sec
+------------- Standard Output ---------------
+Class: IMServiceClass using: jdbcLogin -> ugnm1415g1
+Class: IMServiceClass using: jdbcSchema -> ugnm1415g1
+Class: IMServiceClass using: jdbcPass -> perk53VROT
+Class: IMServiceClass using: jdbcUrl -> jdbc:mysql://buche.informatik.rwth-aachen.de:3306/
+Class: IMServiceClass using: jdbcDriverClassName -> com.mysql.jdbc.Driver
+Service i5.las2peer.services.IMService.IMServiceClass has been started!
+Class: WebConnector using: enableCrossOriginResourceSharing -> TRUE
+Class: WebConnector using: oidcProvider -> https://api.learning-layers.eu/o/oauth2
+Class: WebConnector using: sslKeystore -> etc/example.jks
+Class: WebConnector using: httpsPort -> 8090
+Class: WebConnector using: startHttps -> FALSE
+Class: WebConnector using: sslKeyPassword -> secretpassword
+Class: WebConnector using: socketTimeout -> 60000
+Class: WebConnector using: preferLocalServices -> TRUE
+Class: WebConnector using: defaultLoginPassword -> anonymous
+Class: WebConnector using: httpPort -> 8080
+Class: WebConnector using: xmlPath -> 
+Class: WebConnector using: crossOriginResourceDomain -> *
+Class: WebConnector using: defaultLoginUser -> anonymous
+Class: WebConnector using: startHttp -> TRUE
+Class: WebConnector using: crossOriginResourceMaxAge -> 60
+Starting HTTP-Server on port 8080
+waiting..
+checking for expired messages
+waiting for 0 agents 
+===> CPU Load: 0.0
+Result of 'testCreateRequest': 
+===> CPU Load: 0.08617331
+Result of 'testGetRequest': {"request":[{"username":"adam","nickname":"NewNickName"}]}
+Class: IMServiceClass using: jdbcLogin -> ugnm1415g1
+Class: IMServiceClass using: jdbcSchema -> ugnm1415g1
+Class: IMServiceClass using: jdbcPass -> perk53VROT
+Class: IMServiceClass using: jdbcUrl -> jdbc:mysql://buche.informatik.rwth-aachen.de:3306/
+Class: IMServiceClass using: jdbcDriverClassName -> com.mysql.jdbc.Driver
+checking for expired messages
+waiting for 0 agents 
+Server at port 8080 has been stopped!
+Service i5.las2peer.services.IMService.IMServiceClass has been stopped!
+checking for expired messages
+waiting for 0 agents 
+Connector-Log:
+--------------
+22.01.2015 00:58:40	Web-Connector in HTTP mode running on port 8080
+22.01.2015 00:59:05	Web-Connector in HTTP mode has been stopped
+
+------------- ---------------- ---------------
+
+Testcase: testCreateRequest took 3,46 sec
+Testcase: testGetRequest took 0,728 sec
+Testcase: testDebugMapping took 1,402 sec
