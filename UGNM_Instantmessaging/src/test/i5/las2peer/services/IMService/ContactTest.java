@@ -1,6 +1,7 @@
 package i5.las2peer.services.IMService;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import i5.las2peer.restMapper.data.Pair;
@@ -76,9 +77,12 @@ public class ContactTest extends ServiceTest {
 
 			ClientResponse result = c.sendRequest("POST", mainPath + "profile/contact/"+getAdamName(), "");
 			assertEquals(200, result.getHttpCode());
+			assertTrue(existsInDatabase("Contact", "FirstUser", "SecondUser", getAdamName(), getEveName()));
+			assertFalse(existsInDatabase("ContactRequest", "Sender", "Receiver", getAdamName(), getEveName()));
 			
 			ClientResponse result2 = c.sendRequest("POST", mainPath + "profile/contact/"+getAbelName(), "");
             assertEquals(400, result2.getHttpCode());
+            assertFalse(existsInDatabase("Contact", "FirstUser", "SecondUser", getAbelName(), getEveName()));            
 
 			System.out.println("Result of 'testCreateContact': " + result.getResponse().trim());
 
@@ -101,11 +105,15 @@ public class ContactTest extends ServiceTest {
 
 		try {
 			c.setLogin(getAdamID(), adamPass);
-			ClientResponse result = c.sendRequest("GET", mainPath + "profile/contact", "", "*/*", "application/json",
-					new Pair[] {});
+			ClientResponse result = c.sendRequest("GET", mainPath + "profile/contact", "", "*/*", "application/json", new Pair[] {});
 			assertEquals(200, result.getHttpCode());
 			assertTrue(result.getResponse().trim().contains(getAbelName()));
-			System.out.println("Result of 'testCreateContact': " + result.getResponse().trim());
+			
+			c.setLogin(getEveID(), evePass);
+            ClientResponse result2 = c.sendRequest("GET", mainPath + "profile/contact", "", "*/*", "application/json", new Pair[] {});
+            assertEquals(404, result2.getHttpCode());
+			
+			System.out.println("Result of 'testCreateContact': " + result.getResponse().trim() +","+result2.getResponse().trim());
 		} catch (Exception e) {
 			e.printStackTrace();
 			fail("Exception: " + e);
@@ -127,7 +135,13 @@ public class ContactTest extends ServiceTest {
 			c.setLogin(getAdamID(), adamPass);
 			ClientResponse result = c.sendRequest("DELETE", mainPath + "profile/contact/"+getAbelName(), "");
 			assertEquals(200, result.getHttpCode());
-			System.out.println("Result of 'testCreateContact': " + result.getResponse().trim());
+			assertFalse(existsInDatabase("Contact", "FirstUser", "SecondUser", getAdamName(), getAbelName()));
+			
+	        c.setLogin(getEveID(), evePass);
+	        ClientResponse result2 = c.sendRequest("GET", mainPath + "profile/contact", "", "*/*", "application/json", new Pair[] {});
+	        assertEquals(404, result2.getHttpCode());
+	         
+			System.out.println("Result of 'testCreateContact': " + result.getResponse().trim() +","+result2.getResponse().trim());			
 		} catch (Exception e) {
 			e.printStackTrace();
 			fail("Exception: " + e);

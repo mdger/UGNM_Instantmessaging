@@ -7,80 +7,6 @@
         <parameter annotation="content" index="1" name="" type="java.lang.String"/>
       </parameters>
     </method>
-    <method consumes="application/json" httpMethod="put" name="updateGroup" path="group/{groupname}" type="i5.las2peer.restMapper.HttpResponse">
-      <parameters>
-        <parameter annotation="path" index="0" name="groupname" type="java.lang.String"/>
-        <parameter annotation="content" index="1" name="" type="java.lang.String"/>
-      </parameters>
-    </method>
-    <method httpMethod="delete" name="deleteGroup" path="group/{groupname}" type="i5.las2peer.restMapper.HttpResponse">
-      <parameters>
-        <parameter annotation="path" index="0" name="groupname" type="java.lang.String"/>
-      </parameters>
-    </method>
-    <method httpMethod="delete" name="deleteRequest" path="profile/contact/request" type="i5.las2peer.restMapper.HttpResponse">
-      <parameters>
-        <parameter annotation="content" index="0" name="" type="java.lang.String"/>
-      </parameters>
-    </method>
-    <method httpMethod="delete" name="deleteContact" path="profile/contact/{user}" type="i5.las2peer.restMapper.HttpResponse">
-      <parameters>
-        <parameter annotation="path" index="0" name="user" type="java.lang.String"/>
-      </parameters>
-    </method>
-    <method consumes="application/json" httpMethod="post" name="createProfile" path="profile" type="i5.las2peer.restMapper.HttpResponse">
-      <parameters>
-        <parameter annotation="content" index="0" name="" type="java.lang.String"/>
-      </parameters>
-    </method>
-    <method httpMethod="get" name="getRequests" path="profile/contact/request" produces="application/json" type="i5.las2peer.restMapper.HttpResponse">
-      <parameters/>
-    </method>
-    <method consumes="application/json" httpMethod="put" name="updateProfile" path="profile" type="i5.las2peer.restMapper.HttpResponse">
-      <parameters>
-        <parameter annotation="content" index="0" name="" type="java.lang.String"/>
-      </parameters>
-    </method>
-    <method httpMethod="get" name="getContacts" path="profile/contact" produces="application/json" type="i5.las2peer.restMapper.HttpResponse">
-      <parameters/>
-    </method>
-    <method httpMethod="delete" name="deleteMessage" path="message/single" type="i5.las2peer.restMapper.HttpResponse">
-      <parameters>
-        <parameter annotation="content" index="0" name="" type="java.lang.String"/>
-      </parameters>
-    </method>
-    <method consumes="application/json" httpMethod="post" name="createRequest" path="profile/contact/request" type="i5.las2peer.restMapper.HttpResponse">
-      <parameters>
-        <parameter annotation="content" index="0" name="" type="java.lang.String"/>
-      </parameters>
-    </method>
-    <method httpMethod="post" name="createContact" path="profile/contact/{user}" type="i5.las2peer.restMapper.HttpResponse">
-      <parameters>
-        <parameter annotation="path" index="0" name="user" type="java.lang.String"/>
-      </parameters>
-    </method>
-    <method httpMethod="delete" name="deleteMember" path="group/{groupname}/member/{username}" type="i5.las2peer.restMapper.HttpResponse">
-      <parameters>
-        <parameter annotation="path" index="0" name="groupname" type="java.lang.String"/>
-        <parameter annotation="path" index="1" name="username" type="java.lang.String"/>
-      </parameters>
-    </method>
-    <method httpMethod="get" name="getGroup" path="group/{groupname}" produces="application/json" type="i5.las2peer.restMapper.HttpResponse">
-      <parameters>
-        <parameter annotation="path" index="0" name="groupname" type="java.lang.String"/>
-      </parameters>
-    </method>
-    <method httpMethod="delete" name="deleteProfile" path="profile" type="i5.las2peer.restMapper.HttpResponse">
-      <parameters/>
-    </method>
-    <method httpMethod="get" name="getUsers" path="profile" produces="application/json" type="i5.las2peer.restMapper.HttpResponse">
-      <parameters/>
-    </method>
-    <method httpMethod="get" name="getProfile" path="profile/{username}" produces="application/json" type="i5.las2peer.restMapper.HttpResponse">
-      <parameters>
-        <parameter annotation="path" index="0" name="username" type="java.lang.String"/>
-      </parameters>
-    </method>
     <method httpMethod="post" name="addMember" path="group/{groupname}/member/{username}" type="i5.las2peer.restMapper.HttpResponse">
       <parameters>
         <parameter annotation="path" index="0" name="groupname" type="java.lang.String"/>
@@ -93,9 +19,25 @@
         <parameter annotation="content" index="1" name="" type="java.lang.String"/>
       </parameters>
     </method>
+    <method httpMethod="get" name="getSingleMessages" path="message/single/{username}" produces="application/json" type="i5.las2peer.restMapper.HttpResponse">
+      <parameters>
+        <parameter annotation="path" index="0" name="username" type="java.lang.String"/>
+      </parameters>
+    </method>
+    <method httpMethod="get" name="getMemberships" path="group/member" produces="application/json" type="i5.las2peer.restMapper.HttpResponse">
+      <parameters/>
+    </method>
+    <method httpMethod="get" name="getUnreadMessages" path="message/single/unread" produces="application/json" type="i5.las2peer.restMapper.HttpResponse">
+      <parameters/>
+    </method>
     <method httpMethod="get" name="getGroupMessages" path="message/group/{groupname}" produces="application/json" type="i5.las2peer.restMapper.HttpResponse">
       <parameters>
         <parameter annotation="path" index="0" name="groupname" type="java.lang.String"/>
+      </parameters>
+    </method>
+    <method consumes="application/json" httpMethod="put" name="updateReadSingleMessage" path="message/single/unread" type="i5.las2peer.restMapper.HttpResponse">
+      <parameters>
+        <parameter annotation="content" index="0" name="" type="java.lang.String"/>
       </parameters>
     </method>
     <method consumes="application/json" httpMethod="put" name="sendGroupMessage" path="message/group/{groupname}" type="i5.las2peer.restMapper.HttpResponse">
@@ -104,21 +46,79 @@
         <parameter annotation="content" index="1" name="" type="java.lang.String"/>
       </parameters>
     </method>
-    <method httpMethod="get" name="getUnreadMessages" path="message/single/unread" produces="application/json" type="i5.las2peer.restMapper.HttpResponse">
-      <parameters/>
+    <method httpMethod="get" name="getProfile" path="profile/{username}" produces="application/json" type="i5.las2peer.restMapper.HttpResponse">
+      <parameters>
+        <parameter annotation="path" index="0" name="username" type="java.lang.String"/>
+      </parameters>
     </method>
-    <method consumes="application/json" httpMethod="put" name="updateReadSingleMessage" path="message/single/unread" type="i5.las2peer.restMapper.HttpResponse">
+    <method consumes="application/json" httpMethod="put" name="updateProfile" path="profile" type="i5.las2peer.restMapper.HttpResponse">
       <parameters>
         <parameter annotation="content" index="0" name="" type="java.lang.String"/>
       </parameters>
     </method>
-    <method httpMethod="get" name="getMemberships" path="group/member" produces="application/json" type="i5.las2peer.restMapper.HttpResponse">
+    <method httpMethod="delete" name="deleteContact" path="profile/contact/{user}" type="i5.las2peer.restMapper.HttpResponse">
+      <parameters>
+        <parameter annotation="path" index="0" name="user" type="java.lang.String"/>
+      </parameters>
+    </method>
+    <method httpMethod="delete" name="deleteMessage" path="message/single" type="i5.las2peer.restMapper.HttpResponse">
+      <parameters>
+        <parameter annotation="content" index="0" name="" type="java.lang.String"/>
+      </parameters>
+    </method>
+    <method consumes="application/json" httpMethod="post" name="createProfile" path="profile" type="i5.las2peer.restMapper.HttpResponse">
+      <parameters>
+        <parameter annotation="content" index="0" name="" type="java.lang.String"/>
+      </parameters>
+    </method>
+    <method httpMethod="delete" name="deleteProfile" path="profile" type="i5.las2peer.restMapper.HttpResponse">
       <parameters/>
     </method>
-    <method httpMethod="get" name="getSingleMessages" path="message/single/{username}" produces="application/json" type="i5.las2peer.restMapper.HttpResponse">
+    <method httpMethod="get" name="getContacts" path="profile/contact" produces="application/json" type="i5.las2peer.restMapper.HttpResponse">
+      <parameters/>
+    </method>
+    <method consumes="application/json" httpMethod="put" name="updateGroup" path="group/{groupname}" type="i5.las2peer.restMapper.HttpResponse">
       <parameters>
-        <parameter annotation="path" index="0" name="username" type="java.lang.String"/>
+        <parameter annotation="path" index="0" name="groupname" type="java.lang.String"/>
+        <parameter annotation="content" index="1" name="" type="java.lang.String"/>
       </parameters>
+    </method>
+    <method httpMethod="get" name="getGroup" path="group/{groupname}" produces="application/json" type="i5.las2peer.restMapper.HttpResponse">
+      <parameters>
+        <parameter annotation="path" index="0" name="groupname" type="java.lang.String"/>
+      </parameters>
+    </method>
+    <method httpMethod="post" name="createContact" path="profile/contact/{user}" type="i5.las2peer.restMapper.HttpResponse">
+      <parameters>
+        <parameter annotation="path" index="0" name="user" type="java.lang.String"/>
+      </parameters>
+    </method>
+    <method httpMethod="delete" name="deleteRequest" path="profile/contact/request" type="i5.las2peer.restMapper.HttpResponse">
+      <parameters>
+        <parameter annotation="content" index="0" name="" type="java.lang.String"/>
+      </parameters>
+    </method>
+    <method httpMethod="delete" name="deleteGroup" path="group/{groupname}" type="i5.las2peer.restMapper.HttpResponse">
+      <parameters>
+        <parameter annotation="path" index="0" name="groupname" type="java.lang.String"/>
+      </parameters>
+    </method>
+    <method httpMethod="delete" name="deleteMember" path="group/{groupname}/member/{username}" type="i5.las2peer.restMapper.HttpResponse">
+      <parameters>
+        <parameter annotation="path" index="0" name="groupname" type="java.lang.String"/>
+        <parameter annotation="path" index="1" name="username" type="java.lang.String"/>
+      </parameters>
+    </method>
+    <method consumes="application/json" httpMethod="post" name="createRequest" path="profile/contact/request" type="i5.las2peer.restMapper.HttpResponse">
+      <parameters>
+        <parameter annotation="content" index="0" name="" type="java.lang.String"/>
+      </parameters>
+    </method>
+    <method httpMethod="get" name="getRequests" path="profile/contact/request" produces="application/json" type="i5.las2peer.restMapper.HttpResponse">
+      <parameters/>
+    </method>
+    <method httpMethod="get" name="getUsers" path="profile" produces="application/json" type="i5.las2peer.restMapper.HttpResponse">
+      <parameters/>
     </method>
   </methods>
 </service>

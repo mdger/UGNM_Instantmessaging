@@ -93,8 +93,7 @@ public class MessageTest extends ServiceTest {
 	}
 
 	/**
-	 * Test POST SingleMessage testAgent schickt eine Nachricht an testAgent3
-	 * test testAgnet 3 sollte sie erhalten
+	 * Test POST SingleMessage 
 	 * 
 	 * @throws Exception
 	 */
@@ -104,12 +103,17 @@ public class MessageTest extends ServiceTest {
 		c.setAddressPort(HTTP_ADDRESS, HTTP_PORT);
 
 		try {
+		  
 			c.setLogin(getAdamID(), adamPass);
 			ClientResponse result = c.sendRequest("POST", mainPath + "message/single/" + getEveName(),
 					"{\"message\":\"Hey Eve ;)\", \"timestamp\":\"2014-1-1 00:00:00.000 \"}", "application/json",
 					"*/*", new Pair[] {});
 			assertEquals(200, result.getHttpCode());
-			System.out.println("Result of 'testSendSingleMessage': " + result.getResponse().trim());
+			assertTrue(existsInDatabase("Message", "Message", "Hey Eve ;)" ));
+			assertTrue(existsInDatabase("SendingSingle", "Sender", "Receiver", getAdamName(), getEveName()));
+	
+			System.out.println("Result of 'testSendSingleMessage': " + result.getResponse().trim());			
+		
 		} catch (Exception e) {
 			e.printStackTrace();
 			fail("Exception: " + e);
@@ -118,8 +122,7 @@ public class MessageTest extends ServiceTest {
 	}
 
 	/**
-	 * Test GET SingleMessage testAgent3 überprüft seine Nachrichten test
-	 * testAgent3 sollte eine von testAgent erhalten haben
+	 * Test GET SingleMessage 
 	 * 
 	 * @throws Exception
 	 */
@@ -133,7 +136,8 @@ public class MessageTest extends ServiceTest {
 			ClientResponse result = c.sendRequest("GET", mainPath + "message/single/" + getAdamName(), "", "*/*",
 					"application/json", new Pair[] {});
 			assertEquals(200, result.getHttpCode());
-			assertTrue(result.getResponse().trim().contains("Hey"));
+			assertTrue(result.getResponse().trim().contains("Hey"));			
+			
 			System.out.println("Result of 'testGetSingleMessage': " + result.getResponse().trim());
 		} catch (Exception e) {
 			e.printStackTrace();

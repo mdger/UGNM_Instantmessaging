@@ -17,6 +17,8 @@ import java.io.FileInputStream;
 import java.io.PrintStream;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.Properties;
 
 import org.junit.After;
@@ -166,7 +168,7 @@ public class ServiceTest {
 		 */
 		try {
 			stmnt = conn.prepareStatement("INSERT INTO AccountProfile VALUES (\"" + getAdamName()
-					+ "\", \"test@mail.de\", 2222, \"test\", \"NewNickName\", 1), (\"" + getEveName()
+					+ "\", \"test@mail.de\", 2222, \"test\", \"NickName\", 1), (\"" + getEveName()
 					+ "\", \"test\", 2222, \"test\", \"test\", 0);");
 			int rows = stmnt.executeUpdate();
 
@@ -360,4 +362,47 @@ public class ServiceTest {
 		IMServiceClass cl = new IMServiceClass();
 		assertTrue(cl.debugMapping());
 	}
+	
+	
+	/**
+     * Check if data set exists in database
+     * 
+     * @param table  
+     * @param attr 
+     * @param value 
+     * @return true if data set exists in table
+     * 
+     */
+	public Boolean existsInDatabase(String table, String attr1, String attr2, String value1, String value2) throws SQLException {
+	  
+      Connection conn = dbm.getConnection(); 
+      PreparedStatement stmnt = conn.prepareStatement("SELECT "+attr1+" FROM "+ table +" WHERE ("+attr1+" = ? AND "+attr2+" = ?);");
+          stmnt.setString(1, value1);
+          stmnt.setString(2, value2);
+
+          ResultSet rs = stmnt.executeQuery();
+
+          if (rs.next()) {              
+              return true;
+
+          }
+          return false;
+	}
+	
+public Boolean existsInDatabase(String table, String attr, String value) throws SQLException {
+      
+      Connection conn = dbm.getConnection(); 
+      PreparedStatement stmnt = conn.prepareStatement("SELECT "+attr+" FROM "+ table +" WHERE ("+attr+" = ?);");
+          stmnt.setString(1, value);
+
+          ResultSet rs = stmnt.executeQuery();
+
+          if (rs.next()) {              
+              return true;
+
+          }
+          return false;
+    }
+
+	
 }
