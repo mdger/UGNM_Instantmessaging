@@ -780,12 +780,8 @@ public class IMServiceClass extends Service {
 				
 				if (dataFound)
 				{
-					// setup resulting JSON Object
-					JSONObject jsonResult = new JSONObject();
-					jsonResult.put("contact", contactArray);
-					
 					// return HTTP response
-					HttpResponse r = new HttpResponse(jsonResult.toJSONString());
+					HttpResponse r = new HttpResponse(contactArray.toJSONString());
 					r.setStatus(200);
 					return r;
 				}
@@ -990,12 +986,8 @@ public class IMServiceClass extends Service {
 			
 			if (dataFound)
 			{
-				// setup resulting JSON Object
-				JSONObject jsonResult = new JSONObject();
-				jsonResult.put("message", messageArray);
-				
 				// return HTTP response
-				HttpResponse r = new HttpResponse(jsonResult.toJSONString());
+				HttpResponse r = new HttpResponse(messageArray.toJSONString());
 				r.setStatus(200);
 				return r;
 			}
@@ -1617,13 +1609,9 @@ public class IMServiceClass extends Service {
 				}
 				
 				if (dataFound)
-				{
-					// setup resulting JSON Object
-					JSONObject jsonResult = new JSONObject();
-					jsonResult.put("request", contactArray);
-					
+				{					
 					// return HTTP response
-					HttpResponse r = new HttpResponse(jsonResult.toJSONString());
+					HttpResponse r = new HttpResponse(contactArray.toJSONString());
 					r.setStatus(200);
 					return r;
 				}

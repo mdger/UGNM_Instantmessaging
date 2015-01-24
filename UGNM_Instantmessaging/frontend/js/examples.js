@@ -144,15 +144,17 @@ TemplateServiceClient.prototype.getUsers = function(successCallback, errorCallba
 			for (var i = 0; i < data.length; i++) {
 				// This block will be executed 100 times.
 				$("#userList").append("<li>" + data[i].nickname + " ("  + data[i].username + ")</li>");
-			}		  
+			}		
+			console.log(data);
         },
         function(error) {
           // this is the error callback
           console.log(error);
         }
       );
-    }	
+    }    
     
+       
 	// Sends Form Input into the Service methode updateProfile
 	$( "#submitButton" ).click(function() {
 		var email = $("#ch_mail").val();
@@ -182,20 +184,22 @@ TemplateServiceClient.prototype.getUsers = function(successCallback, errorCallba
 	});								
 	
 	// Sends Contact Request
-	$( "#pendingRequestsButton" ).click(function() {
-       	// var input = "{\"username\":\"" + oidc_userinfo.preferred_username + "\"}";							
+	$( "#pendingRequestsButton" ).click(function() {       							
+		
 		client.getRequests(
         function(data,type) {
-          /* this is the success callback
-			for (var i = 0; i < data.length; i++) {
-				// This block will be executed 100 times.
-				$("#requestList").append("<li>" + data[i].username + "</li>");
-				// Note: The last log will be "Currently at 99".
-			}*/		  		  
+        	//New Requests found
+        	$("#requestList").empty();
+        	$("#requestList").append("You have new requests");
+			for (var i = 0; i < data.length; i++) {				
+				$("#requestList").append("<li>" + data[i].nickname + " ("  + data[i].username + ")</li>");
+			}		  		  
           console.log(data);
         },
         function(error) {
-          // this is the error callback
+        	//NO new Requests found
+        	$("#requestList").empty();
+        	$("#requestList").append("You have no new contact-requests");
           console.log(error);
         }
       );
