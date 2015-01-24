@@ -163,7 +163,7 @@ TemplateServiceClient.prototype.postContact = function(content, successCallback,
 /**
 * GET Contact
 */
-TemplateServiceClient.prototype.getContact = function(successCallback, errorCallback) {
+TemplateServiceClient.prototype.getContacts = function(successCallback, errorCallback) {
 	this.sendRequest("GET",
 		"profile/contact",
 		"",

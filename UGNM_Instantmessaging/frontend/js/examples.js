@@ -135,6 +135,28 @@ TemplateServiceClient.prototype.getUsers = function(successCallback, errorCallba
         }
       );
     }	
+    
+    function showOtherProfile(profileName) {
+    	var content = profileName.toString();
+    	console.log(profileName)
+          client.getProfile(
+    		content,
+            function(data,type) {
+              // this is the success callback
+              console.log(data);
+    		  $("#otherProfileUserName").html(profileName);
+              $("#otherProfileMail").html(data.email);    		 
+              $("#otherProfileTelephone").html(data.telephone);
+             // $("#otherProfileImage").html("<img src=" + data.imageLink + ">");
+    		  $("#otherProfileNickName").html(data.nickname);
+            },
+            function(error) {
+              // this is the error callback
+              console.log(error);
+              $("#getExampleOutput").html(error);
+            }
+          );
+        }
 	
     function getUsersList() {
       client.getUsers(
@@ -152,7 +174,38 @@ TemplateServiceClient.prototype.getUsers = function(successCallback, errorCallba
           console.log(error);
         }
       );
-    }    
+    }   
+    
+    function getContactList() {
+        client.getContacts(
+          function(data,type) {
+            // Show Contacts
+        	$("#contactList").empty();  
+  			for (var i = 0; i < data.length; i++) {
+  				$("#contactList").append("<li> " +
+  						"<button id='dLabel' type='button' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false'>" +
+  						data[i].nickname +
+  						"</button>"+
+  							"<ul class='dropdown-menu' role='menu' aria-labelledby='dLabel'>"+
+  								"<li> start chat </li>"+
+  								"<li>"+
+  								"<a href=\"#\" data-toggle=\"modal\" data-target=\"#otherProfileModal\" onClick=\"showOtherProfile(\'"+data[i].username+"\')\" > show profile </a>"+
+  								"</li>"+
+  								"<li> delete contact </li>"+
+  							"</ul>" +
+  						"</li>");
+  			}		
+  			console.log(data);
+          },
+          function(error) {
+            // No contacts found
+        	  $("#contactList").empty();
+        	  $("#contactList").append("You have no contacts");
+            console.log(error);
+          }
+        );
+      }   
+    
     
        
 	// Sends Form Input into the Service methode updateProfile
@@ -183,7 +236,7 @@ TemplateServiceClient.prototype.getUsers = function(successCallback, errorCallba
       );
 	});								
 	
-	// Sends Contact Request
+	// Get Contact Requests
 	$( "#pendingRequestsButton" ).click(function() {       							
 		
 		client.getRequests(
