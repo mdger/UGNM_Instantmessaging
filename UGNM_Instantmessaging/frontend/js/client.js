@@ -150,11 +150,11 @@ TemplateServiceClient.prototype.deleteRequest = function(content, successCallbac
 /**
 * CREATE Contact
 */
-TemplateServiceClient.prototype.postContact = function(content, successCallback, errorCallback) {
+TemplateServiceClient.prototype.createContact = function(content, successCallback, errorCallback) {
 	this.sendRequest("POST",
-		"profile/contact",
-		content,
-		"application/json",
+		"profile/contact/"+content,
+		"",
+		"",
 		{},
 		successCallback,
 		errorCallback
@@ -178,9 +178,9 @@ TemplateServiceClient.prototype.getContacts = function(successCallback, errorCal
 */
 TemplateServiceClient.prototype.deleteContact = function(content, successCallback, errorCallback) {
 	this.sendRequest("DELETE",
-		"profile/contact",
-		content,
-		"application/json",
+		"profile/contact/"+content,
+		"",
+		"",
 		{},
 		successCallback,
 		errorCallback

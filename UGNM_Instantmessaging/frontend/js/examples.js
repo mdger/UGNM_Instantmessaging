@@ -136,6 +136,7 @@ TemplateServiceClient.prototype.getUsers = function(successCallback, errorCallba
       );
     }	
     
+    //Show Profile Information at #otherProfileModal 
     function showOtherProfile(profileName) {
     	var content = profileName.toString();
     	console.log(profileName)
@@ -152,12 +153,35 @@ TemplateServiceClient.prototype.getUsers = function(successCallback, errorCallba
             },
             function(error) {
               // this is the error callback
-              console.log(error);
-              $("#getExampleOutput").html(error);
+              console.log(error);              
             }
           );
         }
-	
+    
+    
+    //Ask if really want to delete contact at #deleteContactModal
+    function showDeleteContact(profileName) { 
+              $("#deleteContactInformation").html("Are you sure, that you want to delete "+ profileName + " as friend?");
+              $("#deleteContactButtons").html("" +
+            		"<button type=\"button\" class=\"btn btn-default\" data-dismiss=\"modal\" onClick=\"deleteContact(\'"+profileName+"\')\" >Yes</button>"+
+              		"<button type=\"button\" class=\"btn btn-default\" data-dismiss=\"modal\">No</button>");  		     
+     }
+    
+    function deleteContact(username) {
+        client.deleteContact(
+          username,
+          function(data,type) {
+            // Contact successfully deleted
+  			console.log(data);
+          },
+          function(error) {
+            // Error while deleting contact
+            console.log(error);
+          }
+        );
+      }   
+    
+    	
     function getUsersList() {
       client.getUsers(
         function(data,type) {
@@ -191,7 +215,9 @@ TemplateServiceClient.prototype.getUsers = function(successCallback, errorCallba
   								"<li>"+
   								"<a href=\"#\" data-toggle=\"modal\" data-target=\"#otherProfileModal\" onClick=\"showOtherProfile(\'"+data[i].username+"\')\" > show profile </a>"+
   								"</li>"+
-  								"<li> delete contact </li>"+
+  								"<li>"+
+  								"<a href=\"#\" data-toggle=\"modal\" data-target=\"#deleteContactModal\" onClick=\"showDeleteContact(\'"+data[i].username+"\')\" > delete contact </a>"+
+  								"</li>"+
   							"</ul>" +
   						"</li>");
   			}		
@@ -243,9 +269,18 @@ TemplateServiceClient.prototype.getUsers = function(successCallback, errorCallba
         function(data,type) {
         	//New Requests found
         	$("#requestList").empty();
-        	$("#requestList").append("You have new requests");
+        	if(data.lenght == 1) {        		
+        		$("#requestList").append("<p>You have a new request</p>");	
+        	} else {
+        		$("#requestList").append("<p>You have "+ data.length +" new requests</p>");
+        	}
 			for (var i = 0; i < data.length; i++) {				
-				$("#requestList").append("<li>" + data[i].nickname + " ("  + data[i].username + ")</li>");
+				$("#requestList").append("" +
+				"<li id=\"contactRequest"+data[i].username+"\">"	+ 				
+				"<a href=\"#\" data-toggle=\"modal\" data-target=\"#otherProfileModal\" onClick=\"showOtherProfile(\'"+data[i].username+"\')\" >"+ data[i].nickname + " ("  + data[i].username + ") </a>"+
+				"<button type=\"button\" class=\"btn btn-default\" onClick=\"acceptRequest(\'"+data[i].username+"\')\" >accept</button>"+
+				"<button type=\"button\" class=\"btn btn-default\" onClick=\"rejectRequest(\'"+data[i].username+"\')\" >reject</button>"+
+				"</li>");
 			}		  		  
           console.log(data);
         },
@@ -256,4 +291,42 @@ TemplateServiceClient.prototype.getUsers = function(successCallback, errorCallba
           console.log(error);
         }
       );
-	});								
+	});		
+	
+	
+	 // Accept Contact Request to create a contact
+	 function acceptRequest(username) {
+	        client.createContact(
+	          username,
+	          function(data,type) {
+	            // Contact successfully created
+	  			console.log(data);
+	          },
+	          function(error) {
+	            // Error while creating contact
+	            console.log(error);
+	          }
+	        );
+	        $("#contactRequest"+username).remove();	        
+	      }   
+	 
+	// Reject a Contact Request to delete the request
+	 function rejectRequest(username) {
+		 	var input = "{\"username\":\"" + username + "\"}";
+	        client.deleteRequest(
+	          input,
+	          function(data,type) {
+	            // Request successfully deleted
+	  			console.log(data);
+	          },
+	          function(error) {
+	            // Error while deleting request
+	            console.log(error);
+	          }
+	        );
+	        $("#contactRequest"+username).remove();
+	      }   
+	 
+	 
+	 
+	 
