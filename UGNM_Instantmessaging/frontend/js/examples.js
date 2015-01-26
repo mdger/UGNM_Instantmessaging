@@ -158,6 +158,65 @@ TemplateServiceClient.prototype.getUsers = function(successCallback, errorCallba
           );
         }
     
+    //Show Single Chat History at #chatMessages
+    function showSingleMessages(userName) {
+          client.getSingleMessages(
+    		userName,
+            function(data,type) {
+              // All Messages received
+              $("#chatMessages").empty();
+              for (var i = 0; i < data.messages.length; i++) {
+    		    $("#chatMessages").append("<li> " +
+    		      data.messages[i].sender +
+    		    "<p>" +
+    		      data.messages[i].text +
+    		    "</p>" +
+    		    "</li>");   
+              }
+              $("#chatInput").html(
+              "<input id=\"chatMessageInput\" type=\"text\" class=\"form-control input-sm\" placeholder=\"Type your message here...\" />"+
+              "<span class=\"input-group-btn\">"+
+                 "<button class=\"btn btn-warning btn-sm\" id=\"sendMessageButton\" onClick=\"sendSingleMessage('"+data.contact+"')\";>send</button>"+
+              "</span>");
+            },
+            function(error) {
+              // this is the error callback
+            	//Show Empty chatWindow
+              console.log(error);
+              var contactName = error.replace("No messages found for contact ","'");
+              contactName = contactName.replace("!","'");
+              console.log(contactName);
+              $("#chatMessages").empty();             
+    		  $("#chatMessages").append("<li> <p> </p> </li>");
+              $("#chatInput").html(
+              "<input id=\"chatMessageInput\" type=\"text\" class=\"form-control input-sm\" placeholder=\"Type your message here...\" />"+
+              "<span class=\"input-group-btn\">"+
+                 "<button class=\"btn btn-warning btn-sm\" id=\"sendMessageButton\" onClick=\"sendSingleMessage("+contactName+")\";>send</button>"+
+              "</span>");
+            }
+          );
+        }
+    
+  //Send Single Message 
+    function sendSingleMessage(userName) {
+    	 var text = $("#chatMessageInput").val();
+         var content = "{\"message\":\"" + text + "\",\"timestamp\":\"" + "2014-01-01 00:00:00" + "\"}";	
+          client.sendSingleMessage(
+    		userName,
+    		content,
+            function(data,type) {
+    		  var contact = data.replace("Message to ", "");
+    		  contact = contact.replace(" was sent!", "");
+    		  showSingleMessages(contact);
+            },
+            function(error) {
+              // this is the error callback
+              console.log(error);              
+            }
+          );
+        }
+    
+    
     
     //Ask if really want to delete contact at #deleteContactModal
     function showDeleteContact(profileName) { 
@@ -211,7 +270,9 @@ TemplateServiceClient.prototype.getUsers = function(successCallback, errorCallba
   						data[i].nickname +
   						"</button>"+
   							"<ul class='dropdown-menu' role='menu' aria-labelledby='dLabel'>"+
-  								"<li> start chat </li>"+
+  								"<li>"+
+  								"<a href=\"#\" onClick=\"showSingleMessages(\'"+data[i].username+"\')\" > start chat </a>"+ 
+  								"</li>"+
   								"<li>"+
   								"<a href=\"#\" data-toggle=\"modal\" data-target=\"#otherProfileModal\" onClick=\"showOtherProfile(\'"+data[i].username+"\')\" > show profile </a>"+
   								"</li>"+

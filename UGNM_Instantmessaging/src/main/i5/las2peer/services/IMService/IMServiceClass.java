@@ -985,9 +985,13 @@ public class IMServiceClass extends Service {
 			}
 			
 			if (dataFound)
-			{
+			{    
+			    //create JSONObject with user of conversation and messeages array
+			    JSONObject jsonResult = new JSONObject();
+			    jsonResult.put("contact", userName);
+			    jsonResult.put("messages", messageArray);
 				// return HTTP response
-				HttpResponse r = new HttpResponse(messageArray.toJSONString());
+				HttpResponse r = new HttpResponse(jsonResult.toJSONString());
 				r.setStatus(200);
 				return r;
 			}
@@ -2191,7 +2195,7 @@ public HttpResponse deleteRequest(@ContentParam String content) {
 		return false;
 	}
 	
-	
+		
 	
 	/**
 	 * This method frees the database requesting resources

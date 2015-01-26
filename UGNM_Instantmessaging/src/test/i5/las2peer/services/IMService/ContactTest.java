@@ -19,6 +19,8 @@ public class ContactTest extends ServiceTest {
 	@Before
 	public void writeTestData() throws Exception {
 
+	  
+	    deleteData();
 		// DataBase Connection
 
 		Connection conn = null;

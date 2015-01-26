@@ -1,9 +1,2 @@
 /etc/i5.las2peer.services.IMService.IMServiceClass.properties
 *.prefs
-/export
-/tmp
-UGNM_Instantmessaging/export/doc/
-UGNM_Instantmessaging/export/doc/i5/las2peer/services/IMService/class-use/
-UGNM_Instantmessaging/export/test_reports/
-UGNM_Instantmessaging/restMapping.xml
-UGNM_Instantmessaging/log/l2p_local_0.log

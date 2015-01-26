@@ -202,7 +202,7 @@ TemplateServiceClient.prototype.sendSingleMessage = function(input, content, suc
 /**
 * Get Single Message
 */
-TemplateServiceClient.prototype.getSingleMessage = function(input, successCallback, errorCallback) {
+TemplateServiceClient.prototype.getSingleMessages = function(input, successCallback, errorCallback) {
 	this.sendRequest("GET",
 		"message/single/" + input,
 		"",
