@@ -19,3 +19,20 @@
 #friendslist h3.inline {
 	margin: 0;
 }
+
+#chatWindow {
+	max-height: 460px;
+	overflow-y: auto;
+}
+
+ul#chatMessages {
+	list-style-type:none;
+}
+
+ul#contactList {
+	list-style-type:none;
+}
+
+ul#contactList li{
+	margin-bottom: 10px;
+}

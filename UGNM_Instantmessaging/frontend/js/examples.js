@@ -163,12 +163,13 @@ TemplateServiceClient.prototype.getUsers = function(successCallback, errorCallba
           client.getSingleMessages(
     		userName,
             function(data,type) {
-              // All Messages received
+             
+			  // All Messages received
               $("#chatMessages").empty();
               for (var i = 0; i < data.messages.length; i++) {
     		    $("#chatMessages").append("<li> " +
     		      data.messages[i].sender +
-    		    "<p>" +
+    		    "<p class=\"chatMessage\">" +
     		      data.messages[i].text +
     		    "</p>" +
     		    "</li>");   
@@ -178,7 +179,7 @@ TemplateServiceClient.prototype.getUsers = function(successCallback, errorCallba
               "<span class=\"input-group-btn\">"+
                  "<button class=\"btn btn-warning btn-sm\" id=\"sendMessageButton\" onClick=\"sendSingleMessage('"+data.contact+"')\";>send</button>"+
               "</span>");
-            },
+			},
             function(error) {
               // this is the error callback
             	//Show Empty chatWindow
@@ -196,6 +197,14 @@ TemplateServiceClient.prototype.getUsers = function(successCallback, errorCallba
             }
           );
         }
+		
+		// Send Message on Enter
+		  $('#chatMessageInput').on("keyup keydown", function() {
+			if(e.keyCode == 13) {
+			  sendSingleMessage(data.contact);
+			}
+		  });		
+		
     
   //Send Single Message 
     function sendSingleMessage(userName) {
