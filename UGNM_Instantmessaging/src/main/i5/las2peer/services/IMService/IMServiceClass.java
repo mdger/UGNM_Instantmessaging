@@ -250,7 +250,7 @@ public class IMServiceClass extends Service {
 			JSONObject profileObject = (JSONObject) JSONValue.parse(content);
 			String agentName = (String) profileObject.get("userName");
 			String mail = (String) profileObject.get("email");
-			int tele = (int) profileObject.get("telephone");
+			String tele = (String) profileObject.get("telephone");
 			String image = (String) profileObject.get("imageLink");
 			String nickName = (String) profileObject.get("nickname");
 			int visible = (int) profileObject.get("visible");				
@@ -265,7 +265,7 @@ public class IMServiceClass extends Service {
 					conn = dbm.getConnection();
 					stmnt = conn.prepareStatement("UPDATE AccountProfile SET EMail = ?, Telephone = ?, ImageLink = ?, NickName = ?, Visible = ? WHERE UserName = ?;");
 					stmnt.setString(1, mail);
-					stmnt.setInt(2, tele);
+					stmnt.setString(2, tele);
 					stmnt.setString(3, image);
 					stmnt.setString(4, nickName);
 					stmnt.setInt(5, visible);
