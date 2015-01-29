@@ -83,7 +83,7 @@ public class ProfileTest extends ServiceTest {
 			assertEquals(400, result3.getHttpCode());
 			System.out.println("'UpdateProfile'-wrong entry detected: " + result3.getResponse().trim());
 
-	         ClientResponse result2 = c.sendRequest("PUT", mainPath + "profile", "{\"userName\":\"adam\", \"email\":\"test@mail.de\", \"telephone\":1111111, \"imageLink\":\"imageUrl\", \"nickname\":\"NewNickName\", \"visible\":1}",
+	         ClientResponse result2 = c.sendRequest("PUT", mainPath + "profile", "{\"userName\":\"adam\", \"email\":\"test@mail.de\", \"telephone\":\"1111111\", \"imageLink\":\"imageUrl\", \"nickname\":\"NewNickName\", \"visible\":1}",
                  "application/json", "*/*", new Pair[] {});
 	         assertEquals(200, result2.getHttpCode());
 	         assertTrue(existsInDatabase("AccountProfile", "UserName", "NickName", getAdamName(), "NewNickName"));

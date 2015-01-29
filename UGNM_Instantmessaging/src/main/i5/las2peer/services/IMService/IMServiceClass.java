@@ -25,7 +25,6 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.sql.Timestamp;
 
 import net.minidev.json.JSONArray;
 import net.minidev.json.JSONObject;
@@ -1121,7 +1120,7 @@ public class IMServiceClass extends Service {
 			// convert string content to JSON object to get the message content
 			JSONObject messageObject = (JSONObject) JSONValue.parse(content);
 			String message = (String) messageObject.get("message");
-			Timestamp timeStamp = Timestamp.valueOf((String) messageObject.get("timestamp"));
+			//Timestamp timeStamp = Timestamp.valueOf((String) messageObject.get("timestamp"));
 			
 			String result = "";
 			Connection conn = null;
@@ -1135,10 +1134,9 @@ public class IMServiceClass extends Service {
 				conn = dbm.getConnection();
 				
 				// insert the message in the message table
-				stmnt = conn.prepareStatement("INSERT INTO Message (Message, MessageTimeStamp, WasRead) VALUES (?, ?, ?);", Statement.RETURN_GENERATED_KEYS);
+				stmnt = conn.prepareStatement("INSERT INTO Message (Message, WasRead) VALUES (?, ?);", Statement.RETURN_GENERATED_KEYS);
 				stmnt.setString(1, message);
-				stmnt.setTimestamp(2, timeStamp);
-				stmnt.setInt(3, 0);
+				stmnt.setInt(2, 0);
 				stmnt.executeUpdate();
 				// retrieve the message ID for saving it in the sending single table
 				rs = stmnt.getGeneratedKeys();

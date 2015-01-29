@@ -19,6 +19,8 @@ public class MessageTest extends ServiceTest {
 	@Before
 	public void writeTestData() throws Exception {
 
+	    deleteData();
+	  
 		// DataBase Connection
 
 		Connection conn = null;
@@ -74,7 +76,7 @@ public class MessageTest extends ServiceTest {
 					+ getEveName() + "' OR Sender = '" + getAbelName() + "'");
 			int rows = stmnt.executeUpdate();
 
-			stmnt = conn.prepareStatement("DELETE FROM Message WHERE MessageTimeStamp=\"2014-01-01 00:00:00\"");
+			stmnt = conn.prepareStatement("DELETE FROM Message WHERE MessageID=42 OR Message LIKE 'qwerkikjhasiherthn dsfkhlkjnd ilkfio hdsuero lkklfdgh hajkisdlk ifdhifg'");
 			rows = stmnt.executeUpdate();
 
 		} catch (Exception e) {
@@ -106,10 +108,10 @@ public class MessageTest extends ServiceTest {
 		  
 			c.setLogin(getAdamID(), adamPass);
 			ClientResponse result = c.sendRequest("POST", mainPath + "message/single/" + getEveName(),
-					"{\"message\":\"Hey Eve ;)\", \"timestamp\":\"2014-1-1 00:00:00.000 \"}", "application/json",
+					"{\"message\":\"qwerkikjhasiherthn dsfkhlkjnd ilkfio hdsuero lkklfdgh hajkisdlk ifdhifg\", \"timestamp\":\"2014-1-1 00:00:00.000 \"}", "application/json",
 					"*/*", new Pair[] {});
 			assertEquals(200, result.getHttpCode());
-			assertTrue(existsInDatabase("Message", "Message", "Hey Eve ;)" ));
+			assertTrue(existsInDatabase("Message", "Message", "qwerkikjhasiherthn dsfkhlkjnd ilkfio hdsuero lkklfdgh hajkisdlk ifdhifg" ));
 			assertTrue(existsInDatabase("SendingSingle", "Sender", "Receiver", getAdamName(), getEveName()));
 	
 			System.out.println("Result of 'testSendSingleMessage': " + result.getResponse().trim());			
