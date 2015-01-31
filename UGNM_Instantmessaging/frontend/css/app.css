@@ -1,3 +1,8 @@
+body {
+	font-family: 'PT Sans Narrow', sans-serif;
+	font-weight: 400;
+}
+
 #pr_img img {
 	width: 100%;
 }
@@ -10,10 +15,10 @@
 .title {
 	font-size: 18px;
 	font-weight: 900;
-	padding-bottom: 5px;
+	padding: 5px 10px;
 	margin-bottom: 5px;
 	width: 100%;
-	border-bottom: 1px solid black;
+	border: 2px solid #f60;
 }
 
 #friendslist h3.inline {
@@ -33,6 +38,95 @@ ul#contactList {
 	list-style-type:none;
 }
 
+
+#userList {
+	list-style-type:none;
+}
+
 ul#contactList li{
 	margin-bottom: 10px;
+}
+
+#emoteBox {
+	border: 2px solid #333;
+	padding: 7px;
+}
+
+.navbar-default {
+	background: #333;
+	border-color: #444;
+}
+
+.navbar-default .navbar-nav>li>a {
+	color: #fff;
+	font-size: 18px;
+	font-weight: 600;
+	letter-spacing: 1px;
+	transition: all .7s ease-in-out;
+}
+
+.navbar-default .navbar-nav>li>a:hover {
+	transition: all .7s ease-in-out;
+	color: #fff;
+}
+
+.navbar-default .navbar-nav>li>a:visited {
+	transition: all .7s ease-in-out;
+	color: #fff;
+}
+
+.navbar-default .navbar-nav>li>a:focus {
+	transition: all .7s ease-in-out;
+	color: #fff;
+}
+
+button
+
+body {
+	background: #f2f0ee;
+	font-size: 16px;
+}
+
+.btn-default {
+	color: #fff;
+	background-color: #3D5876;
+}
+
+.btn-sm {
+	font-size: 15px;
+}
+
+#userList li a {
+	font-size: 22px;
+	margin-bottom: 20px;
+}
+
+#otherProfileModal #otherProfileUserName {
+	font-size: 24px;
+	font-weight: 600;
+}
+
+.modal-header {
+	background: #3D5876;
+	color: #fff;
+	border-bottom: 1px solid #e5e5e5;
+}
+
+.btn-warning {
+	font-size: 18px;
+}
+
+#chatWindow {
+	font-size: 18px;
+}
+
+.chatname {
+	color: #3D5876;
+	font-weight: 600;
+	letter-spacing: 0px;
+}
+
+#chatMessageInput {
+	font-size: 16px;
+	height: 38px;
 }

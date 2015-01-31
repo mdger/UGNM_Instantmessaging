@@ -34,7 +34,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>UGNM_Instantmessaging - Frontend Example</title>
+  <title>Easy Chat </title>
   
   <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
   <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
@@ -42,6 +42,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
   <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
   <![endif]-->
+  <link href='http://fonts.googleapis.com/css?family=PT+Sans+Narrow:400,700' rel='stylesheet' type='text/css'>
   <link href="css/jquery.cssemoticons.css" media="screen" rel="stylesheet" type="text/css" />
   <link href="https://netdna.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
   <!-- Custom CSS -->
@@ -63,7 +64,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 		  <span class="icon-bar"></span>
           <span class="icon-bar"></span>
         </button>
-        <a class="navbar-brand" href="#">Instant Messaging</a>
+        <a class="navbar-brand" href="#">Easy Chat</a>
       </div>
 	  
       <div class="navbar-collapse collapse">
@@ -99,12 +100,86 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 	<!-- Main Body -->
 	<div class="row">
 	  <div class="col-md-2">
-	  
+		<div id="emoteBox" class="hidden chatMessages">
+		 <label>Click to add a Emote</label>
+		 <table>
+			<tr>
+				<td onClick="addForm(':-)')"> :-) </td>
+				<td onClick="addForm(':)')"> :) </td>
+				<td onClick="addForm(':o)')"> :o) </td>
+				<td onClick="addForm(':c)')"> :c) </td>
+				<td onClick="addForm(':^)')"> :^) </td>
+				<td onClick="addForm(':-D')"> :-D </td>
+				<td onClick="addForm(':-(')"> :-( </td>
+				<td onClick="addForm(':-9')"> :-9 </td>
+			</tr>
+			<tr>		 
+				<td  onClick="addForm(';-)')"> ;-) </td>
+				<td onClick="addForm(':-P')"> :-P </td>
+				<td onClick="addForm(':-p')"> :-p </td>
+				<td onClick="addForm(':-Þ')"> :-Þ </td>
+				<td onClick="addForm(':-b')"> :-b </td>
+				<td onClick="addForm(':-O')"> :-O </td>
+				<td onClick="addForm(':-/')"> :-/ </td>
+				<td onClick="addForm(':-X')"> :-X </td>
+			</tr>
+			<tr>
+				<td onClick="addForm(':-#')"> :-# </td>
+				<td onClick="addForm(':\'(')"> :'( </td>
+				<td onClick="addForm('B-)')"> B-) </td>
+				<td onClick="addForm('8-)')"> 8-) </td>
+				<td onClick="addForm('O:)')"> O:) </td>
+				<td onClick="addForm(';*(')"> ;*( </td>
+				<td onClick="addForm(':-*')"> :-* </td>
+				<td onClick="addForm(':]')"> :] </td>
+			</tr>
+			<tr>
+				<td onClick="addForm(':>')"> :> </td>
+				<td onClick="addForm('=]')"> =] </td>
+				<td onClick="addForm('=)')"> =) </td>
+				<td onClick="addForm('8)')"> 8) </td>
+				<td onClick="addForm(':}')"> :} </td>
+				<td onClick="addForm(':D')"> :D </td>
+				<td onClick="addForm('8D')"> 8D </td>
+				<td onClick="addForm('XD')"> XD </td>
+			</tr>
+			<tr>
+				<td onClick="addForm('xD')"> xD </td>
+				<td onClick="addForm('=D')"> =D </td>
+				<td onClick="addForm(':(')"> :( </td>
+				<td onClick="addForm(':<')"> :< </td>
+				<td onClick="addForm(':[')"> :[ </td>
+				<td onClick="addForm(':{')"> :{ </td>
+				<td onClick="addForm('=(')"> =( </td>
+				<td onClick="addForm(';)')"> ;) </td>
+			</tr>
+			<tr>
+				<td onClick="addForm(';]')"> ;] </td>
+				<td onClick="addForm(';D')"> ;D </td>
+				<td onClick="addForm(':P')"> :P </td>
+				<td onClick="addForm(':p')"> :p </td>
+				<td onClick="addForm('=P')"> =P </td>
+				<td onClick="addForm('=p')"> =p </td>
+				<td onClick="addForm(':b')"> :b </td>
+				<td onClick="addForm(':Þ')"> :Þ </td>
+			</tr>
+			<tr>
+				<td onClick="addForm(':O')"> :O </td>
+				<td onClick="addForm('8O')"> 8O </td>
+				<td onClick="addForm(':/')"> :/ </td>
+				<td onClick="addForm('=/')"> =/ </td>
+				<td onClick="addForm(':S')"> :S </td>
+				<td onClick="addForm(':#')"> :# </td>
+				<td onClick="addForm(':X')"> :X </td>
+				<td onClick="addForm('B)')"> B) </td>
+			</tr>
+		 </table>
+		</div>
 	  </div>
 	  <!-- Chat -->
 	  <div class="col-md-8 authenticated hidden">
 	    <div id="chatWindow">
-	      <ul id="chatMessages">
+	      <ul id="chatMessages" class="chatMessages">
 	  		
 	      </ul>	  		
 	    </div>
@@ -169,7 +244,6 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 			<h4 class="modal-title" id="myModalLabel">Add Contact</h4>
 		  </div>
 		  <div class="modal-body">
-			<h2>Add Contact</h2> 
 				<div class="row">
 				<!-- Send Contact Request Form -->
 				  <div class="col-md-12">
@@ -182,11 +256,18 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 					</form>
 				  </div>	
 				</div>				
-			<h2>User List</h2>	
 				<div class="row">
 				<!-- User List -->
 				  <div class="col-md-12">
+					<!-- Filter/Search Userlist --> 
+				    <form role="form">	
+					  <div class="form-group">
+						<label for="SearchInput"><h2>Search for User</h2></label>
+						<input type="text" class="form-control" id="SearchUserTextbox" placeholder="Enter a Username" onkeyup="searchFilter(this)">
+					  </div>	
+					</form>
 					<p>
+						<h3>User List</h3>
 						<ul id="userList">
 						</ul>
 					</p>
@@ -233,7 +314,6 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 			  <div class="row">
 			  <!-- Profile Information -->
 			    <div class="col-md-12">
-				  <h3>Profile Information</h3>
 				  <p>E-Mail: <strong><span id="otherProfileMail"></span></strong>
 				  </p>
 				  <p>Telephone: <strong><span id="otherProfileTelephone"></span></strong>
@@ -261,7 +341,6 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 			<h4 class="modal-title" id="myModalLabel">My Profile: <span id="profile_username"></span> (Username)</h4>
 		  </div>
 		  <div class="modal-body">
-			<h2>Profile Information</h2> 
 				<div class="row">
 				<!-- Profile Information -->
 				  <div class="col-md-4">
@@ -407,7 +486,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   <script>
 	$( document ).ready(function() {
 		// activate Emoticons
-		$('.chatMessage').emoticonize();
+		$('#chatMessages').emoticonize();
 	});  
   </script>
   </div> 

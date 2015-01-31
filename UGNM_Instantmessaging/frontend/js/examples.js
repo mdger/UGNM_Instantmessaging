@@ -167,9 +167,9 @@ TemplateServiceClient.prototype.getUsers = function(successCallback, errorCallba
 			  // All Messages received
               $("#chatMessages").empty();
               for (var i = 0; i < data.messages.length; i++) {
-    		    $("#chatMessages").append("<li> " +
+    		    $("#chatMessages").append("<li><div class=\"chatname\"> " +
     		      data.messages[i].sender +
-    		    "<p class=\"chatMessage\">" +
+    		    "</div><p class=\"chatMessage\">" +
     		      data.messages[i].text +
     		    "</p>" +
     		    "</li>");   
@@ -179,6 +179,8 @@ TemplateServiceClient.prototype.getUsers = function(successCallback, errorCallba
               "<span class=\"input-group-btn\">"+
                  "<button class=\"btn btn-warning btn-sm\" id=\"sendMessageButton\" onClick=\"sendSingleMessage('"+data.contact+"')\";>send</button>"+
               "</span>");
+			  $('#emoteBox').removeClass("hidden");
+			  $('.chatMessages').emoticonize();
 			},
             function(error) {
               // this is the error callback
@@ -194,6 +196,7 @@ TemplateServiceClient.prototype.getUsers = function(successCallback, errorCallba
               "<span class=\"input-group-btn\">"+
                  "<button class=\"btn btn-warning btn-sm\" id=\"sendMessageButton\" onClick=\"sendSingleMessage("+contactName+")\";>send</button>"+
               "</span>");
+		      $('.chatMessages').emoticonize();			  
             }
           );
         }
@@ -217,11 +220,13 @@ TemplateServiceClient.prototype.getUsers = function(successCallback, errorCallba
     		  var contact = data.replace("Message to ", "");
     		  contact = contact.replace(" was sent!", "");
     		  showSingleMessages(contact);
+			  $('.chatMessages').emoticonize();
             },
             function(error) {
               // this is the error callback
               console.log(error);              
-            }
+			  $('.chatMessages').emoticonize();    
+			}
           );
         }
     
@@ -254,10 +259,10 @@ TemplateServiceClient.prototype.getUsers = function(successCallback, errorCallba
       client.getUsers(
         function(data,type) {
           // this is the success callback
-			$("#userList").html("asd");
+			$("#userList").empty();
 			for (var i = 0; i < data.length; i++) {
 				// This block will be executed 100 times.
-				$("#userList").append("<li>" + data[i].nickname + " ("  + data[i].username + ")</li>");
+				$("#userList").append("<li><a href=\"#\" data-toggle=\"modal\" data-target=\"#otherProfileModal\" onClick=\"showOtherProfile(\'"+data[i].username+"\')\" >" + data[i].username + " ("  + data[i].nickname + ") <button onClick=\"addContactButtonizer(\'"+data[i].username+"\')\" id=\"addContactButton\" type=\"button\" class=\"btn btn-primary\">Add " + data[i].username + "</button></a> </li>");
 			}		
 			console.log(data);
         },
@@ -275,7 +280,7 @@ TemplateServiceClient.prototype.getUsers = function(successCallback, errorCallba
         	$("#contactList").empty();  
   			for (var i = 0; i < data.length; i++) {
   				$("#contactList").append("<li> " +
-  						"<button id='dLabel' type='button' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false'>" +
+  						"<button type=\"button\" class=\"btn btn-warning\" id='dLabel' type='button' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false'>" +
   						data[i].nickname +
   						"</button>"+
   							"<ul class='dropdown-menu' role='menu' aria-labelledby='dLabel'>"+
@@ -315,7 +320,7 @@ TemplateServiceClient.prototype.getUsers = function(successCallback, errorCallba
 		updateProfileInfo(input);
 	});				
 	
-	// Sends Contact Request
+	// Sends Contact Request Form Input
 	$( "#sendRequestButton" ).click(function() {
 		var nameOfContact = $("#cr_name").val();
        	var input = "{\"myusername\":\"" + oidc_userinfo.preferred_username + "\",\"username\":\"" + nameOfContact + "\"}";							
@@ -330,7 +335,23 @@ TemplateServiceClient.prototype.getUsers = function(successCallback, errorCallba
           console.log(error);
         }
       );
-	});								
+	});					
+	
+	// Sends Contact Request by Button
+	function addContactButtonizer(contactUser) {
+       	var input = "{\"myusername\":\"" + oidc_userinfo.preferred_username + "\",\"username\":\"" + contactUser + "\"}";							
+		client.postRequest(
+		input,
+        function(data,type) {
+          // this is the success callback
+          console.log(data);
+        },
+        function(error) {
+          // this is the error callback
+          console.log(error);
+        }
+      );		
+	}
 	
 	// Get Contact Requests
 	$( "#pendingRequestsButton" ).click(function() {       							
@@ -397,6 +418,21 @@ TemplateServiceClient.prototype.getUsers = function(successCallback, errorCallba
 	        $("#contactRequest"+username).remove();
 	      }   
 	 
+	 // Filter Search Function
 	 
+	 function searchFilter(searchInput) {
+		var value = $(searchInput).val();
+        $("#userList > li > a").each(function() {
+            if ($(this).text().search(value) > -1) {
+                $(this).show();
+            }
+            else {
+                $(this).hide();
+            }
+        });		
+	 }
 	 
-	 
+	 function addForm(text) {
+		
+		$('#chatMessageInput').val($('#chatMessageInput').val() + " " + text + " ");
+	 }
