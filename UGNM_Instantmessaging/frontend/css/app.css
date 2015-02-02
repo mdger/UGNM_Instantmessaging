@@ -4,7 +4,7 @@ body {
 }
 
 #pr_img img {
-	width: 100%;
+	max-width: 200px;
 }
 
 .inline {
@@ -133,4 +133,15 @@ body {
 
 .timestamp {
 	font-size: 12px;
+}
+
+.dropdown-menu {
+	position: static;
+	margin-bottom: 5px;
+}
+
+.avatar {
+	height: 50px;
+	margin: 2px 5px 2px;
+	border: 1px solid #f60;
 }

@@ -1,4 +1,8 @@
-    
+	// Global variables
+	
+	var avatar;
+	
+	
     // create new instance of TemplateServiceClient, given its endpoint URL
     var client = new TemplateServiceClient("http://localhost:8080/im");	
     
@@ -76,6 +80,7 @@ TemplateServiceClient.prototype.getUsers = function(successCallback, errorCallba
 		usrname,
         function(data,type) {
           console.log(data);
+		$('#avatar').append('<img class=\"avatar\" src=\"' + data.imageLink + '\">');
         },
         function(error) {
 			  var content = "{\"username\":" + oidc_userinfo.preferred_username + ",\"email\":" + oidc_userinfo.email + ",\"telephone\": 00000000,\"imageLink\":\"imagelink\",\"nickname\":\"Chatter\",\"visible\":1}";
@@ -165,6 +170,7 @@ TemplateServiceClient.prototype.getUsers = function(successCallback, errorCallba
     
     //Show Single Chat History at #chatMessages
     function showSingleMessages(userName) {
+		  
           client.getSingleMessages(
     		userName,
             function(data,type) {
@@ -285,7 +291,7 @@ TemplateServiceClient.prototype.getUsers = function(successCallback, errorCallba
         	$("#contactList").empty();  
   			for (var i = 0; i < data.length; i++) {
   				$("#contactList").append("<li> " +
-  						"<button type=\"button\" class=\"btn btn-warning\" id='dLabel' type='button' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false'>" +
+  						"<button type=\"button\" class=\"btn btn-warning dropdown-toggle\" id='dLabel' type='button' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false'>" +
   						data[i].nickname +
   						"</button>"+
   							"<ul class='dropdown-menu' role='menu' aria-labelledby='dLabel'>"+
@@ -441,3 +447,4 @@ TemplateServiceClient.prototype.getUsers = function(successCallback, errorCallba
 		
 		$('#chatMessageInput').val($('#chatMessageInput').val() + " " + text + " ");
 	 }
+	 
