@@ -25,6 +25,10 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
 
 import net.minidev.json.JSONArray;
 import net.minidev.json.JSONObject;
@@ -966,7 +970,9 @@ public class IMServiceClass extends Service {
 			
 			// prepare JSONArray
 			JSONArray messageArray = new JSONArray();
-			
+			JSONArray sortedMessageArray = new JSONArray();
+			List<JSONObject> jsonValues = new ArrayList<JSONObject>();
+						
 			// retrieve result set
 			rs = stmnt.executeQuery();
 			boolean dataFound = false;
@@ -980,16 +986,42 @@ public class IMServiceClass extends Service {
 				messageObject.put("text", rs.getString(2));
 				messageObject.put("messageID", rs.getString(1));
 
-				messageArray.add(messageObject);
+				messageArray.add(messageObject);				
+				jsonValues.add(messageObject);			
+				
 			}
 			
 			if (dataFound)
 			{    
+			    
+			  //Sort Array
+			  Collections.sort(jsonValues, new Comparator<JSONObject>() {
+			      
+			      private static final String KEY_NAME = "timestamp";
+
+			        @Override
+			        public int compare(JSONObject a, JSONObject b) {
+			            String valA = new String();
+			            String valB = new String();
+			            
+			            valA = (String) a.get(KEY_NAME);
+			            valB = (String) b.get(KEY_NAME);			           
+
+			            return valA.compareTo(valB);
+			        }
+			    });
+			    
+			    //Sorted ArrayList to Message Array
+			    for (int i = 0; i < jsonValues.size(); i++) {
+		          sortedMessageArray.add(jsonValues.get(i));
+		        }
+			  
 			    //create JSONObject with user of conversation and messeages array
-			    JSONObject jsonResult = new JSONObject();
-			    jsonResult.put("contact", userName);
-			    jsonResult.put("messages", messageArray);
-				// return HTTP response
+                JSONObject jsonResult = new JSONObject();
+                jsonResult.put("contact", userName);
+                jsonResult.put("messages", sortedMessageArray);
+			    
+			    // return HTTP response
 				HttpResponse r = new HttpResponse(jsonResult.toJSONString());
 				r.setStatus(200);
 				return r;
@@ -1120,8 +1152,7 @@ public class IMServiceClass extends Service {
 			// convert string content to JSON object to get the message content
 			JSONObject messageObject = (JSONObject) JSONValue.parse(content);
 			String message = (String) messageObject.get("message");
-			//Timestamp timeStamp = Timestamp.valueOf((String) messageObject.get("timestamp"));
-			
+						
 			String result = "";
 			Connection conn = null;
 			PreparedStatement stmnt = null;
