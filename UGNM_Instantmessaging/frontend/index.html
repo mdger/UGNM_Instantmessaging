@@ -34,7 +34,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Easy Chat </title>
+  <title>EasyChat </title>
   
   <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
   <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
@@ -52,8 +52,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   <script type="text/javascript" src="https://code.jquery.com/jquery-1.11.1.min.js"></script>
   <script src="js/jquery.cssemoticons.min.js" type="text/javascript"></script>
 </head>
-<body>
-  
+<body> 
   <!-- Fixed navbar -->
   <div class="navbar navbar-default navbar-fixed-top" role="navigation">
     <div class="container">
@@ -69,6 +68,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 	  
       <div class="navbar-collapse collapse">
 		<ul class="nav navbar-nav authenticated hidden">
+          <li id="avatar"></li>
           <li><a href="#url1" onclick="getProfileInfo();" data-toggle="modal" data-target="#profile">Profile</a></li>
         </ul>
         <!-- OpenID Connect Button: add HTML element representing button -->
@@ -487,6 +487,8 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 	$( document ).ready(function() {
 		// activate Emoticons
 		$('#chatMessages').emoticonize();
+		$( document ).getProfileInfo();
+		$( document ).getContactList();
 	});  
   </script>
   </div> 

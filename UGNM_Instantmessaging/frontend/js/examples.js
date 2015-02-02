@@ -1,4 +1,8 @@
-    
+	// Global variables
+	
+	var avatar;
+	
+	
     // create new instance of TemplateServiceClient, given its endpoint URL
     var client = new TemplateServiceClient("http://localhost:8080/im");	
     
@@ -80,6 +84,7 @@ TemplateServiceClient.prototype.getUsers = function(successCallback, errorCallba
 		usrname,
         function(data,type) {
           console.log(data);
+		$('#avatar').append('<img class=\"avatar\" src=\"' + data.imageLink + '\">');
         },
         function(error) {
 			  var content = "{\"username\":" + oidc_userinfo.preferred_username + ",\"email\":" + oidc_userinfo.email + ",\"telephone\": 00000000,\"imageLink\":\"imagelink\",\"nickname\":\"Chatter\",\"visible\":1}";
@@ -117,6 +122,11 @@ TemplateServiceClient.prototype.getUsers = function(successCallback, errorCallba
           $("#pr_tel").html(data.telephone);
           $("#pr_img").html("<img src=" + data.imageLink + ">");
 		  $("#pr_nick").html(data.nickname);
+		  
+		$('#ch_mail').val(data.email);
+		$('#ch_tel').val(data.telephone);
+		$('#ch_img').val(data.imageLink);
+		$('#ch_nick').val(data.nickname);
         },
         function(error) {
           // this is the error callback
@@ -172,7 +182,7 @@ TemplateServiceClient.prototype.getUsers = function(successCallback, errorCallba
     	} else {
     		conv = userName;
     	}
-    	
+
           client.getSingleMessages(
     		userName,
             function(data,type) {  			
@@ -181,8 +191,8 @@ TemplateServiceClient.prototype.getUsers = function(successCallback, errorCallba
               $("#chatMessages").empty();
               for (var i = 0; i < data.messages.length; i++) {
     		    $("#chatMessages").append("<li><div class=\"chatname\"> " +
-    		      data.messages[i].sender +
-    		    "</div><p class=\"chatMessage\">" +
+    		      data.messages[i].sender + " <short class=\"timestamp\">" + data.messages[i].timestamp +
+    		    "</short></div><p class=\"chatMessage\">" +
     		      data.messages[i].text +
     		    "</p>" +
     		    "</li>");   
@@ -296,7 +306,7 @@ TemplateServiceClient.prototype.getUsers = function(successCallback, errorCallba
         	$("#contactList").empty();  
   			for (var i = 0; i < data.length; i++) {
   				$("#contactList").append("<li> " +
-  						"<button type=\"button\" class=\"btn btn-warning\" id='dLabel' type='button' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false'>" +
+  						"<button type=\"button\" class=\"btn btn-warning dropdown-toggle\" id='dLabel' type='button' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false'>" +
   						data[i].nickname +
   						"</button>"+
   							"<ul class='dropdown-menu' role='menu' aria-labelledby='dLabel'>"+
@@ -452,3 +462,4 @@ TemplateServiceClient.prototype.getUsers = function(successCallback, errorCallba
 		
 		$('#chatMessageInput').val($('#chatMessageInput').val() + " " + text + " ");
 	 }
+	 
