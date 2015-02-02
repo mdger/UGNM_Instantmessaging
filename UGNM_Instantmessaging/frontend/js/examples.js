@@ -2,6 +2,10 @@
     // create new instance of TemplateServiceClient, given its endpoint URL
     var client = new TemplateServiceClient("http://localhost:8080/im");	
     
+    //Active Conversation 
+    var conv;
+    var timeOut;
+    
     // function defined as response to a click on the first button (see below)
     function getExample() {
       client.getMethod(
@@ -159,11 +163,20 @@ TemplateServiceClient.prototype.getUsers = function(successCallback, errorCallba
         }
     
     //Show Single Chat History at #chatMessages
-    function showSingleMessages(userName) {
+    function showSingleMessages(userName) {   	
+    	
+    	//Check if a new userName is given
+    	if (typeof(userName) == "undefined")
+    	{
+    	    userName = conv;
+    	} else {
+    		conv = userName;
+    	}
+    	
           client.getSingleMessages(
     		userName,
-            function(data,type) {
-             
+            function(data,type) {  			
+    			
 			  // All Messages received
               $("#chatMessages").empty();
               for (var i = 0; i < data.messages.length; i++) {
@@ -181,6 +194,9 @@ TemplateServiceClient.prototype.getUsers = function(successCallback, errorCallba
               "</span>");
 			  $('#emoteBox').removeClass("hidden");
 			  $('.chatMessages').emoticonize();
+			  console.log(timeOut);
+			  window.clearTimeout(timeOut);
+			  timeOut = window.setTimeout(showSingleMessages, 2000);
 			},
             function(error) {
               // this is the error callback
