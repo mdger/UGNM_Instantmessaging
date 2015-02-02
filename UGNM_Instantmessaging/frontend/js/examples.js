@@ -113,6 +113,11 @@ TemplateServiceClient.prototype.getUsers = function(successCallback, errorCallba
           $("#pr_tel").html(data.telephone);
           $("#pr_img").html("<img src=" + data.imageLink + ">");
 		  $("#pr_nick").html(data.nickname);
+		  
+		$('#ch_mail').val(data.email);
+		$('#ch_tel').val(data.telephone);
+		$('#ch_img').val(data.imageLink);
+		$('#ch_nick').val(data.nickname);
         },
         function(error) {
           // this is the error callback
@@ -168,8 +173,8 @@ TemplateServiceClient.prototype.getUsers = function(successCallback, errorCallba
               $("#chatMessages").empty();
               for (var i = 0; i < data.messages.length; i++) {
     		    $("#chatMessages").append("<li><div class=\"chatname\"> " +
-    		      data.messages[i].sender +
-    		    "</div><p class=\"chatMessage\">" +
+    		      data.messages[i].sender + " <short class=\"timestamp\">" + data.messages[i].timestamp +
+    		    "</short></div><p class=\"chatMessage\">" +
     		      data.messages[i].text +
     		    "</p>" +
     		    "</li>");   
