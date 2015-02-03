@@ -201,6 +201,9 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 			<button type="button" class="btn btn-default" aria-label="Left Align" data-toggle="modal" data-target="#pendingRequests" id="pendingRequestsButton" onclick="getContactRequests();">
 			  <span alt="Show Pending Requests" class="glyphicon glyphicon-user" aria-hidden="true"></span>
 			</button>
+			<button type="button" class="btn btn-soon" aria-label="Left Align"">
+			  <span alt="Show Pending Requests" class="glyphicon glyphicon-th-large" aria-hidden="true"></span>
+			</button>
 			<p>
 				<ul id="contactList">
 				</ul>
@@ -487,8 +490,6 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 	$( document ).ready(function() {
 		// activate Emoticons
 		$('#chatMessages').emoticonize();
-		$( document ).getProfileInfo();
-		$( document ).getContactList();
 	});  
   </script>
   </div> 

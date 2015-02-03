@@ -3,7 +3,7 @@ body {
 	font-weight: 400;
 }
 
-#pr_img img {
+#pr_img img,#otherProfileImage img {
 	max-width: 200px;
 }
 
@@ -90,6 +90,8 @@ body {
 .btn-default {
 	color: #fff;
 	background-color: #3D5876;
+	border: 0 solid black;
+	margin-right: -1px;
 }
 
 .btn-sm {
@@ -144,4 +146,19 @@ body {
 	height: 50px;
 	margin: 2px 5px 2px;
 	border: 1px solid #f60;
+}
+
+#sendMessageButton {
+	position:relative;
+	right: 52px;
+	z-index: 20;
+}
+
+#otherProfileImage {
+	display: block;
+}	
+
+.btn-soon {
+	color: white;
+	background: grey;
 }
