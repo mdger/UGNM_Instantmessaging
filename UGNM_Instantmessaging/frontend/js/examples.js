@@ -84,7 +84,8 @@ TemplateServiceClient.prototype.getUsers = function(successCallback, errorCallba
 		usrname,
         function(data,type) {
           console.log(data);
-		$('#avatar').append('<img class=\"avatar\" src=\"' + data.imageLink + '\">');
+		  $('#avatar').append('<img class=\"avatar\" src=\"' + data.imageLink + '\">');
+		getContactList()
         },
         function(error) {
 			  var content = "{\"username\":" + oidc_userinfo.preferred_username + ",\"email\":" + oidc_userinfo.email + ",\"telephone\": 00000000,\"imageLink\":\"imagelink\",\"nickname\":\"Chatter\",\"visible\":1}";
@@ -102,6 +103,7 @@ TemplateServiceClient.prototype.getUsers = function(successCallback, errorCallba
 	
       } else {
         // anonymous
+		$('#intro').removeClass('hidden');
       }
     }
 	
@@ -162,7 +164,7 @@ TemplateServiceClient.prototype.getUsers = function(successCallback, errorCallba
     		  $("#otherProfileUserName").html(profileName);
               $("#otherProfileMail").html(data.email);    		 
               $("#otherProfileTelephone").html(data.telephone);
-             // $("#otherProfileImage").html("<img src=" + data.imageLink + ">");
+              $("#otherProfileImage").html("<img src=" + data.imageLink + ">");
     		  $("#otherProfileNickName").html(data.nickname);
             },
             function(error) {
@@ -172,6 +174,14 @@ TemplateServiceClient.prototype.getUsers = function(successCallback, errorCallba
           );
         }
     
+	function startChat(username) {
+              $("#chatInput").html(
+              "<span class=\"input-group-btn\"><form><input id=\"chatMessageInput\" type=\"text\" class=\"form-control input-sm\" placeholder=\"Type your message here...\" />"+	
+                 "<button type=\"submit\" class=\"btn btn-warning btn-sm\" id=\"sendMessageButton\" onClick=\"sendSingleMessage('"+username+"')\";>send</button>"+
+              "</span></form>");
+			showSingleMessages(username);
+	}
+	
     //Show Single Chat History at #chatMessages
     function showSingleMessages(userName) {   	
     	
@@ -197,16 +207,13 @@ TemplateServiceClient.prototype.getUsers = function(successCallback, errorCallba
     		    "</p>" +
     		    "</li>");   
               }
-              $("#chatInput").html(
-              "<input id=\"chatMessageInput\" type=\"text\" class=\"form-control input-sm\" placeholder=\"Type your message here...\" />"+
-              "<span class=\"input-group-btn\">"+
-                 "<button class=\"btn btn-warning btn-sm\" id=\"sendMessageButton\" onClick=\"sendSingleMessage('"+data.contact+"')\";>send</button>"+
-              "</span>");
 			  $('#emoteBox').removeClass("hidden");
 			  $('.chatMessages').emoticonize();
 			  console.log(timeOut);
 			  window.clearTimeout(timeOut);
 			  timeOut = window.setTimeout(showSingleMessages, 2000);
+		 var wHeight = $('#chatMessages').height();
+		 $('#chatWindow').scrollTop(wHeight);
 			},
             function(error) {
               // this is the error callback
@@ -228,17 +235,19 @@ TemplateServiceClient.prototype.getUsers = function(successCallback, errorCallba
         }
 		
 		// Send Message on Enter
-		  $('#chatMessageInput').on("keyup keydown", function() {
-			if(e.keyCode == 13) {
-			  sendSingleMessage(data.contact);
-			}
+		  $('#chatMessageInput').keyup(function(e) {
+			 var code = (e.keyCode ? e.keyCode : e.which);
+				if (code==13) {
+					e.preventDefault();
+					sendSingleMessage(username);
+				}
 		  });		
-		
     
   //Send Single Message 
     function sendSingleMessage(userName) {
     	 var text = $("#chatMessageInput").val();
          var content = "{\"message\":\"" + text + "\",\"timestamp\":\"" + "2014-01-01 00:00:00" + "\"}";	
+		 $('#chatMessageInput').val('');
           client.sendSingleMessage(
     		userName,
     		content,
@@ -254,7 +263,7 @@ TemplateServiceClient.prototype.getUsers = function(successCallback, errorCallba
 			  $('.chatMessages').emoticonize();    
 			}
           );
-        }
+	}
     
     
     
@@ -272,7 +281,9 @@ TemplateServiceClient.prototype.getUsers = function(successCallback, errorCallba
           function(data,type) {
             // Contact successfully deleted
   			console.log(data);
-          },
+          
+		getContactList();
+		  },
           function(error) {
             // Error while deleting contact
             console.log(error);
@@ -288,7 +299,7 @@ TemplateServiceClient.prototype.getUsers = function(successCallback, errorCallba
 			$("#userList").empty();
 			for (var i = 0; i < data.length; i++) {
 				// This block will be executed 100 times.
-				$("#userList").append("<li><a href=\"#\" data-toggle=\"modal\" data-target=\"#otherProfileModal\" onClick=\"showOtherProfile(\'"+data[i].username+"\')\" >" + data[i].username + " ("  + data[i].nickname + ") <button onClick=\"addContactButtonizer(\'"+data[i].username+"\')\" id=\"addContactButton\" type=\"button\" class=\"btn btn-primary\">Add " + data[i].username + "</button></a> </li>");
+				$("#userList").append("<li><a href=\"#\" data-toggle=\"modal\" data-target=\"#otherProfileModal\" onClick=\"showOtherProfile(\'"+data[i].username+"\')\" >" + data[i].username + " ("  + data[i].nickname + ") </a><a><button onClick=\"addContactButtonizer(\'"+data[i].username+"\')\" id=\"addContactButton\" type=\"button\" class=\"btn btn-primary\">Add " + data[i].username + "</button></a> </li>");
 			}		
 			console.log(data);
         },
@@ -311,7 +322,7 @@ TemplateServiceClient.prototype.getUsers = function(successCallback, errorCallba
   						"</button>"+
   							"<ul class='dropdown-menu' role='menu' aria-labelledby='dLabel'>"+
   								"<li>"+
-  								"<a href=\"#\" onClick=\"showSingleMessages(\'"+data[i].username+"\')\" > start chat </a>"+ 
+  								"<a href=\"#\" onClick=\"startChat(\'"+data[i].username+"\')\" > start chat </a>"+ 
   								"</li>"+
   								"<li>"+
   								"<a href=\"#\" data-toggle=\"modal\" data-target=\"#otherProfileModal\" onClick=\"showOtherProfile(\'"+data[i].username+"\')\" > show profile </a>"+
@@ -426,6 +437,7 @@ TemplateServiceClient.prototype.getUsers = function(successCallback, errorCallba
 	          }
 	        );
 	        $("#contactRequest"+username).remove();	        
+			getContactList();
 	      }   
 	 
 	// Reject a Contact Request to delete the request
