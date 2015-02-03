@@ -50,6 +50,7 @@ ul#contactList li{
 #emoteBox {
 	border: 2px solid #333;
 	padding: 7px;
+	margin-top: 40px;
 }
 
 .navbar-default {
@@ -161,4 +162,59 @@ body {
 .btn-soon {
 	color: white;
 	background: grey;
+}
+
+p {
+	font-size: 18px;
+}
+
+ol {
+	font-size: 22px;
+}
+
+.intro_list {
+    list-style-type: decimal;
+	text-align: center;
+}
+
+ol.intro_list li{
+    float: left;
+    width: 33.33%;
+    padding: 2px 0px;
+	min-height: 300px;
+	position: relative;
+	margin-bottom: 20px;
+}
+
+ol.intro_list img{
+	max-width: 200px;
+	width: 90%;
+	position: absolute;
+	bottom: 0;
+	margin: 0 auto;
+	left:0;
+	right:0;
+}
+
+ol.intro_list p {
+	width: 90%;
+	position: absolute;
+	margin-bottom: 20px;
+	top: 0;
+}
+
+.logo {
+	margin: 2px;
+	padding: 5px 5px 10px;
+	width: 75px;
+	background: white;
+	border: 3px solid #f60;
+}
+
+.navbar-brand {
+	padding:0;
+}
+
+#intro {
+	margin-top: 20px;
 }

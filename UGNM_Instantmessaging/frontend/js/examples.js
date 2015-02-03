@@ -84,7 +84,7 @@ TemplateServiceClient.prototype.getUsers = function(successCallback, errorCallba
 		usrname,
         function(data,type) {
           console.log(data);
-		$('#avatar').append('<img class=\"avatar\" src=\"' + data.imageLink + '\">');
+		  $('#avatar').append('<img class=\"avatar\" src=\"' + data.imageLink + '\">');
 		getContactList()
         },
         function(error) {
@@ -103,6 +103,7 @@ TemplateServiceClient.prototype.getUsers = function(successCallback, errorCallba
 	
       } else {
         // anonymous
+		$('#intro').removeClass('hidden');
       }
     }
 	
