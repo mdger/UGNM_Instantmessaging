@@ -962,7 +962,7 @@ public class IMServiceClass extends Service {
 			conn = dbm.getConnection();
 			
 			// prepare statement
-			stmnt = conn.prepareStatement("SELECT Message.MessageID, Message, MessageTimeStamp, Sender FROM Message, SendingSingle WHERE ((Sender = ? AND Receiver = ?) OR (Sender = ? AND Receiver = ?)) AND Message.MessageID = SendingSingle.MessageID;");
+			stmnt = conn.prepareStatement("SELECT Message.MessageID, Message, MessageTimeStamp, Sender, NickName FROM Message, SendingSingle, AccountProfile WHERE ((Sender = ? AND Receiver = ?) OR (Sender = ? AND Receiver = ?)) AND Message.MessageID = SendingSingle.MessageID AND SendingSingle.Sender = AccountProfile.UserName;");
 			stmnt.setString(1, userName);
 			stmnt.setString(2, agentName);
 			stmnt.setString(3, agentName);
@@ -981,6 +981,7 @@ public class IMServiceClass extends Service {
 			{
 				if(!dataFound) dataFound = true;
 				JSONObject messageObject = new JSONObject();
+				messageObject.put("senderNickName", rs.getString(5));
 				messageObject.put("sender", rs.getString(4));
 				messageObject.put("timestamp", rs.getString(3));
 				messageObject.put("text", rs.getString(2));

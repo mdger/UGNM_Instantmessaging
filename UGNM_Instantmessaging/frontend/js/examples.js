@@ -186,12 +186,12 @@ TemplateServiceClient.prototype.getUsers = function(successCallback, errorCallba
           client.getSingleMessages(
     		userName,
             function(data,type) {  			
-    			
+    		  console.log(data.messages);
 			  // All Messages received
               $("#chatMessages").empty();
               for (var i = 0; i < data.messages.length; i++) {
     		    $("#chatMessages").append("<li><div class=\"chatname\"> " +
-    		      data.messages[i].sender + " <short class=\"timestamp\">" + data.messages[i].timestamp +
+    		      data.messages[i].senderNickName + " <short class=\"timestamp\">" + data.messages[i].timestamp +
     		    "</short></div><p class=\"chatMessage\">" +
     		      data.messages[i].text +
     		    "</p>" +
@@ -380,13 +380,13 @@ TemplateServiceClient.prototype.getUsers = function(successCallback, errorCallba
 	}
 	
 	// Get Contact Requests
-	$( "#pendingRequestsButton" ).click(function() {       							
+	function getContactRequests() {       							
 		
 		client.getRequests(
         function(data,type) {
         	//New Requests found
         	$("#requestList").empty();
-        	if(data.lenght == 1) {        		
+        	if(data.length = 1) {        		
         		$("#requestList").append("<p>You have a new request</p>");	
         	} else {
         		$("#requestList").append("<p>You have "+ data.length +" new requests</p>");
@@ -408,7 +408,7 @@ TemplateServiceClient.prototype.getUsers = function(successCallback, errorCallba
           console.log(error);
         }
       );
-	});		
+	}		
 	
 	
 	 // Accept Contact Request to create a contact
@@ -418,6 +418,7 @@ TemplateServiceClient.prototype.getUsers = function(successCallback, errorCallba
 	          function(data,type) {
 	            // Contact successfully created
 	  			console.log(data);
+	  			getContactRequests();
 	          },
 	          function(error) {
 	            // Error while creating contact
@@ -434,6 +435,7 @@ TemplateServiceClient.prototype.getUsers = function(successCallback, errorCallba
 	          input,
 	          function(data,type) {
 	            // Request successfully deleted
+	        	getContactRequests();
 	  			console.log(data);
 	          },
 	          function(error) {
