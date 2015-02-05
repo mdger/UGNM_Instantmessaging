@@ -84,6 +84,9 @@ TemplateServiceClient.prototype.getUsers = function(successCallback, errorCallba
 		usrname,
         function(data,type) {
           console.log(data);
+		  if (data.imageLink == '') {
+			return;
+		  }
 		  $('#avatar').append('<img class=\"avatar\" src=\"' + data.imageLink + '\">');
 		getContactList()
         },
@@ -355,6 +358,7 @@ TemplateServiceClient.prototype.getUsers = function(successCallback, errorCallba
 		var visi  = $("#ch_vis").val();
        	var input = "{\"userName\":\"" + oidc_userinfo.preferred_username + "\",\"email\":\"" + email + "\",\"telephone\":" + tele + ",\"imageLink\":\"" + img + "\",\"nickname\":\"" + nick + "\",\"visible\":" + visi + "}";							
 		updateProfileInfo(input);
+		window.location.reload(false); 
 	});				
 	
 	// Sends Contact Request Form Input

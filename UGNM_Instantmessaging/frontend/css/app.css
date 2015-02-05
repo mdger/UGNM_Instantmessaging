@@ -1,4 +1,4 @@
-body {
+y {
 	font-family: 'PT Sans Narrow', sans-serif;
 	font-weight: 400;
 }
@@ -48,9 +48,10 @@ ul#contactList li{
 }
 
 #emoteBox {
-	border: 2px solid #333;
+	border: 2px solid #f60;
 	padding: 7px;
 	margin-top: 40px;
+	margin-bottom: 10px;
 }
 
 .navbar-default {
@@ -132,6 +133,7 @@ body {
 #chatMessageInput {
 	font-size: 16px;
 	height: 38px;
+	margin-bottom: 10px;
 }
 
 .timestamp {
@@ -181,7 +183,7 @@ ol.intro_list li{
     float: left;
     width: 33.33%;
     padding: 2px 0px;
-	min-height: 300px;
+	min-height: 380px;
 	position: relative;
 	margin-bottom: 20px;
 }
@@ -217,4 +219,35 @@ ol.intro_list p {
 
 #intro {
 	margin-top: 20px;
+}
+
+@media (max-width: 780px) { 
+	p {
+		font-size: 14px;
+	}
+	
+	ol.intro_list img{
+		max-width: 120px;
+	}
+	
+	ol.intro_list li{
+		float: left;
+		width: 39.33%;
+		padding: 2px 0px;
+		min-height: 290px;
+		position: relative;
+		margin-bottom: 20px;
+		margin-right: 4%;
+	}
+	
+	.logo {
+		max-width: 50px;
+	}
+}
+
+
+@media (max-width: 768px) { 
+	.avatar{
+		margin-top: 40px;
+	}
 }
